@@ -1,0 +1,120 @@
+---
+// En-tête partagé. Le lien actif est déduit de l'URL courante.
+const path = Astro.url.pathname;
+const is = (p) => (path === p || path.startsWith(p + '/') ? 'active' : '');
+---
+<div class="top-strip">
+  <div><span class="dot"></span>ÉDITION 2026 · INSCRIPTIONS OUVERTES</div>
+  <div class="top-strip-right">
+    <a href="/contact#contact">Presse</a>
+    <a href="/contact#contact">Contact</a>
+  </div>
+</div>
+
+<nav class="navbar">
+  <a href="/" class="logo" aria-label="ZIFFA - Retour à l'accueil">
+    <img src="/ziffa.png" alt="ZIFFA - Ziguinchor International Festival Film and Animation">
+  </a>
+
+  <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <ul class="nav-links">
+    <li class="nav-item">
+      <a class={`nav-link ${is('/le-ziffa')}`} href="/le-ziffa">Le ZIFFA <span class="caret">▾</span></a>
+      <div class="dropdown">
+        <div class="dropdown-header">— Découvrir le festival</div>
+        <a href="/le-ziffa#histoire">Histoire du Festival</a>
+        <a href="/le-ziffa#valeurs">Nos valeurs</a>
+        <a href="/le-ziffa#equipe">Équipe</a>
+        <a href="/le-ziffa#presse">Presse</a>
+        <a href="/le-ziffa#partenaires">Nos partenaires</a>
+        <a href="/le-ziffa#archives">Archives</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class={`nav-link ${is('/a-lannee')}`} href="/a-lannee">À l'année <span class="caret">▾</span></a>
+      <div class="dropdown">
+        <div class="dropdown-header">— Formations permanentes</div>
+        <a href="/a-lannee#formation-doc">Formation documentaire</a>
+        <a href="/a-lannee#formation-anim">Formation animation</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class={`nav-link ${is('/edition-2026')}`} href="/edition-2026">Édition 2026 <span class="caret">▾</span></a>
+      <div class="dropdown">
+        <div class="dropdown-header">— Prochaine édition</div>
+        <a href="/edition-2026#prix">Prix</a>
+        <a href="/edition-2026#programme">Programme</a>
+        <a href="/edition-2026#jury">Jury</a>
+        <a href="/edition-2026#masterclasses">Masterclasses</a>
+        <a href="/edition-2026#affiche">Affiche</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class={`nav-link ${is('/edition-2025')}`} href="/edition-2025">Édition 2025 <span class="caret">▾</span></a>
+      <div class="dropdown">
+        <div class="dropdown-header">— Édition passée</div>
+        <a href="/edition-2025#images">En images</a>
+        <a href="/edition-2025#prix">Prix</a>
+        <a href="/edition-2025#programme">Programme</a>
+        <a href="/edition-2025#jury">Jury</a>
+        <a href="/edition-2025#masterclasses">Masterclasses</a>
+        <a href="/edition-2025#affiche">Affiche</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class={`nav-link ${is('/participer')}`} href="/participer">Participer <span class="caret">▾</span></a>
+      <div class="dropdown">
+        <div class="dropdown-header">— Rejoignez-nous</div>
+        <a href="/participer#inscription">Inscrire un film</a>
+        <a href="/participer#accreditation">S'accréditer</a>
+        <a href="/participer#partenariat">Devenir partenaire</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class={`nav-link ${is('/contact')}`} href="/contact">Infos <span class="caret">▾</span></a>
+      <div class="dropdown">
+        <div class="dropdown-header">— Nous contacter</div>
+        <a href="/contact#contact">Contacts</a>
+        <a href="/contact#newsletter">Newsletter</a>
+      </div>
+    </li>
+  </ul>
+
+  <div class="nav-right">
+    <div class="lang-pill">
+      <a href="#" class="active">FR</a>
+      <a href="#">EN</a>
+    </div>
+    <a href="/participer#accreditation" class="nav-cta">S'accréditer ↗</a>
+  </div>
+</nav>
+
+<script>
+  // Menu mobile (hamburger) + ouverture des sous-menus au tap.
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+  if (toggle && links) {
+    toggle.addEventListener('click', () => {
+      const open = links.classList.toggle('open');
+      toggle.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.nav-item > .nav-link').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        if (window.matchMedia('(max-width: 1200px)').matches) {
+          const item = link.parentElement;
+          if (!item.classList.contains('open')) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item.open').forEach((o) => {
+              if (o !== item) o.classList.remove('open');
+            });
+            item.classList.add('open');
+          }
+        }
+      });
+    });
+  }
+</script>

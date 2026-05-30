@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Édition 2026 — Programme, prix, jury & masterclasses | ZIFFA</title>
+<meta name="description" content="Édition 2026 du ZIFFA, 12–15 novembre à Ziguinchor : prix officiels, programme jour par jour, jury, masterclasses et affiche.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="edition-2026">
+
+<div data-include="partials/header.html"></div>
+
+<header class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Accueil</a> &nbsp;/&nbsp; Édition 2026</div>
+    <div class="eyebrow"><span class="arrow">→</span> Prochaine édition · 12–15 Nov 2026</div>
+    <h1><span class="yellow">2026</span>, édition <span class="italic">N°02</span>.</h1>
+    <p>Quatre jours de projections, de rencontres et de transmission à Ziguinchor. Découvrez les prix, le programme, le jury et les masterclasses de la prochaine édition.</p>
+  </div>
+</header>
+
+<!-- ===== PRIX ===== -->
+<section class="section" id="prix">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow"><span class="arrow">→</span> Compétition officielle</div>
+      <h2 class="section-title">Les <span class="red">prix</span> 2026.</h2>
+    </div>
+  </div>
+  <p class="lead" style="margin-bottom:40px;">Le jury international récompense les œuvres les plus marquantes de la sélection, toutes catégories confondues.</p>
+  <div class="prize-grid">
+    <div class="prize-card">
+      <div class="trophy">🏆</div>
+      <h3>Grand Prix ZIFFA</h3>
+      <p>La plus haute distinction du festival, toutes catégories confondues.</p>
+    </div>
+    <div class="prize-card">
+      <div class="trophy">🎬</div>
+      <h3>Prix de la Fiction</h3>
+      <p>Récompense le meilleur film de fiction de la sélection officielle.</p>
+    </div>
+    <div class="prize-card">
+      <div class="trophy">🎞️</div>
+      <h3>Prix du Documentaire</h3>
+      <p>Distingue le regard documentaire le plus fort de l'édition.</p>
+    </div>
+    <div class="prize-card">
+      <div class="trophy">✨</div>
+      <h3>Prix de l'Animation</h3>
+      <p>Salue la création animée et ses nouvelles écritures.</p>
+    </div>
+    <div class="prize-card">
+      <div class="trophy">⏱️</div>
+      <h3>Prix du Court-métrage</h3>
+      <p>Pour la meilleure œuvre courte, fiction ou documentaire.</p>
+    </div>
+    <div class="prize-card">
+      <div class="trophy">❤️</div>
+      <h3>Prix du Public</h3>
+      <p>Décerné par les votes des spectateurs du festival.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="programme-section" id="programme">
+  <div class="programme-inner">
+    <div style="text-align: center; margin-bottom: 16px;">
+      <div class="eyebrow" style="justify-content: center;"><span class="arrow">→</span> Programme officiel · Édition 2026</div>
+      <h2 class="section-title" style="margin: 16px auto 16px; text-align: center;">
+        Quatre jours, <span class="red">un seul</span><br>
+        rendez-vous <span class="italic">incontournable</span>.
+      </h2>
+      <p style="font-size: 18px; color: var(--ink-soft); max-width: 640px; margin: 0 auto;">
+        Projections, masterclasses, rencontres et cérémonies. Naviguez jour par jour dans le programme officiel.
+      </p>
+    </div>
+
+    <!-- Tabs jour par jour -->
+    <div class="programme-tabs" role="tablist">
+      <button class="programme-tab active" data-day="1" onclick="switchDay(this, 1)">
+        <div class="programme-tab-day">Jeudi</div>
+        <div class="programme-tab-date">12 Nov</div>
+        <div class="programme-tab-label">Ouverture</div>
+      </button>
+      <button class="programme-tab" data-day="2" onclick="switchDay(this, 2)">
+        <div class="programme-tab-day">Vendredi</div>
+        <div class="programme-tab-date">13 Nov</div>
+        <div class="programme-tab-label">Compétition</div>
+      </button>
+      <button class="programme-tab" data-day="3" onclick="switchDay(this, 3)">
+        <div class="programme-tab-day">Samedi</div>
+        <div class="programme-tab-date">14 Nov</div>
+        <div class="programme-tab-label">Masterclasses</div>
+      </button>
+      <button class="programme-tab" data-day="4" onclick="switchDay(this, 4)">
+        <div class="programme-tab-day">Dimanche</div>
+        <div class="programme-tab-date">15 Nov</div>
+        <div class="programme-tab-label">Clôture</div>
+      </button>
+    </div>
+
+    <!-- Filtres -->
+    <div class="programme-filters">
+      <span class="filter-label">Filtrer :</span>
+      <button class="filter-chip active" onclick="filterEvents(this, 'all')">Tout</button>
+      <button class="filter-chip" onclick="filterEvents(this, 'projection')">Projections</button>
+      <button class="filter-chip" onclick="filterEvents(this, 'masterclass')">Masterclasses</button>
+      <button class="filter-chip" onclick="filterEvents(this, 'rencontre')">Rencontres</button>
+      <button class="filter-chip" onclick="filterEvents(this, 'ceremonie')">Cérémonies</button>
+    </div>
+
+    <!-- Jour 1 - Jeudi 12 Nov -->
+    <div class="programme-day active" data-day="1">
+      <div class="programme-event" data-type="ceremonie">
+        <div class="programme-event-time">19:00<span class="duration">2h00</span></div>
+        <div class="programme-event-info">
+          <h4>Cérémonie d'ouverture officielle</h4>
+          <p>Discours d'ouverture du festival en présence des autorités</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-ceremonie">Cérémonie</span>
+          <strong>Théâtre Aline Sitoé Diatta</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="projection">
+        <div class="programme-event-time">21:00<span class="duration">1h45</span></div>
+        <div class="programme-event-info">
+          <h4>Film d'ouverture : "Sous le Baobab"</h4>
+          <p>Réalisé par Aïssatou Diop · Sénégal · 2025</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-projection">Projection</span>
+          <strong>Salle principale</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="rencontre">
+        <div class="programme-event-time">22:45<span class="duration">2h00</span></div>
+        <div class="programme-event-info">
+          <h4>Cocktail d'ouverture & rencontres</h4>
+          <p>Rencontre avec les cinéastes et invités du festival</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-rencontre">Rencontre</span>
+          <strong>Jardins du Théâtre</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+    </div>
+
+    <!-- Jour 2 - Vendredi 13 Nov -->
+    <div class="programme-day" data-day="2">
+      <div class="programme-event" data-type="projection">
+        <div class="programme-event-time">10:00<span class="duration">1h30</span></div>
+        <div class="programme-event-info">
+          <h4>Projection compétition fiction</h4>
+          <p>3 courts-métrages en compétition officielle</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-projection">Projection</span>
+          <strong>Salle Casamance</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="masterclass">
+        <div class="programme-event-time">14:30<span class="duration">2h00</span></div>
+        <div class="programme-event-info">
+          <h4>Masterclass : L'écriture documentaire</h4>
+          <p>Avec un réalisateur invité international</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-masterclass">Masterclass</span>
+          <strong>Université Assane Seck</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="projection">
+        <div class="programme-event-time">19:30<span class="duration">1h50</span></div>
+        <div class="programme-event-info">
+          <h4>Projection : "Voix de Casamance"</h4>
+          <p>Documentaire de Mamadou Ba · 88 min</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-projection">Projection</span>
+          <strong>Salle principale</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+    </div>
+
+    <!-- Jour 3 - Samedi 14 Nov -->
+    <div class="programme-day" data-day="3">
+      <div class="programme-event" data-type="masterclass">
+        <div class="programme-event-time">09:30<span class="duration">3h00</span></div>
+        <div class="programme-event-info">
+          <h4>Masterclass : Animation 2D africaine</h4>
+          <p>Atelier pratique avec un studio invité</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-masterclass">Masterclass</span>
+          <strong>Institut français</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="rencontre">
+        <div class="programme-event-time">15:00<span class="duration">1h30</span></div>
+        <div class="programme-event-info">
+          <h4>Table ronde : Cinéma & développement local</h4>
+          <p>Avec les acteurs culturels de Casamance</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-rencontre">Rencontre</span>
+          <strong>Maison de la Culture</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="projection">
+        <div class="programme-event-time">20:00<span class="duration">2h15</span></div>
+        <div class="programme-event-info">
+          <h4>Nuit de l'animation africaine</h4>
+          <p>Projection de 5 courts-métrages d'animation</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-projection">Projection</span>
+          <strong>Salle principale</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+    </div>
+
+    <!-- Jour 4 - Dimanche 15 Nov -->
+    <div class="programme-day" data-day="4">
+      <div class="programme-event" data-type="projection">
+        <div class="programme-event-time">15:00<span class="duration">2h00</span></div>
+        <div class="programme-event-info">
+          <h4>Projection des films primés</h4>
+          <p>Re-projection des œuvres lauréates de l'édition</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-projection">Projection</span>
+          <strong>Salle principale</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="ceremonie">
+        <div class="programme-event-time">19:00<span class="duration">2h30</span></div>
+        <div class="programme-event-info">
+          <h4>Cérémonie de clôture & remise des prix</h4>
+          <p>Annonce du palmarès officiel ZIFFA 2026</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-ceremonie">Cérémonie</span>
+          <strong>Théâtre Aline Sitoé Diatta</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+      <div class="programme-event" data-type="rencontre">
+        <div class="programme-event-time">22:00<span class="duration">3h00</span></div>
+        <div class="programme-event-info">
+          <h4>Soirée de gala festive</h4>
+          <p>Concert live, DJ set & rencontres jusqu'à l'aube</p>
+        </div>
+        <div class="programme-event-location">
+          <span class="programme-event-type event-type-rencontre">Rencontre</span>
+          <strong>Plage municipale</strong>
+        </div>
+        <div class="programme-event-arrow">→</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="#" class="btn-primary-light" style="background: var(--red); color: var(--bg); padding: 16px 28px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+        Télécharger le programme PDF ↗
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACCRÉDITATION STEP-BY-STEP ===== -->
+
+<hr class="section-divider">
+
+<!-- ===== JURY ===== -->
+<section class="section" id="jury">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow"><span class="arrow">→</span> Le jury 2026</div>
+      <h2 class="section-title">Un <span class="italic">jury</span> international.</h2>
+    </div>
+  </div>
+  <p class="lead" style="margin-bottom:40px;">Cinéastes, productrices et critiques venus du continent et d'ailleurs délibèrent sur la sélection officielle. Composition complète à venir.</p>
+  <div class="people-grid">
+    <div class="person-card">
+      <div class="person-avatar">P</div>
+      <div class="person-name">Président·e du jury</div>
+      <div class="person-role">À annoncer</div>
+      <p class="person-bio">Une figure du cinéma africain présidera les délibérations 2026.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar">J2</div>
+      <div class="person-name">Membre du jury</div>
+      <div class="person-role">Réalisation</div>
+      <p class="person-bio">À annoncer.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar">J3</div>
+      <div class="person-name">Membre du jury</div>
+      <div class="person-role">Production</div>
+      <p class="person-bio">À annoncer.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar">J4</div>
+      <div class="person-name">Membre du jury</div>
+      <div class="person-role">Critique & presse</div>
+      <p class="person-bio">À annoncer.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ===== MASTERCLASSES ===== -->
+<section class="section" id="masterclasses">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow"><span class="arrow">→</span> Transmission</div>
+      <h2 class="section-title">Master-<span class="italic">classes</span> 2026.</h2>
+    </div>
+    <a href="participer.html#accreditation" class="btn-ghost">S'accréditer →</a>
+  </div>
+  <div class="ateliers-grid">
+    <div class="atelier-card">
+      <span class="atelier-tag">— Masterclass</span>
+      <h3><span class="italic">Réalisation</span> documentaire</h3>
+      <p>Construire un récit documentaire fort à partir de matière brute, avec un réalisateur invité.</p>
+      <div class="atelier-meta"><span>Samedi 14 Nov</span><span>Tous niveaux</span></div>
+    </div>
+    <div class="atelier-card">
+      <span class="atelier-tag">— Masterclass</span>
+      <h3><span class="italic">Écriture</span> de scénario</h3>
+      <p>Du synopsis au traitement : structurer son histoire pour la fiction et le court-métrage.</p>
+      <div class="atelier-meta"><span>Vendredi 13 Nov</span><span>Débutant</span></div>
+    </div>
+    <div class="atelier-card">
+      <span class="atelier-tag">— Atelier pratique</span>
+      <h3><span class="italic">Animation</span> 2D</h3>
+      <p>Techniques d'animation et création de courts-métrages animés avec un studio invité.</p>
+      <div class="atelier-meta"><span>Samedi 14 Nov</span><span>Intermédiaire</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AFFICHE ===== -->
+<section class="objectifs-section" id="affiche">
+  <div class="objectifs-inner">
+    <div class="affiche-wrap">
+      <div class="affiche-poster">
+        <span class="placeholder">ZIFFA<br>2026</span>
+      </div>
+      <div>
+        <div class="eyebrow"><span class="arrow">→</span> Identité visuelle</div>
+        <h2 class="section-title" style="color:var(--bg);">L'<span class="yellow-highlight">affiche</span>.</h2>
+        <p class="objectifs-tagline" style="margin:16px 0 28px;">L'affiche officielle de l'édition 2026 sera dévoilée prochainement. Elle incarnera l'esprit du festival : un cinéma africain vivant, ancré et tourné vers l'avenir.</p>
+        <a href="contact.html#newsletter" class="nav-cta" style="background:var(--yellow);color:var(--green-deep);">Être prévenu du dévoilement ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div data-include="partials/footer.html"></div>
+
+<script src="assets/js/include.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "programme_events",
+  "info": {
+    "singularName": "programme-event",
+    "pluralName": "programme-events",
+    "displayName": "Événement (programme)"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "startTime": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "projection",
+        "masterclass",
+        "rencontre",
+        "ceremonie"
+      ]
+    },
+    "location": {
+      "type": "string"
+    },
+    "day": {
+      "type": "integer"
+    },
+    "date": {
+      "type": "date"
+    },
+    "edition": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::edition.edition",
+      "inversedBy": "events"
+    }
+  }
+}

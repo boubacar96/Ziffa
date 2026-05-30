@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+// TODO (migration) : porter le contenu de la page statique de référence
+//   ../../../participer.html
+// en réutilisant les composants/classes existants, et brancher les parties
+// dynamiques sur Strapi (cf. src/lib/strapi.js et l'exemple dans index.astro).
+---
+<Base title="Participer — Inscrire, s'accréditer, partenariat | ZIFFA" description="Rejoignez-nous — ZIFFA.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Participer</div>
+      <div class="eyebrow"><span class="arrow">→</span> Rejoignez-nous</div>
+      <h1>Faites partie du <span class="yellow">ZIFFA</span>.</h1>
+      <p>Page en cours de migration vers Astro. Le contenu de référence existe
+         déjà dans <code>participer.html</code> (site statique) et sera porté ici.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <p class="lead">Section à porter : reprends le balisage de <code>participer.html</code>
+       et remplace les contenus fixes par des appels Strapi quand c'est pertinent
+       (films, programme, jury, prix, partenaires, articles…).</p>
+  </section>
+</Base>

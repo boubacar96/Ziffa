@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../lib/strapi.js';
+
+// --- Données dynamiques depuis Strapi (avec repli si vide/indisponible) ---
+const articlesRes = await fetchAPI('articles', {
+  populate: 'cover',
+  sort: 'publishedDate:desc',
+  'pagination[limit]': '3',
+});
+const articles = articlesRes.data || [];
+
+const partnersRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
+const partners = partnersRes.data || [];
+---
+<Base
+  title="ZIFFA 2026 — Ziguinchor International Film Festival & Animation"
+  description="Le rendez-vous du cinéma africain en Casamance — 12 au 15 novembre 2026."
+>
+  <!--
+    NOTE DE MIGRATION
+    Le hero ci-dessous est une version simplifiée. Le hero complet (mosaïque
+    animée), la pellicule, la galerie, etc. se trouvent dans le site statique
+    de référence à la racine du repo (index.html) — à porter ici en composants.
+  -->
+  <section class="hero" style="min-height:80vh;">
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+      <div class="hero-tag"><span class="hero-tag-dot"></span> 12 — 15 Novembre 2026 · Ziguinchor</div>
+      <div class="hero-acronym">ZIFFA<span class="red-dot">.</span></div>
+      <div class="hero-full-name">
+        <strong>Z</strong>IGUINCHOR <strong>I</strong>NTERNATIONAL <strong>F</strong>ILM <strong>F</strong>ESTIVAL &amp; <strong>A</strong>NIMATION
+      </div>
+      <div class="hero-subtitle">
+        Le premier festival international de cinéma<br />
+        et d'animation en <span class="yellow">Casamance</span>.
+      </div>
+      <div class="hero-actions">
+        <a href="/edition-2026" class="btn-primary">Découvrir l'édition 2026 →</a>
+        <a href="/participer#inscription" class="btn-ghost">Inscrire un film</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ACTUALITÉS (dynamique : Strapi → collection "article") ===== -->
+  <section class="section" id="actu">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="arrow">→</span> Le journal</div>
+        <h2 class="section-title">Dernières <span class="italic">actualités</span></h2>
+      </div>
+    </div>
+
+    {articles.length > 0 ? (
+      <div class="actu-magazine">
+        {articles.map((a, i) => (
+          <article class={`actu-card ${i === 0 ? 'featured' : ''}`}>
+            <div class={`actu-img actu-img-${(i % 3) + 1}`}>
+              {a.cover?.url && <img src={mediaUrl(a.cover.url)} alt={a.title} loading="lazy" />}
+            </div>
+            <div class="actu-meta">
+              <span class="cat">— {a.category || 'Actualité'}</span>
+              <span class="dot"></span>
+              <span class="time">{a.readingTime || '3 min'}</span>
+            </div>
+            <h3 class="actu-title">{a.title}</h3>
+            <p class="actu-excerpt">{a.excerpt}</p>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="lead">Aucun article publié pour l'instant. Ajoute-en depuis le back-office Strapi (collection « Article »).</p>
+    )}
+  </section>
+
+  <!-- ===== PARTENAIRES (dynamique : Strapi → collection "partner") ===== -->
+  <section class="partners-section" id="partenaires">
+    <div class="eyebrow" style="justify-content: center;"><span class="arrow">→</span> Soutiens &amp; Partenaires</div>
+    <h2 class="section-title" style="margin: 16px auto 0; max-width: 700px;">
+      Ils <span class="red">accompagnent</span><br />le ZIFFA.
+    </h2>
+
+    {partners.length > 0 ? (
+      <div class="partners-grid">
+        {partners.map((p) => (
+          <a href={p.url || '#'} class="partner-logo" title={p.name} target="_blank" rel="noopener">
+            {p.logo?.url && <img src={mediaUrl(p.logo.url)} alt={p.name} />}
+            <span class="partner-logo-name">{p.name}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="partners-intro">Les partenaires s'afficheront ici une fois ajoutés dans Strapi (collection « Partenaire »).</p>
+    )}
+
+    <a href="/participer#partenariat" class="btn-ghost">Devenir partenaire →</a>
+  </section>
+</Base>

@@ -1,0 +1,37 @@
+# Caddy — reverse proxy + HTTPS automatique (Let's Encrypt)
+# Les domaines sont injectés depuis le fichier .env (SITE_DOMAIN / ADMIN_DOMAIN).
+
+# --- Site public (Astro) ---
+{$SITE_DOMAIN} {
+	encode gzip zstd
+	reverse_proxy frontend:4321
+
+	# En-têtes de sécurité de base
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+# --- Back-office + API Strapi ---
+{$ADMIN_DOMAIN} {
+	encode gzip zstd
+	reverse_proxy cms:1337
+}
+
+# ============================================================================
+# DÉV LOCAL (sans nom de domaine) : commente les deux blocs ci-dessus et
+# décommente celui-ci, puis lance `docker compose up`. Caddy servira en HTTP.
+# ----------------------------------------------------------------------------
+# :80 {
+# 	encode gzip zstd
+# 	handle_path /admin* {
+# 		reverse_proxy cms:1337
+# 	}
+# 	reverse_proxy /api/* cms:1337
+# 	reverse_proxy /uploads/* cms:1337
+# 	reverse_proxy frontend:4321
+# }

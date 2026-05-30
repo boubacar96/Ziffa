@@ -1,0 +1,28 @@
+# Secrets
+.env
+*.env.local
+
+# Dépendances
+node_modules/
+**/node_modules/
+
+# Builds
+frontend/dist/
+cms/dist/
+cms/build/
+cms/.cache/
+cms/.strapi/
+
+# Uploads Strapi (servis depuis un volume / S3)
+cms/public/uploads/*
+!cms/public/uploads/.gitkeep
+
+# Logs & divers
+*.log
+.DS_Store
+
+# Sauvegardes legacy du site statique
+index.html.bak
+
+# Astro généré
+**/.astro/

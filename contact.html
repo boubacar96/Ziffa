@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact & Infos — ZIFFA</title>
+<meta name="description" content="Contactez l'équipe du ZIFFA et abonnez-vous à la newsletter pour suivre toute l'actualité du festival.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="contact">
+
+<div data-include="partials/header.html"></div>
+
+<header class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Accueil</a> &nbsp;/&nbsp; Infos</div>
+    <div class="eyebrow"><span class="arrow">→</span> Nous contacter</div>
+    <h1>On vous <span class="yellow">répond</span>.</h1>
+    <p>Une question sur la programmation, la presse, les partenariats ou les inscriptions ? Écrivez-nous, l'équipe du festival vous répond.</p>
+  </div>
+</header>
+
+<!-- ===== CONTACT ===== -->
+<section class="section" id="contact">
+  <div class="contact-grid">
+    <div>
+      <div class="eyebrow"><span class="arrow">→</span> Coordonnées</div>
+      <h2 class="section-title" style="font-size:clamp(32px,4vw,52px);margin:12px 0 30px;">Nous <span class="red">joindre</span>.</h2>
+
+      <div class="contact-card">
+        <div class="c-label">Email général</div>
+        <div class="c-value"><a href="mailto:contact@ziffa.sn">contact@ziffa.sn</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="c-label">Presse & médias</div>
+        <div class="c-value"><a href="mailto:presse@ziffa.sn">presse@ziffa.sn</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="c-label">Partenariats</div>
+        <div class="c-value"><a href="mailto:partenaires@ziffa.sn">partenaires@ziffa.sn</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="c-label">Téléphone</div>
+        <div class="c-value">+221 77 000 00 00</div>
+      </div>
+      <div class="contact-card">
+        <div class="c-label">Adresse</div>
+        <div class="c-value">Ziguinchor, Casamance — Sénégal</div>
+      </div>
+      <div class="contact-card">
+        <div class="c-label">Réseaux</div>
+        <div class="c-value">
+          <a href="#">Facebook</a> · <a href="#">Instagram</a> · <a href="#">LinkedIn</a> · <a href="#">YouTube</a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="eyebrow"><span class="arrow">→</span> Formulaire</div>
+      <h2 class="section-title" style="font-size:clamp(32px,4vw,52px);margin:12px 0 30px;">Écrivez-<span class="italic">nous</span>.</h2>
+      <form class="contact-form" onsubmit="event.preventDefault(); alert('Merci ! Votre message a bien été envoyé.'); this.reset();">
+        <div>
+          <label for="c-nom">Nom complet *</label>
+          <input id="c-nom" type="text" placeholder="Votre nom" required>
+        </div>
+        <div>
+          <label for="c-email">Email *</label>
+          <input id="c-email" type="email" placeholder="vous@email.com" required>
+        </div>
+        <div>
+          <label for="c-sujet">Sujet *</label>
+          <input id="c-sujet" type="text" placeholder="Presse, partenariat, programmation..." required>
+        </div>
+        <div>
+          <label for="c-msg">Message *</label>
+          <textarea id="c-msg" placeholder="Votre message" required></textarea>
+        </div>
+        <button type="submit">Envoyer le message ↗</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEWSLETTER ===== -->
+<section class="newsletter" id="newsletter">
+  <div class="newsletter-inner">
+    <div class="eyebrow" style="justify-content: center;"><span class="arrow">→</span> Newsletter</div>
+    <h2>
+      Ne ratez <span class="red">rien</span><br>
+      du <span class="italic">festival</span>.
+    </h2>
+    <p>Programmes, appels à films, annonces de jurys, coulisses : recevez l'actualité du ZIFFA directement dans votre boîte mail.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Merci pour votre inscription !'); this.reset();">
+      <input type="email" placeholder="votre@email.com" required>
+      <button type="submit">S'inscrire ↗</button>
+    </form>
+  </div>
+</section>
+
+<div data-include="partials/footer.html"></div>
+
+<script src="assets/js/include.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+</html>

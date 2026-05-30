@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+// TODO (migration) : porter le contenu de la page statique de référence
+//   ../../../edition-2025.html
+// en réutilisant les composants/classes existants, et brancher les parties
+// dynamiques sur Strapi (cf. src/lib/strapi.js et l'exemple dans index.astro).
+---
+<Base title="Édition 2025 — Retour en images | ZIFFA" description="Édition passée · N°01 — ZIFFA.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Édition 2025</div>
+      <div class="eyebrow"><span class="arrow">→</span> Édition passée · N°01</div>
+      <h1>Retour sur <span class="yellow">2025</span>.</h1>
+      <p>Page en cours de migration vers Astro. Le contenu de référence existe
+         déjà dans <code>edition-2025.html</code> (site statique) et sera porté ici.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <p class="lead">Section à porter : reprends le balisage de <code>edition-2025.html</code>
+       et remplace les contenus fixes par des appels Strapi quand c'est pertinent
+       (films, programme, jury, prix, partenaires, articles…).</p>
+  </section>
+</Base>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Participer — Inscrire un film, s'accréditer, devenir partenaire | ZIFFA</title>
+<meta name="description" content="Participez au ZIFFA 2026 : inscrivez votre film, demandez votre accréditation professionnelle ou devenez partenaire du festival.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="participer">
+
+<div data-include="partials/header.html"></div>
+
+<header class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Accueil</a> &nbsp;/&nbsp; Participer</div>
+    <div class="eyebrow"><span class="arrow">→</span> Rejoignez-nous</div>
+    <h1>Faites partie<br>du <span class="yellow">ZIFFA</span>.</h1>
+    <p>Cinéastes, professionnels, journalistes et partenaires : trois manières de prendre part à l'édition 2026.</p>
+  </div>
+</header>
+
+<section class="inscription-split" id="inscription">
+  <div class="insc-left">
+    <div class="insc-left-inner">
+      <div class="eyebrow"><span class="arrow">→</span> Appel à films</div>
+      <h2>
+        Inscrivez votre<br>
+        <span class="italic">œuvre</span>.
+      </h2>
+      <p>
+        Réalisateurs, producteurs, étudiants — participez à la 2ᵉ édition du ZIFFA et présentez votre film devant un jury international.
+      </p>
+      <a href="#" class="insc-btn">Soumettre mon film ↗</a>
+    </div>
+  </div>
+  <div class="insc-right">
+    <div class="eyebrow"><span class="arrow">→</span> Catégories acceptées</div>
+    <h3>Cinq <span style="font-style: italic; color: var(--red);">familles</span>.</h3>
+    <div class="insc-cats">
+      <div class="insc-cat-card">
+        <div class="insc-cat-emoji">🎬</div>
+        <div class="insc-cat-name">Fiction</div>
+      </div>
+      <div class="insc-cat-card">
+        <div class="insc-cat-emoji">🎞️</div>
+        <div class="insc-cat-name">Documentaire</div>
+      </div>
+      <div class="insc-cat-card">
+        <div class="insc-cat-emoji">✨</div>
+        <div class="insc-cat-name">Animation</div>
+      </div>
+      <div class="insc-cat-card">
+        <div class="insc-cat-emoji">⏱️</div>
+        <div class="insc-cat-name">Court-métrage</div>
+      </div>
+    </div>
+    <div class="deadline-box">
+      <div class="deadline-label">— Date limite d'inscription</div>
+      <div class="deadline-date">15 Septembre 2026</div>
+    </div>
+  </div>
+</section>
+
+<section class="accreditation-section" id="accreditation">
+  <div class="accreditation-inner">
+    <div class="accreditation-head">
+      <div class="eyebrow"><span class="arrow">→</span> Accréditation professionnelle</div>
+      <h2 class="section-title">
+        Demandez votre <span class="italic" style="color: var(--yellow);">badge</span><br>
+        en 4 étapes.
+      </h2>
+      <p>Journalistes, professionnels du cinéma, étudiants : accédez à tous les événements du festival avec votre accréditation officielle.</p>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="steps-progress">
+      <div class="steps-progress-fill" id="progressFill"></div>
+      <div class="step-progress-item active" data-step="1">
+        <div class="step-progress-num"><span>1</span></div>
+        <div class="step-progress-label">Profil</div>
+      </div>
+      <div class="step-progress-item" data-step="2">
+        <div class="step-progress-num"><span>2</span></div>
+        <div class="step-progress-label">Informations</div>
+      </div>
+      <div class="step-progress-item" data-step="3">
+        <div class="step-progress-num"><span>3</span></div>
+        <div class="step-progress-label">Justificatifs</div>
+      </div>
+      <div class="step-progress-item" data-step="4">
+        <div class="step-progress-num"><span>4</span></div>
+        <div class="step-progress-label">Confirmation</div>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 1 : Choix du profil -->
+    <div class="step-content active" data-step="1">
+      <h3>Quel est votre profil ?</h3>
+      <p>Sélectionnez la catégorie qui correspond à votre activité professionnelle.</p>
+
+      <div class="step-options">
+        <button type="button" class="step-option" onclick="selectOption(this, 'profile')">
+          <div class="step-option-icon">📰</div>
+          <div class="step-option-title">Presse</div>
+          <div class="step-option-desc">Journaliste, photographe, média</div>
+        </button>
+        <button type="button" class="step-option" onclick="selectOption(this, 'profile')">
+          <div class="step-option-icon">🎬</div>
+          <div class="step-option-title">Professionnel</div>
+          <div class="step-option-desc">Réalisateur, producteur, distributeur</div>
+        </button>
+        <button type="button" class="step-option" onclick="selectOption(this, 'profile')">
+          <div class="step-option-icon">🎓</div>
+          <div class="step-option-title">Étudiant cinéma</div>
+          <div class="step-option-desc">École de cinéma, master arts</div>
+        </button>
+        <button type="button" class="step-option" onclick="selectOption(this, 'profile')">
+          <div class="step-option-icon">🏛️</div>
+          <div class="step-option-title">Institutionnel</div>
+          <div class="step-option-desc">Ministère, ambassade, ONG culturelle</div>
+        </button>
+      </div>
+
+      <div class="step-actions">
+        <button class="step-btn step-btn-prev" disabled>← Précédent</button>
+        <button class="step-btn step-btn-next" onclick="nextStep()">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 2 : Informations personnelles -->
+    <div class="step-content" data-step="2">
+      <h3>Vos informations</h3>
+      <p>Renseignez les informations qui figureront sur votre badge officiel.</p>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Prénom *</label>
+          <input type="text" placeholder="Aïssatou">
+        </div>
+        <div class="form-field">
+          <label>Nom *</label>
+          <input type="text" placeholder="Diop">
+        </div>
+        <div class="form-field">
+          <label>Email professionnel *</label>
+          <input type="email" placeholder="vous@media.com">
+        </div>
+        <div class="form-field">
+          <label>Téléphone *</label>
+          <input type="tel" placeholder="+221 77 000 00 00">
+        </div>
+        <div class="form-field">
+          <label>Organisation / Média *</label>
+          <input type="text" placeholder="Le Soleil, RTS, ...">
+        </div>
+        <div class="form-field">
+          <label>Pays *</label>
+          <select>
+            <option>Sénégal</option>
+            <option>Mali</option>
+            <option>Côte d'Ivoire</option>
+            <option>Burkina Faso</option>
+            <option>France</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-field full">
+          <label>Fonction *</label>
+          <input type="text" placeholder="Rédacteur en chef, journaliste, réalisateur...">
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="step-btn step-btn-prev" onclick="prevStep()">← Précédent</button>
+        <button class="step-btn step-btn-next" onclick="nextStep()">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 3 : Justificatifs -->
+    <div class="step-content" data-step="3">
+      <h3>Vos justificatifs</h3>
+      <p>Joignez les documents nécessaires pour valider votre accréditation.</p>
+
+      <div class="form-grid">
+        <div class="form-field full">
+          <label>Carte de presse ou justificatif professionnel *</label>
+          <input type="file" accept=".pdf,.jpg,.png">
+        </div>
+        <div class="form-field full">
+          <label>Lettre de mission / Justificatif de l'organisation *</label>
+          <input type="file" accept=".pdf,.jpg,.png">
+        </div>
+        <div class="form-field full">
+          <label>Photo d'identité (pour le badge) *</label>
+          <input type="file" accept=".jpg,.png">
+        </div>
+        <div class="form-field full">
+          <label>Motivation (optionnel)</label>
+          <textarea placeholder="Pourquoi souhaitez-vous couvrir ZIFFA 2026 ? Quel sujet souhaitez-vous traiter ?"></textarea>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="step-btn step-btn-prev" onclick="prevStep()">← Précédent</button>
+        <button class="step-btn step-btn-next" onclick="nextStep()">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 : Récap et confirmation -->
+    <div class="step-content" data-step="4">
+      <h3>Récapitulatif de votre demande</h3>
+      <p>Vérifiez vos informations avant de soumettre votre demande d'accréditation.</p>
+
+      <div class="recap-list">
+        <div class="recap-row">
+          <span class="recap-label">Type d'accréditation</span>
+          <span class="recap-value">Presse</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-label">Nom complet</span>
+          <span class="recap-value">Aïssatou Diop</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-label">Email</span>
+          <span class="recap-value">vous@media.com</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-label">Organisation</span>
+          <span class="recap-value">Le Soleil</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-label">Pays</span>
+          <span class="recap-value">Sénégal</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-label">Justificatifs</span>
+          <span class="recap-value">3 fichiers joints</span>
+        </div>
+      </div>
+
+      <p style="font-size: 13px; color: rgba(250, 245, 232, 0.6); margin-bottom: 24px;">
+        En soumettant cette demande, vous acceptez les conditions générales d'accréditation du festival ZIFFA. Une réponse vous sera envoyée par email sous 5 jours ouvrés.
+      </p>
+
+      <div class="step-actions">
+        <button class="step-btn step-btn-prev" onclick="prevStep()">← Précédent</button>
+        <button class="step-btn step-btn-submit" onclick="submitAccreditation()">✓ Soumettre ma demande</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEVENIR PARTENAIRE ===== -->
+<section class="section" id="partenariat">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow"><span class="arrow">→</span> Devenir partenaire</div>
+      <h2 class="section-title">Soutenez le <span class="red">festival</span>.</h2>
+    </div>
+    <a href="contact.html#contact" class="btn-ghost">Contacter l'équipe →</a>
+  </div>
+  <p class="lead" style="margin-bottom:40px;">Institutions, entreprises et mécènes : associez votre image à un événement culturel majeur de Casamance et soutenez la jeune création cinématographique africaine. Les formules ci-dessous sont indicatives et adaptables à votre projet.</p>
+  <div class="tier-grid">
+    <div class="tier-card">
+      <div class="tier-name">Partenaire Bronze</div>
+      <div class="tier-price">Soutien</div>
+      <ul>
+        <li>Logo sur le site et les supports</li>
+        <li>Mention dans les remerciements</li>
+        <li>Invitations à la cérémonie d'ouverture</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-name">Partenaire Argent</div>
+      <div class="tier-price">Associé</div>
+      <ul>
+        <li>Visibilité renforcée (affiches, programme)</li>
+        <li>Espace presse & réseaux sociaux</li>
+        <li>Accréditations professionnelles</li>
+        <li>Présence lors des temps forts</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-name">Partenaire Or</div>
+      <div class="tier-price">Officiel</div>
+      <ul>
+        <li>Partenaire principal d'une section</li>
+        <li>Logo prioritaire sur tous les supports</li>
+        <li>Prise de parole & remise d'un prix</li>
+        <li>Dispositif sur-mesure</li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:40px;">
+    <a href="contact.html#contact" class="nav-cta">Demander le dossier partenaires ↗</a>
+  </div>
+</section>
+
+<div data-include="partials/footer.html"></div>
+
+<script src="assets/js/include.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+</html>

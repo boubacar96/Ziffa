@@ -1,0 +1,52 @@
+{
+  "kind": "singleType",
+  "collectionName": "globals",
+  "info": {
+    "singularName": "global",
+    "pluralName": "globals",
+    "displayName": "Paramètres du site"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string",
+      "default": "ZIFFA"
+    },
+    "tagline": {
+      "type": "text"
+    },
+    "contactEmail": {
+      "type": "email"
+    },
+    "pressEmail": {
+      "type": "email"
+    },
+    "partnerEmail": {
+      "type": "email"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "text"
+    },
+    "facebook": {
+      "type": "string"
+    },
+    "instagram": {
+      "type": "string"
+    },
+    "linkedin": {
+      "type": "string"
+    },
+    "youtube": {
+      "type": "string"
+    },
+    "currentEditionLabel": {
+      "type": "string"
+    }
+  }
+}

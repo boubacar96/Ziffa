@@ -1,0 +1,26 @@
+# ============================================================================
+# MODE IP / SANS DOMAINE (test) — HTTP uniquement, sans Caddy/HTTPS.
+# On expose directement les ports : le site sur :80, Strapi sur :1337.
+#
+# Utilisation (NE PAS démarrer caddy) :
+#   docker compose -f docker-compose.yml -f docker-compose.ip.yml up -d --build db cms frontend
+#
+# Accès :
+#   Site    -> http://178.105.238.252
+#   Strapi  -> http://178.105.238.252:1337/admin
+#
+# Quand le domaine sera prêt : arrête tout, remplis SITE_DOMAIN/ADMIN_DOMAIN
+# dans .env, et relance SANS ce fichier :  docker compose up -d --build
+# ============================================================================
+services:
+  cms:
+    ports:
+      - "1337:1337"
+    environment:
+      URL: http://178.105.238.252:1337
+
+  frontend:
+    ports:
+      - "80:4321"
+    environment:
+      PUBLIC_STRAPI_URL: http://178.105.238.252:1337

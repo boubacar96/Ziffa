@@ -1,10 +1,12 @@
 // Helpers pour parler à l'API Strapi.
 // En SSR (runtime), les variables viennent de process.env (injectées par Docker).
 
+// En dev (astro dev) : les variables viennent de frontend/.env via import.meta.env.
+// En prod (Docker) : elles viennent de process.env injecté par docker-compose.
 const INTERNAL =
-  process.env.STRAPI_INTERNAL_URL || 'http://localhost:1337';
+  import.meta.env.STRAPI_INTERNAL_URL || process.env.STRAPI_INTERNAL_URL || 'http://localhost:1337';
 const PUBLIC =
-  process.env.PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  import.meta.env.PUBLIC_STRAPI_URL || process.env.PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
 /** Construit l'URL absolue d'un média Strapi. */
 export function mediaUrl(path) {

@@ -12,6 +12,7 @@ cms/dist/
 cms/build/
 cms/.cache/
 cms/.strapi/
+cms/.tmp/
 
 # Uploads Strapi (servis depuis un volume / S3)
 cms/public/uploads/*

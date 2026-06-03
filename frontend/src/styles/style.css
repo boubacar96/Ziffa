@@ -2922,3 +2922,113 @@
 
   /* ----- Galerie teaser (accueil) : bouton dans l'en-tête ----- */
   .galerie-teaser .section-head { align-items: center; }
+
+  /* ==========================================================================
+     ACCUEIL 2026 — compte à rebours + à l'affiche
+     ========================================================================== */
+
+  /* ----- Compte à rebours ----- */
+  .countdown-section {
+    background: var(--green-deep);
+    color: var(--bg);
+    padding: 90px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .countdown-section::before {
+    content: '';
+    position: absolute; top: -160px; right: -120px;
+    width: 460px; height: 460px;
+    background: radial-gradient(circle, rgba(242,183,24,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .countdown-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+  .countdown-section .eyebrow { color: var(--yellow); justify-content: center; }
+  .countdown-section .eyebrow .arrow { color: var(--yellow); }
+  .countdown-section .section-title { color: var(--bg); margin: 12px auto 40px; }
+  .countdown-section .section-title .yellow { color: var(--yellow); }
+  .countdown { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cd-box {
+    background: rgba(245,240,228,0.06);
+    border: 1px solid rgba(232,181,71,0.3);
+    border-radius: 18px;
+    padding: 24px 24px;
+    min-width: 110px;
+    backdrop-filter: blur(10px);
+  }
+  .cd-num {
+    display: block;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--yellow);
+  }
+  .cd-label {
+    display: block; margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(245,240,228,0.6);
+  }
+
+  /* ----- À l'affiche (cartes films) ----- */
+  .film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .film-card {
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .film-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(26,24,20,0.12); }
+  .film-poster {
+    aspect-ratio: 2/3;
+    display: flex; align-items: flex-end;
+    padding: 16px; position: relative;
+  }
+  .film-poster::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.55) 100%);
+  }
+  .film-card:nth-child(4n+1) .film-poster { background: linear-gradient(160deg, var(--red), var(--red-deep)); }
+  .film-card:nth-child(4n+2) .film-poster { background: linear-gradient(160deg, var(--green), var(--green-deep)); }
+  .film-card:nth-child(4n+3) .film-poster { background: linear-gradient(160deg, var(--yellow), var(--yellow-deep)); }
+  .film-card:nth-child(4n)   .film-poster { background: linear-gradient(160deg, var(--orange), var(--red-deep)); }
+  .film-cat {
+    position: relative; z-index: 2;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    background: var(--bg); color: var(--green-deep);
+    padding: 5px 10px; border-radius: 50px;
+  }
+  .film-body { padding: 16px 18px; }
+  .film-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700; font-size: 18px; line-height: 1.1;
+    color: var(--green-deep); letter-spacing: -0.01em;
+  }
+  .film-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--ink-muted); margin-top: 6px;
+  }
+
+  /* ----- Grille "festival en bref" ----- */
+  .brief-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  /* ----- Bandeau CTA conversion ----- */
+  .cta-band {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    margin-top: 36px;
+  }

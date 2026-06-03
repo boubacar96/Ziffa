@@ -1,7 +1,90 @@
 ---
 import Base from '../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../lib/strapi.js';
 
-// --- Mosaïque du hero (générée pour varier formes et photos) ---
+// ===========================================================================
+// Données dynamiques (Strapi) AVEC REPLI sur du contenu de démo.
+// Si Strapi est vide / indisponible / non autorisé -> on affiche le statique,
+// donc la page reste toujours présentable. Dès qu'on saisit du contenu dans
+// le back-office (+ permissions Public), il remplace automatiquement le repli.
+// ===========================================================================
+const catLabel = { fiction: 'Fiction', documentaire: 'Documentaire', animation: 'Animation', 'court-metrage': 'Court-métrage' };
+const typeLabel = { projection: 'Projection', masterclass: 'Masterclass', rencontre: 'Rencontre', ceremonie: 'Cérémonie' };
+
+// --- Édition courante (pour le compte à rebours) ---
+const edRes = await fetchAPI('editions', { 'filters[isCurrent][$eq]': 'true', 'pagination[limit]': '1' });
+const edition = (edRes.data || [])[0] || null;
+// On utilise la date de l'édition seulement si elle est dans le futur (sinon repli).
+const festivalTarget =
+  edition?.dateStart && new Date(edition.dateStart) > new Date()
+    ? `${edition.dateStart}T19:00:00`
+    : '2026-11-12T19:00:00';
+
+// --- Films à l'affiche ---
+const filmRes = await fetchAPI('films', { populate: 'poster', sort: 'year:desc', 'pagination[limit]': '6' });
+const cmsFilms = filmRes.data || [];
+const fallbackFilms = [
+  { title: 'Sous le Baobab', cat: 'Fiction', meta: 'Aïssatou Diop · Sénégal · 2025', poster: null },
+  { title: 'Voix de Casamance', cat: 'Documentaire', meta: 'Mamadou Ba · 88 min', poster: null },
+  { title: "L'Esprit du Fleuve", cat: 'Animation', meta: 'Studio Téranga · 2026', poster: null },
+  { title: 'Le Dernier Griot', cat: 'Fiction', meta: 'Fatou Sow · Mali', poster: null },
+  { title: 'Nuit à Ziguinchor', cat: 'Court-métrage', meta: 'O. Diédhiou · 18 min', poster: null },
+  { title: "Mémoires d'Afrique", cat: 'Documentaire', meta: 'Collectif Casamance', poster: null },
+];
+// Contenu CMS d'abord, complété par des placeholders pour ne jamais paraître vide.
+const films = [
+  ...cmsFilms.map((f) => ({
+    title: f.title,
+    cat: catLabel[f.category] || f.category || 'Film',
+    meta: [f.director, f.country, f.year].filter(Boolean).join(' · '),
+    poster: f.poster?.url ? mediaUrl(f.poster.url) : null,
+  })),
+  ...fallbackFilms,
+].slice(0, 6);
+
+// --- Programme (temps forts) ---
+const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '4' });
+const cmsEvents = evRes.data || [];
+const fallbackEvents = [
+  { time: 'Jeu 12', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "Le coup d'envoi du festival, en présence des invités.", place: 'Théâtre Aline Sitoé Diatta' },
+  { time: 'Ven 13', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
+  { time: 'Sam 14', type: 'masterclass', title: 'Masterclasses & rencontres pro', desc: 'Transmission avec les cinéastes invités.', place: 'Institut français' },
+  { time: 'Dim 15', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Remise des prix de l'édition 2026.", place: 'Théâtre Aline Sitoé Diatta' },
+];
+const events = [
+  ...cmsEvents.map((e) => ({
+    time: e.startTime || (e.day ? `Jour ${e.day}` : '—'),
+    type: e.type || 'projection',
+    title: e.title,
+    desc: e.description || '',
+    place: e.location || '',
+  })),
+  ...fallbackEvents,
+].slice(0, 4);
+
+// --- Galerie / pellicule ---
+const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
+const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
+const stripUrls = [...cmsPhotos, ...fallbackPhotos].slice(0, 10);
+
+// --- Partenaires ---
+const partRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
+const cmsPartners = partRes.data || [];
+const fallbackPartners = [
+  { name: 'Wallonie-Bruxelles Int.', url: 'https://www.wbi.be', logo: '/partenaires/wallonie-bruxelles.jpg' },
+  { name: 'Alliance Française', url: '#', logo: '/partenaires/alliance-francaise.jpg' },
+  { name: 'Air Sénégal', url: 'https://flyairsenegal.com', logo: '/partenaires/air-senegal.jpg' },
+  { name: 'FOTTI', url: '#', logo: '/partenaires/fotti.jpg' },
+  { name: 'LONASE', url: 'https://www.lonase.sn', logo: '/partenaires/lonase.jpg' },
+  { name: 'TALAATA Production', url: '#', logo: '/partenaires/talaata.jpg' },
+];
+const partners = [
+  ...cmsPartners.map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null })),
+  ...fallbackPartners,
+].slice(0, 6);
+
+// --- Mosaïque du hero ---
 const shapes = ['tall', 'square', 'wide'];
 const heroCols = Array.from({ length: 6 }, (_, c) =>
   Array.from({ length: 10 }, (_, i) => ({
@@ -9,19 +92,6 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     shape: shapes[(c + i) % 3],
   }))
 );
-
-// --- À l'affiche (contenu de démo, à brancher sur Strapi ensuite) ---
-const films = [
-  { title: 'Sous le Baobab', cat: 'Fiction', meta: 'Aïssatou Diop · Sénégal · 2025' },
-  { title: 'Voix de Casamance', cat: 'Documentaire', meta: 'Mamadou Ba · 88 min' },
-  { title: "L'Esprit du Fleuve", cat: 'Animation', meta: 'Studio Téranga · 2026' },
-  { title: 'Le Dernier Griot', cat: 'Fiction', meta: 'Fatou Sow · Mali' },
-  { title: 'Nuit à Ziguinchor', cat: 'Court-métrage', meta: 'O. Diédhiou · 18 min' },
-  { title: "Mémoires d'Afrique", cat: 'Documentaire', meta: 'Collectif Casamance' },
-];
-
-// --- Pellicule (photos défilantes) ---
-const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(2, '0'));
 ---
 <Base
   title="ZIFFA 2026 — Ziguinchor International Film Festival & Animation"
@@ -67,7 +137,7 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
     <div class="countdown-inner">
       <div class="eyebrow"><span class="arrow">→</span> Ouverture le 12 novembre 2026 · Ziguinchor</div>
       <h2 class="section-title">Plus que <span class="yellow">quelques jours</span>.</h2>
-      <div class="countdown" id="countdown">
+      <div class="countdown" id="countdown" data-target={festivalTarget}>
         <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Jours</span></div>
         <div class="cd-box"><span class="cd-num" data-cd="hours">—</span><span class="cd-label">Heures</span></div>
         <div class="cd-box"><span class="cd-num" data-cd="mins">—</span><span class="cd-label">Minutes</span></div>
@@ -89,24 +159,9 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
       quatre jours de projections, de rencontres et de transmission, ouverts à tous.
     </p>
     <div class="brief-stats">
-      <div class="stat-card stat-card-red">
-        <div class="stat-card-content">
-          <div class="stat-card-num">4<span class="plus">j</span></div>
-          <div class="stat-card-label">de festival</div>
-        </div>
-      </div>
-      <div class="stat-card stat-card-green">
-        <div class="stat-card-content">
-          <div class="stat-card-num">40<span class="plus">+</span></div>
-          <div class="stat-card-label">films projetés</div>
-        </div>
-      </div>
-      <div class="stat-card stat-card-yellow">
-        <div class="stat-card-content">
-          <div class="stat-card-num">10<span class="plus">+</span></div>
-          <div class="stat-card-label">pays représentés</div>
-        </div>
-      </div>
+      <div class="stat-card stat-card-red"><div class="stat-card-content"><div class="stat-card-num">4<span class="plus">j</span></div><div class="stat-card-label">de festival</div></div></div>
+      <div class="stat-card stat-card-green"><div class="stat-card-content"><div class="stat-card-num">40<span class="plus">+</span></div><div class="stat-card-label">films projetés</div></div></div>
+      <div class="stat-card stat-card-yellow"><div class="stat-card-content"><div class="stat-card-num">10<span class="plus">+</span></div><div class="stat-card-label">pays représentés</div></div></div>
     </div>
   </section>
 
@@ -122,7 +177,9 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
     <div class="film-grid">
       {films.map((f) => (
         <article class="film-card">
-          <div class="film-poster"><span class="film-cat">{f.cat}</span></div>
+          <div class="film-poster" style={f.poster ? `background-image:url('${f.poster}');background-size:cover;background-position:center;` : ''}>
+            <span class="film-cat">{f.cat}</span>
+          </div>
           <div class="film-body">
             <h3 class="film-title">{f.title}</h3>
             <div class="film-meta">{f.meta}</div>
@@ -139,30 +196,17 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
         <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme · Édition 2026</div>
         <h2 class="section-title" style="margin:12px auto;text-align:center;">Quatre jours<br />de <span class="red">temps forts</span>.</h2>
       </div>
-      <div class="programme-event" data-type="ceremonie">
-        <div class="programme-event-time">Jeu 12</div>
-        <div class="programme-event-info"><h4>Cérémonie d'ouverture & film inaugural</h4><p>Le coup d'envoi du festival, en présence des invités.</p></div>
-        <div class="programme-event-location"><span class="programme-event-type event-type-ceremonie">Cérémonie</span><strong>Théâtre Aline Sitoé Diatta</strong></div>
-        <div class="programme-event-arrow">→</div>
-      </div>
-      <div class="programme-event" data-type="projection">
-        <div class="programme-event-time">Ven 13</div>
-        <div class="programme-event-info"><h4>Projections en compétition</h4><p>Fictions, documentaires et animations de la sélection.</p></div>
-        <div class="programme-event-location"><span class="programme-event-type event-type-projection">Projections</span><strong>Salle Casamance</strong></div>
-        <div class="programme-event-arrow">→</div>
-      </div>
-      <div class="programme-event" data-type="masterclass">
-        <div class="programme-event-time">Sam 14</div>
-        <div class="programme-event-info"><h4>Masterclasses & rencontres pro</h4><p>Transmission avec les cinéastes invités.</p></div>
-        <div class="programme-event-location"><span class="programme-event-type event-type-masterclass">Masterclass</span><strong>Institut français</strong></div>
-        <div class="programme-event-arrow">→</div>
-      </div>
-      <div class="programme-event" data-type="ceremonie">
-        <div class="programme-event-time">Dim 15</div>
-        <div class="programme-event-info"><h4>Cérémonie de clôture & palmarès</h4><p>Remise des prix de l'édition 2026.</p></div>
-        <div class="programme-event-location"><span class="programme-event-type event-type-ceremonie">Cérémonie</span><strong>Théâtre Aline Sitoé Diatta</strong></div>
-        <div class="programme-event-arrow">→</div>
-      </div>
+      {events.map((ev) => (
+        <div class="programme-event" data-type={ev.type}>
+          <div class="programme-event-time">{ev.time}</div>
+          <div class="programme-event-info"><h4>{ev.title}</h4><p>{ev.desc}</p></div>
+          <div class="programme-event-location">
+            <span class={`programme-event-type event-type-${ev.type}`}>{typeLabel[ev.type] || ev.type}</span>
+            {ev.place && <strong>{ev.place}</strong>}
+          </div>
+          <div class="programme-event-arrow">→</div>
+        </div>
+      ))}
       <div style="text-align:center;margin-top:36px;">
         <a href="/edition-2026#programme" class="nav-cta" style="background:var(--red);">Programme complet ↗</a>
       </div>
@@ -177,7 +221,7 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
         <h2 class="section-title">ZIFFA <span class="red">2026</span><br />en <span class="italic">mouvement</span>.</h2>
         <p>Un avant-goût du festival : l'énergie, les images, l'émotion du cinéma africain.</p>
       </div>
-      <div class="video-wrapper" onclick="this.querySelector('.video-placeholder')?.classList.add('played')">
+      <div class="video-wrapper">
         <div class="video-placeholder">
           <div class="play-button"></div>
           <div class="video-info">
@@ -200,12 +244,8 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
     </div>
     <div class="filmstrip">
       <div class="filmstrip-track">
-        {stripPhotos.map((n) => (
-          <figure><img src={`/photos/photo${n}.jpg`} alt="ZIFFA — temps fort" loading="lazy" /></figure>
-        ))}
-        {stripPhotos.map((n) => (
-          <figure aria-hidden="true"><img src={`/photos/photo${n}.jpg`} alt="" loading="lazy" /></figure>
-        ))}
+        {stripUrls.map((url) => (<figure><img src={url} alt="ZIFFA — temps fort" loading="lazy" /></figure>))}
+        {stripUrls.map((url) => (<figure aria-hidden="true"><img src={url} alt="" loading="lazy" /></figure>))}
       </div>
     </div>
   </section>
@@ -216,12 +256,12 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
     <h2 class="section-title" style="margin:16px auto 0;max-width:700px;">Ils <span class="red">accompagnent</span><br />le ZIFFA.</h2>
     <p class="partners-intro">Le festival est rendu possible grâce au soutien d'institutions et de partenaires engagés pour le cinéma africain.</p>
     <div class="partners-grid">
-      <a href="https://www.wbi.be" target="_blank" rel="noopener" class="partner-logo"><img src="/partenaires/wallonie-bruxelles.jpg" alt="Wallonie-Bruxelles International" /><span class="partner-logo-name">Wallonie-Bruxelles Int.</span></a>
-      <a href="#" class="partner-logo"><img src="/partenaires/alliance-francaise.jpg" alt="Alliance Française" /><span class="partner-logo-name">Alliance Française</span></a>
-      <a href="https://flyairsenegal.com" target="_blank" rel="noopener" class="partner-logo"><img src="/partenaires/air-senegal.jpg" alt="Air Sénégal" /><span class="partner-logo-name">Air Sénégal</span></a>
-      <a href="#" class="partner-logo"><img src="/partenaires/fotti.jpg" alt="FOTTI" /><span class="partner-logo-name">FOTTI</span></a>
-      <a href="https://www.lonase.sn" target="_blank" rel="noopener" class="partner-logo"><img src="/partenaires/lonase.jpg" alt="LONASE" /><span class="partner-logo-name">LONASE</span></a>
-      <a href="#" class="partner-logo"><img src="/partenaires/talaata.jpg" alt="TALAATA Production" /><span class="partner-logo-name">TALAATA Production</span></a>
+      {partners.map((p) => (
+        <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>
+          {p.logo && <img src={p.logo} alt={p.name} />}
+          <span class="partner-logo-name">{p.name}</span>
+        </a>
+      ))}
     </div>
     <a href="/participer#partenariat" class="btn-ghost">Devenir partenaire →</a>
   </section>
@@ -241,12 +281,13 @@ const stripPhotos = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(
 </Base>
 
 <script>
-  // Compte à rebours jusqu'à l'ouverture du festival.
-  const target = new Date('2026-11-12T19:00:00').getTime();
-  function pad(n) { return String(n).padStart(2, '0'); }
+  // Compte à rebours — la date cible vient de Strapi (data-target) ou d'un repli.
+  const el = document.getElementById('countdown');
+  const target = new Date(el?.dataset.target || '2026-11-12T19:00:00').getTime();
+  const pad = (n) => String(n).padStart(2, '0');
+  function set(k, v) { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; }
   function tick() {
     const diff = target - Date.now();
-    const set = (k, v) => { const el = document.querySelector(`[data-cd="${k}"]`); if (el) el.textContent = v; };
     if (diff <= 0) { set('days', '0'); set('hours', '00'); set('mins', '00'); set('secs', '00'); return; }
     set('days', String(Math.floor(diff / 86400000)));
     set('hours', pad(Math.floor((diff % 86400000) / 3600000)));

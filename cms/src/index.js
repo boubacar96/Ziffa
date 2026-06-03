@@ -35,10 +35,11 @@ async function seedDemo(strapi) {
 
   const ed = await strapi.documents('api::edition.edition').create({
     data: {
-      year: 2026, number: 2, title: 'ZIFFA 2026',
+      year: 2027, number: 3, title: 'ZIFFA 2027',
       tagline: 'Quatre jours pour vibrer.',
-      dateStart: '2026-11-12', dateEnd: '2026-11-15',
+      dateStart: '2027-11-12', dateEnd: '2027-11-15',
       location: 'Ziguinchor, Casamance', isCurrent: true,
+      videoUrl: 'https://vimeo.com/1169196245/5c5f7be273',
     },
   });
 

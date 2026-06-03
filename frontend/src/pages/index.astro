@@ -18,7 +18,16 @@ const edition = (edRes.data || [])[0] || null;
 const festivalTarget =
   edition?.dateStart && new Date(edition.dateStart) > new Date()
     ? `${edition.dateStart}T19:00:00`
-    : '2026-11-12T19:00:00';
+    : '2027-11-12T19:00:00';
+
+// Vidéo (Vimeo) — depuis l'Édition (champ videoUrl) ou repli sur la vidéo 2025 fournie.
+function toEmbed(url) {
+  if (!url) return null;
+  const m = String(url).match(/vimeo\.com\/(\d+)(?:\/(\w+))?/);
+  if (m) return `https://player.vimeo.com/video/${m[1]}${m[2] ? `?h=${m[2]}` : ''}`;
+  return url;
+}
+const videoEmbed = toEmbed(edition?.videoUrl) || 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
 
 // --- Films à l'affiche ---
 const filmRes = await fetchAPI('films', { populate: 'poster', sort: 'year:desc', 'pagination[limit]': '6' });
@@ -26,7 +35,7 @@ const cmsFilms = filmRes.data || [];
 const fallbackFilms = [
   { title: 'Sous le Baobab', cat: 'Fiction', meta: 'Aïssatou Diop · Sénégal · 2025', poster: null },
   { title: 'Voix de Casamance', cat: 'Documentaire', meta: 'Mamadou Ba · 88 min', poster: null },
-  { title: "L'Esprit du Fleuve", cat: 'Animation', meta: 'Studio Téranga · 2026', poster: null },
+  { title: "L'Esprit du Fleuve", cat: 'Animation', meta: 'Studio Téranga · 2027', poster: null },
   { title: 'Le Dernier Griot', cat: 'Fiction', meta: 'Fatou Sow · Mali', poster: null },
   { title: 'Nuit à Ziguinchor', cat: 'Court-métrage', meta: 'O. Diédhiou · 18 min', poster: null },
   { title: "Mémoires d'Afrique", cat: 'Documentaire', meta: 'Collectif Casamance', poster: null },
@@ -49,7 +58,7 @@ const fallbackEvents = [
   { time: 'Jeu 12', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "Le coup d'envoi du festival, en présence des invités.", place: 'Théâtre Aline Sitoé Diatta' },
   { time: 'Ven 13', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
   { time: 'Sam 14', type: 'masterclass', title: 'Masterclasses & rencontres pro', desc: 'Transmission avec les cinéastes invités.', place: 'Institut français' },
-  { time: 'Dim 15', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Remise des prix de l'édition 2026.", place: 'Théâtre Aline Sitoé Diatta' },
+  { time: 'Dim 15', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Remise des prix de l'édition 2027.", place: 'Théâtre Aline Sitoé Diatta' },
 ];
 const events = [
   ...cmsEvents.map((e) => ({
@@ -94,8 +103,8 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 );
 ---
 <Base
-  title="ZIFFA 2026 — Ziguinchor International Film Festival & Animation"
-  description="Le rendez-vous du cinéma africain en Casamance — 12 au 15 novembre 2026."
+  title="ZIFFA 2027 — Ziguinchor International Film Festival & Animation"
+  description="Le rendez-vous du cinéma africain en Casamance — 12 au 15 novembre 2027."
 >
   <!-- ===== 1. HERO ===== -->
   <section class="hero">
@@ -126,7 +135,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         <span class="discipline-pill">Photographie</span>
       </div>
       <div class="hero-actions">
-        <a href="/edition-2026" class="btn-primary">Découvrir l'édition 2026 →</a>
+        <a href="/edition-2027" class="btn-primary">Découvrir l'édition 2027 →</a>
         <a href="/participer#inscription" class="btn-ghost">▶ Inscrire un film</a>
       </div>
     </div>
@@ -135,7 +144,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
   <!-- ===== 2. COMPTE À REBOURS ===== -->
   <section class="countdown-section">
     <div class="countdown-inner">
-      <div class="eyebrow"><span class="arrow">→</span> Ouverture le 12 novembre 2026 · Ziguinchor</div>
+      <div class="eyebrow"><span class="arrow">→</span> Ouverture le 12 novembre 2027 · Ziguinchor</div>
       <h2 class="section-title">Plus que <span class="yellow">quelques jours</span>.</h2>
       <div class="countdown" id="countdown" data-target={festivalTarget}>
         <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Jours</span></div>
@@ -172,7 +181,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         <div class="eyebrow"><span class="arrow">→</span> Sélection officielle</div>
         <h2 class="section-title">À l'<span class="italic">affiche</span>.</h2>
       </div>
-      <a href="/edition-2026" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Toute la sélection →</a>
+      <a href="/edition-2027" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Toute la sélection →</a>
     </div>
     <div class="film-grid">
       {films.map((f) => (
@@ -193,7 +202,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
   <section class="programme-section">
     <div class="programme-inner">
       <div style="text-align:center;margin-bottom:30px;">
-        <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme · Édition 2026</div>
+        <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme · Édition 2027</div>
         <h2 class="section-title" style="margin:12px auto;text-align:center;">Quatre jours<br />de <span class="red">temps forts</span>.</h2>
       </div>
       {events.map((ev) => (
@@ -208,7 +217,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         </div>
       ))}
       <div style="text-align:center;margin-top:36px;">
-        <a href="/edition-2026#programme" class="nav-cta" style="background:var(--red);">Programme complet ↗</a>
+        <a href="/edition-2027#programme" class="nav-cta" style="background:var(--red);">Programme complet ↗</a>
       </div>
     </div>
   </section>
@@ -218,17 +227,18 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     <div class="video-2025-inner">
       <div class="video-2025-head">
         <div class="eyebrow"><span class="arrow">→</span> Teaser officiel</div>
-        <h2 class="section-title">ZIFFA <span class="red">2026</span><br />en <span class="italic">mouvement</span>.</h2>
+        <h2 class="section-title">ZIFFA <span class="red">2027</span><br />en <span class="italic">mouvement</span>.</h2>
         <p>Un avant-goût du festival : l'énergie, les images, l'émotion du cinéma africain.</p>
       </div>
       <div class="video-wrapper">
-        <div class="video-placeholder">
-          <div class="play-button"></div>
-          <div class="video-info">
-            <div class="video-info-label">— Teaser · 02:00</div>
-            <div class="video-info-title">ZIFFA <em>2026</em> — Bande-annonce</div>
-          </div>
-        </div>
+        <iframe
+          src={videoEmbed}
+          title="ZIFFA — vidéo du festival"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+          style="width:100%;height:100%;border:0;display:block;"
+        ></iframe>
       </div>
     </div>
   </section>
@@ -283,7 +293,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 <script>
   // Compte à rebours — la date cible vient de Strapi (data-target) ou d'un repli.
   const el = document.getElementById('countdown');
-  const target = new Date(el?.dataset.target || '2026-11-12T19:00:00').getTime();
+  const target = new Date(el?.dataset.target || '2027-11-12T19:00:00').getTime();
   const pad = (n) => String(n).padStart(2, '0');
   function set(k, v) { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; }
   function tick() {

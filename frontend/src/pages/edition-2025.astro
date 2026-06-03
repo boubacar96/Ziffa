@@ -1,24 +1,120 @@
 ---
 import Base from '../layouts/Base.astro';
-// TODO (migration) : porter le contenu de la page statique de référence
-//   ../../../edition-2025.html
-// en réutilisant les composants/classes existants, et brancher les parties
-// dynamiques sur Strapi (cf. src/lib/strapi.js et l'exemple dans index.astro).
+import { fetchAPI, mediaUrl } from '../lib/strapi.js';
+
+// Vidéo de l'édition 2025 (Vimeo fournie par le client).
+const VIDEO_2025 = 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
+
+// Galerie : photos du CMS, sinon repli sur les photos locales.
+const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
+const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
+const photos = [...cmsPhotos, ...fallbackPhotos].slice(0, 8);
+
+const prizes = [
+  { icon: '🏆', name: 'Grand Prix ZIFFA', winner: 'Lauréat 2025 — à confirmer' },
+  { icon: '🎬', name: 'Prix de la Fiction', winner: 'Lauréat 2025 — à confirmer' },
+  { icon: '🎞️', name: 'Prix du Documentaire', winner: 'Lauréat 2025 — à confirmer' },
+  { icon: '✨', name: "Prix de l'Animation", winner: 'Lauréat 2025 — à confirmer' },
+];
+const jury = [
+  { ini: 'P', name: 'Président·e du jury 2025', role: 'Présidence' },
+  { ini: 'J2', name: 'Membre du jury', role: 'Réalisation' },
+  { ini: 'J3', name: 'Membre du jury', role: 'Production' },
+];
 ---
-<Base title="Édition 2025 — Retour en images | ZIFFA" description="Édition passée · N°01 — ZIFFA.">
+<Base title="Édition 2025 — Retour en images | ZIFFA" description="Revivez la première édition du ZIFFA (2025) : vidéo, galerie, palmarès, programme et jury.">
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Édition 2025</div>
       <div class="eyebrow"><span class="arrow">→</span> Édition passée · N°01</div>
       <h1>Retour sur <span class="yellow">2025</span>.</h1>
-      <p>Page en cours de migration vers Astro. Le contenu de référence existe
-         déjà dans <code>edition-2025.html</code> (site statique) et sera porté ici.</p>
+      <p>La première édition du ZIFFA a réuni public et professionnels autour du cinéma africain.</p>
     </div>
   </header>
 
+  <!-- EN IMAGES : vidéo + galerie -->
+  <section class="video-2025-section" id="images">
+    <div class="video-2025-inner">
+      <div class="video-2025-head">
+        <div class="eyebrow"><span class="arrow">→</span> Le film de l'édition 2025</div>
+        <h2 class="section-title">L'édition <span class="red">2025</span><br />en <span class="italic">images</span>.</h2>
+        <p>Les temps forts de notre première édition : projections, masterclasses et rencontres.</p>
+      </div>
+      <div class="video-wrapper">
+        <iframe src={VIDEO_2025} title="ZIFFA 2025 — le film du festival" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
-    <p class="lead">Section à porter : reprends le balisage de <code>edition-2025.html</code>
-       et remplace les contenus fixes par des appels Strapi quand c'est pertinent
-       (films, programme, jury, prix, partenaires, articles…).</p>
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> La galerie</div><h2 class="section-title">Souvenirs de <span class="italic">2025</span>.</h2></div></div>
+    <div class="gallery-grid">
+      {photos.map((src, i) => (
+        <figure class={i % 4 === 0 ? 'tall' : ''}><img src={src} alt="ZIFFA 2025" loading="lazy" /></figure>
+      ))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- PALMARÈS -->
+  <section class="section" id="prix">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Palmarès 2025</div><h2 class="section-title">Les <span class="red">lauréats</span>.</h2></div></div>
+    <div class="prize-grid">
+      {prizes.map((p) => (
+        <div class="prize-card"><div class="trophy">{p.icon}</div><h3>{p.name}</h3><div class="winner">{p.winner}</div></div>
+      ))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- PROGRAMME 2025 (récap) -->
+  <section class="programme-section" id="programme">
+    <div class="programme-inner">
+      <div style="text-align:center;margin-bottom:30px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Ce qu'il s'est passé</div><h2 class="section-title" style="margin:12px auto;text-align:center;">Le <span class="italic">programme</span> 2025.</h2></div>
+      <div class="programme-event" data-type="ceremonie"><div class="programme-event-time">J1</div><div class="programme-event-info"><h4>Cérémonie d'ouverture & film inaugural</h4><p>Lancement de la première édition.</p></div><div class="programme-event-location"><span class="programme-event-type event-type-ceremonie">Cérémonie</span><strong>Ziguinchor</strong></div><div class="programme-event-arrow">→</div></div>
+      <div class="programme-event" data-type="projection"><div class="programme-event-time">J2</div><div class="programme-event-info"><h4>Projections en compétition</h4><p>Fictions, documentaires et animations.</p></div><div class="programme-event-location"><span class="programme-event-type event-type-projection">Projections</span><strong>Salles partenaires</strong></div><div class="programme-event-arrow">→</div></div>
+      <div class="programme-event" data-type="masterclass"><div class="programme-event-time">J3</div><div class="programme-event-info"><h4>Masterclasses & rencontres</h4><p>Transmission avec les cinéastes invités.</p></div><div class="programme-event-location"><span class="programme-event-type event-type-masterclass">Masterclass</span><strong>Ziguinchor</strong></div><div class="programme-event-arrow">→</div></div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- JURY 2025 -->
+  <section class="section" id="jury">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Le jury 2025</div><h2 class="section-title">Le <span class="italic">jury</span>.</h2></div></div>
+    <div class="people-grid">
+      {jury.map((j) => (
+        <div class="person-card"><div class="person-avatar">{j.ini}</div><div class="person-name">{j.name}</div><div class="person-role">{j.role}</div></div>
+      ))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- MASTERCLASSES 2025 -->
+  <section class="section" id="masterclasses">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Transmission 2025</div><h2 class="section-title">Master-<span class="italic">classes</span>.</h2></div></div>
+    <div class="ateliers-grid">
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3><span class="italic">Réalisation</span> documentaire</h3><p>Atelier de la première édition autour de l'écriture du réel.</p><div class="atelier-meta"><span>Édition 2025</span><span>Archive</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3><span class="italic">Animation</span> africaine</h3><p>Découverte des techniques d'animation avec des intervenants invités.</p><div class="atelier-meta"><span>Édition 2025</span><span>Archive</span></div></div>
+    </div>
+  </section>
+
+  <!-- AFFICHE 2025 -->
+  <section class="objectifs-section" id="affiche">
+    <div class="objectifs-inner">
+      <div class="affiche-wrap">
+        <div class="affiche-poster"><span class="placeholder">ZIFFA<br />2025</span></div>
+        <div>
+          <div class="eyebrow"><span class="arrow">→</span> Identité visuelle 2025</div>
+          <h2 class="section-title" style="color:var(--bg);">L'<span class="yellow-highlight">affiche</span> 2025.</h2>
+          <p class="objectifs-tagline" style="margin:16px 0 28px;">L'affiche de la première édition.</p>
+          <a href="/edition-2027" class="nav-cta" style="background:var(--yellow);color:var(--green-deep);">Voir l'édition 2027 ↗</a>
+        </div>
+      </div>
+    </div>
   </section>
 </Base>

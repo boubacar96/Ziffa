@@ -1,24 +1,150 @@
 ---
 import Base from '../layouts/Base.astro';
-// TODO (migration) : porter le contenu de la page statique de référence
-//   ../../../le-ziffa.html
-// en réutilisant les composants/classes existants, et brancher les parties
-// dynamiques sur Strapi (cf. src/lib/strapi.js et l'exemple dans index.astro).
+import { fetchAPI, mediaUrl } from '../lib/strapi.js';
+
+// Équipe (Strapi `person` type=equipe) avec repli.
+const teamRes = await fetchAPI('people', { 'filters[type][$eq]': 'equipe', sort: 'order:asc', populate: 'photo' });
+const cmsTeam = teamRes.data || [];
+const fallbackTeam = [
+  { ini: 'BB', name: 'Babacar Ba', role: 'Direction générale', bio: 'Fondateur du festival, il en porte la vision et les partenariats.' },
+  { ini: 'DP', name: 'Direction de la programmation', role: 'Programmation', bio: 'Sélection des films, invitations des jurys et des cinéastes.' },
+  { ini: 'CP', name: 'Coordination production', role: 'Production', bio: 'Logistique, lieux et accueil des publics.' },
+  { ini: 'CM', name: 'Communication', role: 'Presse & médias', bio: "Relations presse, réseaux sociaux et image du festival." },
+];
+const team = cmsTeam.length
+  ? cmsTeam.map((p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null }))
+  : fallbackTeam;
+
+// Partenaires (Strapi `partner`) avec repli.
+const partRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
+const fallbackPartners = [
+  { name: 'Wallonie-Bruxelles Int.', url: 'https://www.wbi.be', logo: '/partenaires/wallonie-bruxelles.jpg' },
+  { name: 'Alliance Française', url: '#', logo: '/partenaires/alliance-francaise.jpg' },
+  { name: 'Air Sénégal', url: 'https://flyairsenegal.com', logo: '/partenaires/air-senegal.jpg' },
+  { name: 'FOTTI', url: '#', logo: '/partenaires/fotti.jpg' },
+  { name: 'LONASE', url: 'https://www.lonase.sn', logo: '/partenaires/lonase.jpg' },
+  { name: 'TALAATA Production', url: '#', logo: '/partenaires/talaata.jpg' },
+];
+const partners = [
+  ...(partRes.data || []).map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null })),
+  ...fallbackPartners,
+].slice(0, 6);
+
+const objectifs = [
+  { num: '— 01', icon: '🎬', title: 'Promotion du cinéma africain', desc: 'Mettre en lumière les talents africains et faire rayonner le cinéma du continent sur la scène internationale.' },
+  { num: '— 02', icon: '🎓', title: 'Formation des jeunes talents', desc: 'Offrir des ateliers de formation professionnelle aux jeunes cinéastes avec des experts internationaux.' },
+  { num: '— 03', icon: '📈', title: 'Développement économique', desc: "Stimuler l'économie locale à travers le tourisme culturel et créer des opportunités d'emploi." },
+  { num: '— 04', icon: '🤝', title: 'Réseau professionnel', desc: 'Créer un marché du film et faciliter les rencontres entre professionnels du secteur.' },
+];
 ---
-<Base title="Le ZIFFA — Histoire, valeurs & équipe | ZIFFA" description="Découvrir le festival — ZIFFA.">
+<Base title="Le ZIFFA — Présentation, objectifs & équipe" description="Présentation officielle du ZIFFA, ses objectifs, son équipe, la presse, les partenaires et les archives.">
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Le ZIFFA</div>
       <div class="eyebrow"><span class="arrow">→</span> Découvrir le festival</div>
       <h1>Le <span class="yellow">ZIFFA</span>.</h1>
-      <p>Page en cours de migration vers Astro. Le contenu de référence existe
-         déjà dans <code>le-ziffa.html</code> (site statique) et sera porté ici.</p>
+      <p>Le Ziguinchor International Film Festival &amp; Animation célèbre le cinéma africain en Casamance.</p>
     </div>
   </header>
 
-  <section class="section">
-    <p class="lead">Section à porter : reprends le balisage de <code>le-ziffa.html</code>
-       et remplace les contenus fixes par des appels Strapi quand c'est pertinent
-       (films, programme, jury, prix, partenaires, articles…).</p>
+  <!-- ===== HISTOIRE / PRÉSENTATION ===== -->
+  <section class="section" id="histoire">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="arrow">→</span> Présentation du festival</div>
+        <h2 class="section-title">Présentation<br />du <span class="red">festival</span>.</h2>
+      </div>
+      <a href="#" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Document officiel ↓</a>
+    </div>
+    <p class="lead" style="margin-bottom:36px;">Découvrez l'univers du ZIFFA à travers notre document de présentation officiel.</p>
+
+    <div class="presentation-editorial" style="max-width:880px;">
+      <p>Ce festival de cinéma ambitionne de faire rayonner la région de Ziguinchor à travers une programmation artistique <strong>panafricaine et internationale</strong>, tout en valorisant la diversité culturelle, la créativité des jeunes, et le potentiel du Sud du Sénégal dans le domaine des industries culturelles et créatives.</p>
+      <p>Une attention particulière sera portée à la <strong>jeunesse</strong>, avec une programmation dédiée incluant un atelier de stop motion de 12 jours, des séances de conte, ainsi que des projections spéciales.</p>
+      <p>Avant le coup d'envoi du festival, place à <strong>douze jours d'ateliers intensifs</strong> ouverts aux professionnels et aux jeunes !</p>
+    </div>
+  </section>
+
+  <!-- ===== OBJECTIFS DU FESTIVAL ===== -->
+  <section class="objectifs-section" id="valeurs">
+    <div class="objectifs-inner">
+      <div class="objectifs-header">
+        <div class="eyebrow"><span class="arrow">→</span> Notre mission</div>
+        <h2 class="section-title">Objectifs du <span class="yellow-highlight">festival</span>.</h2>
+        <p class="objectifs-tagline">Promouvoir le cinéma africain et développer l'industrie cinématographique en Casamance.</p>
+      </div>
+      <div class="objectifs-grid">
+        {objectifs.map((o) => (
+          <div class="objectif-card">
+            <div class="objectif-num">{o.num}</div>
+            <div class="objectif-icon">{o.icon}</div>
+            <h3>{o.title}</h3>
+            <p>{o.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ÉQUIPE ===== -->
+  <section class="section" id="equipe">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Celles & ceux qui font le festival</div><h2 class="section-title">L'<span class="italic">équipe</span>.</h2></div></div>
+    <div class="people-grid">
+      {team.map((m) => (
+        <div class="person-card">
+          <div class="person-avatar" style={m.photo ? `background-image:url('${m.photo}');background-size:cover;background-position:center;` : ''}>{m.photo ? '' : m.ini}</div>
+          <div class="person-name">{m.name}</div>
+          <div class="person-role">{m.role}</div>
+          {m.bio && <p class="person-bio">{m.bio}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- ===== PRESSE ===== -->
+  <section class="section" id="presse">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Espace presse</div><h2 class="section-title">Kit <span class="red">presse</span>.</h2></div><a href="/contact#contact" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Contact presse →</a></div>
+    <div class="download-list">
+      <div class="download-row"><div><div class="dl-name">Dossier de presse</div><div class="dl-meta">PDF · à venir</div></div><a href="#" class="dl-btn">Télécharger ↓</a></div>
+      <div class="download-row"><div><div class="dl-name">Logos & charte graphique</div><div class="dl-meta">ZIP · PNG / SVG</div></div><a href="#" class="dl-btn">Télécharger ↓</a></div>
+      <div class="download-row"><div><div class="dl-name">Photothèque officielle</div><div class="dl-meta">Images haute définition</div></div><a href="/edition-2025#images" class="dl-btn">Voir la galerie →</a></div>
+    </div>
+  </section>
+
+  <!-- ===== PARTENAIRES ===== -->
+  <section class="partners-section" id="partenaires">
+    <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Soutiens & Partenaires</div>
+    <h2 class="section-title" style="margin:16px auto 0;max-width:700px;">Ils <span class="red">accompagnent</span><br />le ZIFFA.</h2>
+    <p class="partners-intro">Le festival est rendu possible grâce au soutien d'institutions et de partenaires engagés.</p>
+    <div class="partners-grid">
+      {partners.map((p) => (
+        <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>
+          {p.logo && <img src={p.logo} alt={p.name} />}
+          <span class="partner-logo-name">{p.name}</span>
+        </a>
+      ))}
+    </div>
+    <a href="/participer#partenariat" class="btn-ghost">Devenir partenaire →</a>
+  </section>
+
+  <!-- ===== ARCHIVES ===== -->
+  <section class="section" id="archives">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Mémoire du festival</div><h2 class="section-title">Les <span class="italic">archives</span>.</h2></div></div>
+    <div class="edition-cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+      <div class="ed-card" style="background:var(--paper);border:1px solid var(--line);color:var(--ink);">
+        <div class="ed-card-num" style="color:var(--red);">— Édition 01</div>
+        <h4 style="color:var(--green-deep);">ZIFFA <span class="italic">2025</span></h4>
+        <p style="color:var(--ink-soft);">Retour en images, palmarès et programme de la première édition.</p>
+        <a href="/edition-2025" class="ed-card-link" style="color:var(--red);">Revivre 2025 ↗</a>
+      </div>
+      <div class="ed-card" style="background:var(--paper);border:1px solid var(--line);color:var(--ink);">
+        <div class="ed-card-num" style="color:var(--red);">— Prochaine édition</div>
+        <h4 style="color:var(--green-deep);">ZIFFA <span class="italic">2027</span></h4>
+        <p style="color:var(--ink-soft);">Programme, jurys, prix et masterclasses à venir.</p>
+        <a href="/edition-2027" class="ed-card-link" style="color:var(--red);">Découvrir 2027 ↗</a>
+      </div>
+    </div>
   </section>
 </Base>

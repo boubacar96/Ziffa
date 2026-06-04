@@ -35,7 +35,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks: [internal]
+    networks: [internal, web]
 
   # ----- Frontend Astro (site public, SSR) -----
   frontend:
@@ -50,11 +50,15 @@ services:
       PORT: "4321"
     depends_on:
       - cms
-    networks: [internal]
+    networks: [internal, web]
 
-  # ----- Reverse proxy + HTTPS automatique -----
+  # ----- Reverse proxy interne (mode "tout-en-un" / local uniquement) -----
+  # Sur le serveur, un Caddy PARTAGÉ (projet "proxy") gère déjà 80/443.
+  # Ce service n'est donc PAS démarré par défaut (profil "standalone").
+  # Pour l'activer en local : docker compose --profile standalone up
   caddy:
     image: caddy:2-alpine
+    profiles: ["standalone"]
     restart: unless-stopped
     ports:
       - "80:80"
@@ -80,3 +84,6 @@ volumes:
 networks:
   internal:
     driver: bridge
+  # Réseau partagé du reverse proxy (créé par le projet "proxy").
+  web:
+    external: true

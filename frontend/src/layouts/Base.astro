@@ -3,7 +3,10 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/style.css';
 
-const { title = 'ZIFFA 2026', description = '' } = Astro.props;
+const { title = 'ZIFFA', description = '' } = Astro.props;
+// URLs absolues (fonctionnent en local, sur le serveur et avec le domaine).
+const ogImage = new URL('/photos/photo06.jpg', Astro.url).href;
+const canonical = Astro.url.href;
 ---
 <!DOCTYPE html>
 <html lang="fr">
@@ -12,6 +15,25 @@ const { title = 'ZIFFA 2026', description = '' } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/ziffa.png" />
+  <link rel="apple-touch-icon" href="/ziffa.png" />
+  <meta name="theme-color" content="#1A4527" />
+
+  <!-- Partage réseaux (OpenGraph + Twitter) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ZIFFA" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:url" content={canonical} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+
   <link
     href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
@@ -21,5 +43,36 @@ const { title = 'ZIFFA 2026', description = '' } = Astro.props;
   <Header />
   <slot />
   <Footer />
+
+  <script>
+    (() => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Apparition au scroll (progressif : rien n'est masqué si JS off)
+      if (!reduce && 'IntersectionObserver' in window) {
+        document.documentElement.classList.add('js-reveal');
+        const sel = '.section-head, .film-card, .objectif-card, .prize-card, .person-card, .programme-event, .atelier-card, .stat-card, .ed-card, .partner-logo, .download-row, .gallery-grid figure, .cd-box, .timeline-item, .tier-card, .presentation-editorial';
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll(sel).forEach((el) => { el.classList.add('reveal-el'); io.observe(el); });
+      }
+
+      // Lightbox sur les galeries
+      const lb = document.createElement('div');
+      lb.className = 'lightbox';
+      lb.innerHTML = '<button class="lightbox-close" aria-label="Fermer">✕</button><img alt="">';
+      document.body.appendChild(lb);
+      const lbImg = lb.querySelector('img');
+      const close = () => lb.classList.remove('open');
+      lb.addEventListener('click', close);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+      document.querySelectorAll('.gallery-grid img').forEach((img) => {
+        img.addEventListener('click', () => { lbImg.src = img.currentSrc || img.src; lb.classList.add('open'); });
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI } from '../../lib/strapi.js';
+
+const fRes = await fetchAPI('formations', { populate: 'image' });
+const cms = fRes.data || [];
+const doc = cms.find((f) => f.type === 'documentaire');
+const anim = cms.find((f) => f.type === 'animation');
+const formationDoc = {
+  desc: doc?.description || 'From idea to edit: building a documentary narrative from reality — research, shooting, interviews, writing and post-production.',
+  schedule: doc?.schedule || 'Sessions year-round',
+  level: doc?.level || 'All levels',
+};
+const formationAnim = {
+  desc: anim?.description || '2D animation techniques: storyboard, character design, principles of movement and making a short film.',
+  schedule: anim?.schedule || 'Sessions year-round',
+  level: anim?.level || 'Beginner to intermediate',
+};
+---
+<Base title="Year-round — Permanent training | ZIFFA" description="ZIFFA permanent training: documentary training and animation training.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; Year-round</div>
+      <div class="eyebrow"><span class="arrow">→</span> Permanent training</div>
+      <h1>ZIFFA, <span class="italic yellow">all year long</span>.</h1>
+      <p>Beyond the festival, ZIFFA trains the next wave of Casamance filmmakers through two permanent programmes.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <p class="lead" style="margin-bottom:50px;">Open to the region's youth, these trainings combine theory and practice, led by professionals. Applications by file via the <a href="/en/contact#contact" style="color:var(--red);">Contact</a> page.</p>
+    <div class="ateliers-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
+      <div class="atelier-card" id="formation-doc">
+        <span class="atelier-tag">— Permanent programme</span>
+        <h3><span class="italic">Documentary</span> training</h3>
+        <p>{formationDoc.desc}</p>
+        <div class="atelier-meta"><span>{formationDoc.schedule}</span><span>{formationDoc.level}</span></div>
+      </div>
+      <div class="atelier-card" id="formation-anim">
+        <span class="atelier-tag">— Permanent programme</span>
+        <h3><span class="italic">Animation</span> training</h3>
+        <p>{formationAnim.desc}</p>
+        <div class="atelier-meta"><span>{formationAnim.schedule}</span><span>{formationAnim.level}</span></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="objectifs-section">
+    <div class="objectifs-inner">
+      <div class="objectifs-header">
+        <div class="eyebrow"><span class="arrow">→</span> How it works</div>
+        <h2 class="section-title">A complete <span class="yellow-highlight">journey</span>.</h2>
+        <p class="objectifs-tagline">From application to the screening of the films made during the training.</p>
+      </div>
+      <div class="objectifs-grid">
+        <div class="objectif-card"><div class="objectif-num">— Step 01</div><div class="objectif-icon">📝</div><h3>Application</h3><p>Submit a motivation file.</p></div>
+        <div class="objectif-card"><div class="objectif-num">— Step 02</div><div class="objectif-icon">🎥</div><h3>Learning</h3><p>Theory and practice led by professionals.</p></div>
+        <div class="objectif-card"><div class="objectif-num">— Step 03</div><div class="objectif-icon">✂️</div><h3>Production</h3><p>Make a graduation film.</p></div>
+        <div class="objectif-card"><div class="objectif-num">— Step 04</div><div class="objectif-icon">🎬</div><h3>Screening</h3><p>The best works shown to the public.</p></div>
+      </div>
+    </div>
+  </section>
+</Base>

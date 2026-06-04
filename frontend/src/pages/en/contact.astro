@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Contact & Info | ZIFFA" description="Contact the ZIFFA team and subscribe to the newsletter.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; Info</div>
+      <div class="eyebrow"><span class="arrow">→</span> Get in touch</div>
+      <h1>We'll <span class="yellow">reply</span>.</h1>
+      <p>A question about the programme, press, partnerships or submissions? Write to us.</p>
+    </div>
+  </header>
+  <section class="section" id="contact">
+    <div class="contact-card"><div class="c-label">General email</div><div class="c-value"><a href="mailto:contact@ziffa.sn">contact@ziffa.sn</a></div></div>
+    <div class="contact-card"><div class="c-label">Phone</div><div class="c-value">+221 77 336 43 30</div></div>
+    <div class="contact-card"><div class="c-label">Address</div><div class="c-value">Ziguinchor, Casamance — Senegal</div></div>
+  </section>
+  <section class="newsletter" id="newsletter">
+    <div class="newsletter-inner">
+      <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Newsletter</div>
+      <h2>Never miss <span class="red">a thing</span><br />about the <span class="italic">festival</span>.</h2>
+      <p>Get ZIFFA news straight to your inbox.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing!'); this.reset();">
+        <input type="email" placeholder="your@email.com" required />
+        <button type="submit">Subscribe ↗</button>
+      </form>
+    </div>
+  </section>
+</Base>

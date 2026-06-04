@@ -1,21 +1,28 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getLangFromUrl, altPath } from '../i18n.js';
 import '../styles/style.css';
 
 const { title = 'ZIFFA', description = '' } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 // URLs absolues (fonctionnent en local, sur le serveur et avec le domaine).
 const ogImage = new URL('/photos/photo06.jpg', Astro.url).href;
 const canonical = Astro.url.href;
+const frUrl = new URL(altPath(Astro.url, 'fr'), Astro.url).href;
+const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
 ---
 <!DOCTYPE html>
-<html lang="fr">
+<html lang={lang}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  <link rel="alternate" hreflang="fr" href={frUrl} />
+  <link rel="alternate" hreflang="en" href={enUrl} />
+  <link rel="alternate" hreflang="x-default" href={frUrl} />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/ziffa.png" />

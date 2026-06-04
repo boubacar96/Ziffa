@@ -1,13 +1,16 @@
 ---
-// Pied de page partagé — version modernisée avec carte Ziguinchor.
+import { getLangFromUrl, useTranslations, lp } from '../i18n.js';
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const L = (p) => lp(p, lang);
 ---
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
       <div class="footer-wordmark">ZIFFA<span class="dot">.</span></div>
-      <p>Ziguinchor International Film Festival &amp; Animation — le rendez-vous du cinéma africain en Casamance.</p>
+      <p>{t('footer.tagline')}</p>
       <div class="footer-contact-line">
-        <a href="mailto:contact@ziffa.sn">contact@ziffa.sn</a><span class="sep">·</span>+221 77 000 00 00<br />
+        <a href="mailto:contact@ziffa.sn">contact@ziffa.sn</a><span class="sep">·</span>+221 77 336 43 30<br />
         Ziguinchor, Casamance — Sénégal
       </div>
       <div class="socials">
@@ -32,44 +35,44 @@
 
   <div class="footer-grid">
     <div class="footer-col">
-      <h4>— Festival</h4>
+      <h4>{t('footer.festival')}</h4>
       <ul>
-        <li><a href="/le-ziffa#histoire">Histoire</a></li>
-        <li><a href="/le-ziffa#valeurs">Valeurs</a></li>
-        <li><a href="/le-ziffa#equipe">L'équipe</a></li>
-        <li><a href="/le-ziffa#archives">Archives</a></li>
+        <li><a href={L('/le-ziffa') + '#histoire'}>{t('footer.histoire')}</a></li>
+        <li><a href={L('/le-ziffa') + '#valeurs'}>{t('footer.valeurs')}</a></li>
+        <li><a href={L('/le-ziffa') + '#equipe'}>{t('footer.equipe')}</a></li>
+        <li><a href={L('/le-ziffa') + '#archives'}>{t('footer.archives')}</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>— Édition 2027</h4>
+      <h4>{t('footer.ed2027')}</h4>
       <ul>
-        <li><a href="/edition-2027#programme">Programme</a></li>
-        <li><a href="/edition-2027#prix">Prix</a></li>
-        <li><a href="/edition-2027#jury">Jurys</a></li>
-        <li><a href="/edition-2025#images">Galerie</a></li>
+        <li><a href={L('/edition-2027') + '#programme'}>{t('nav.programme')}</a></li>
+        <li><a href={L('/edition-2027') + '#prix'}>{t('nav.prix')}</a></li>
+        <li><a href={L('/edition-2027') + '#jury'}>{t('nav.jury')}</a></li>
+        <li><a href={L('/edition-2025') + '#images'}>{t('footer.galerie')}</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>— Participer</h4>
+      <h4>{t('footer.participer')}</h4>
       <ul>
-        <li><a href="/participer#inscription">Inscrire un film</a></li>
-        <li><a href="/a-lannee">Formations</a></li>
-        <li><a href="/le-ziffa#partenaires">Partenaires</a></li>
-        <li><a href="/contact#contact">Presse</a></li>
+        <li><a href={L('/participer') + '#inscription'}>{t('nav.inscrire')}</a></li>
+        <li><a href={L('/a-lannee')}>{t('footer.formations')}</a></li>
+        <li><a href={L('/le-ziffa') + '#partenaires'}>{t('nav.partenaires')}</a></li>
+        <li><a href={L('/contact') + '#contact'}>{t('footer.presse')}</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>— Infos</h4>
+      <h4>{t('footer.infos')}</h4>
       <ul>
-        <li><a href="/contact#contact">Contact</a></li>
-        <li><a href="/contact#newsletter">Newsletter</a></li>
-        <li><a href="/edition-2025">Édition 2025</a></li>
+        <li><a href={L('/contact') + '#contact'}>{t('footer.contact')}</a></li>
+        <li><a href={L('/contact') + '#newsletter'}>{t('nav.newsletter')}</a></li>
+        <li><a href={L('/edition-2025')}>{t('footer.ed2025link')}</a></li>
       </ul>
     </div>
   </div>
 
   <div class="footer-bottom">
-    <div>© 2026 ZIFFA · All rights reserved</div>
+    <div>{t('footer.rights')}</div>
     <div>Ziguinchor International Film Festival &amp; Animation</div>
   </div>
 </footer>

@@ -1,0 +1,209 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+
+const catLabel = { fiction: 'Fiction', documentaire: 'Documentary', animation: 'Animation', 'court-metrage': 'Short film' };
+const typeLabel = { projection: 'Screening', masterclass: 'Masterclass', rencontre: 'Talk', ceremonie: 'Ceremony' };
+
+const edRes = await fetchAPI('editions', { 'filters[isCurrent][$eq]': 'true', populate: 'poster', 'pagination[limit]': '1' });
+const edition = (edRes.data || [])[0] || null;
+const festivalTarget =
+  edition?.dateStart && new Date(edition.dateStart) > new Date()
+    ? `${edition.dateStart}T19:00:00`
+    : '2027-11-12T19:00:00';
+
+function toEmbed(url) {
+  if (!url) return null;
+  const m = String(url).match(/vimeo\.com\/(\d+)(?:\/(\w+))?/);
+  if (m) return `https://player.vimeo.com/video/${m[1]}${m[2] ? `?h=${m[2]}` : ''}`;
+  return url;
+}
+const videoEmbed = toEmbed(edition?.videoUrl) || 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
+
+const filmRes = await fetchAPI('films', { populate: 'poster', sort: 'year:desc', 'pagination[limit]': '6' });
+const fallbackFilms = [
+  { title: 'Sous le Baobab', cat: 'Fiction', meta: 'Aïssatou Diop · Senegal · 2025', poster: null },
+  { title: 'Voix de Casamance', cat: 'Documentary', meta: 'Mamadou Ba · 88 min', poster: null },
+  { title: "L'Esprit du Fleuve", cat: 'Animation', meta: 'Studio Téranga · 2026', poster: null },
+  { title: 'Le Dernier Griot', cat: 'Fiction', meta: 'Fatou Sow · Mali', poster: null },
+  { title: 'Nuit à Ziguinchor', cat: 'Short film', meta: 'O. Diédhiou · 18 min', poster: null },
+  { title: "Mémoires d'Afrique", cat: 'Documentary', meta: 'Casamance Collective', poster: null },
+];
+const films = [
+  ...(filmRes.data || []).map((f) => ({ title: f.title, cat: catLabel[f.category] || f.category || 'Film', meta: [f.director, f.country, f.year].filter(Boolean).join(' · '), poster: f.poster?.url ? mediaUrl(f.poster.url) : null })),
+  ...fallbackFilms,
+].slice(0, 6);
+
+const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '4' });
+const fallbackEvents = [
+  { time: 'Thu 12', type: 'ceremonie', title: 'Opening ceremony & inaugural film', desc: 'In the presence of guests and officials.', place: 'Aline Sitoé Diatta Theatre' },
+  { time: 'Fri 13', type: 'projection', title: 'Competition screenings', desc: 'Fiction, documentary and animation from the selection.', place: 'Casamance Hall' },
+  { time: 'Sat 14', type: 'masterclass', title: 'Masterclasses & pro meetings', desc: 'Knowledge-sharing with guest filmmakers.', place: 'Institut français' },
+  { time: 'Sun 15', type: 'ceremonie', title: 'Closing ceremony & awards', desc: 'Announcement of the official prize list.', place: 'Aline Sitoé Diatta Theatre' },
+];
+const events = [
+  ...(evRes.data || []).map((e) => ({ time: e.startTime || (e.day ? `Day ${e.day}` : '—'), type: e.type || 'projection', title: e.title, desc: e.description || '', place: e.location || '' })),
+  ...fallbackEvents,
+].slice(0, 4);
+
+const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
+const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
+const stripUrls = [...cmsPhotos, ...fallbackPhotos].slice(0, 10);
+
+const partRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
+const fallbackPartners = [
+  { name: 'Wallonie-Bruxelles Int.', url: 'https://www.wbi.be', logo: '/partenaires/wallonie-bruxelles.jpg' },
+  { name: 'Alliance Française', url: '#', logo: '/partenaires/alliance-francaise.jpg' },
+  { name: 'Air Sénégal', url: 'https://flyairsenegal.com', logo: '/partenaires/air-senegal.jpg' },
+  { name: 'FOTTI', url: '#', logo: '/partenaires/fotti.jpg' },
+  { name: 'LONASE', url: 'https://www.lonase.sn', logo: '/partenaires/lonase.jpg' },
+  { name: 'TALAATA Production', url: '#', logo: '/partenaires/talaata.jpg' },
+];
+const partners = [
+  ...(partRes.data || []).map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null })),
+  ...fallbackPartners,
+].slice(0, 6);
+
+const shapes = ['tall', 'square', 'wide'];
+const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, (_, i) => ({ n: String(((c * 3 + i * 2) % 10) + 1).padStart(2, '0'), shape: shapes[(c + i) % 3] })));
+---
+<Base title="ZIFFA 2027 — Ziguinchor International Film Festival & Animation" description="The home of African cinema in Casamance — 12 to 15 November 2027.">
+  <section class="hero">
+    <div class="hero-mosaic">
+      {heroCols.map((cards, idx) => (
+        <div class={`mosaic-col mosaic-col-${idx + 1}`}>
+          {cards.map((card) => (<div class={`mosaic-card ${card.shape}`}><img src={`/photos/photo${card.n}.jpg`} alt="" /></div>))}
+        </div>
+      ))}
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+      <h1 class="hero-acronym">ZIFFA<span class="red-dot">.</span></h1>
+      <div class="hero-full-name">
+        <strong>Z</strong>iguinchor &nbsp;·&nbsp; <strong>I</strong>nternational &nbsp;·&nbsp; <strong>F</strong>ilm &nbsp;·&nbsp; <strong>F</strong>estival &nbsp;·&nbsp; <strong>&amp; A</strong>nimation
+      </div>
+      <h2 class="hero-subtitle">The leading international film and<br />animation festival in <span class="yellow">Casamance</span>.</h2>
+      <div class="hero-disciplines">
+        <span class="discipline-pill">Feature film</span>
+        <span class="discipline-pill">Short film</span>
+        <span class="discipline-pill">Animation</span>
+        <span class="discipline-pill">Photography</span>
+      </div>
+      <div class="hero-actions">
+        <a href="/en/edition-2027" class="btn-primary">Discover the 2027 edition →</a>
+        <a href="/en/participer#inscription" class="btn-ghost">▶ Submit a film</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="countdown-section">
+    <div class="countdown-inner">
+      <div class="eyebrow"><span class="arrow">→</span> Opening 12 November 2027 · Ziguinchor</div>
+      <h2 class="section-title">Only a <span class="yellow">few days</span> left.</h2>
+      <div class="countdown" id="countdown" data-target={festivalTarget}>
+        <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Days</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd="hours">—</span><span class="cd-label">Hours</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd="mins">—</span><span class="cd-label">Minutes</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd="secs">—</span><span class="cd-label">Seconds</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The festival</div><h2 class="section-title">African cinema,<br /><span class="red">in Casamance</span>.</h2></div></div>
+    <p class="lead" style="margin-bottom:10px;">ZIFFA celebrates film and animation from the continent and its diaspora: four days of screenings, encounters and training, open to all.</p>
+    <div class="brief-stats">
+      <div class="stat-card stat-card-red"><div class="stat-card-content"><div class="stat-card-num">4<span class="plus">d</span></div><div class="stat-card-label">of festival</div></div></div>
+      <div class="stat-card stat-card-green"><div class="stat-card-content"><div class="stat-card-num">40<span class="plus">+</span></div><div class="stat-card-label">films screened</div></div></div>
+      <div class="stat-card stat-card-yellow"><div class="stat-card-content"><div class="stat-card-num">10<span class="plus">+</span></div><div class="stat-card-label">countries represented</div></div></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Official selection</div><h2 class="section-title">Now <span class="italic">showing</span>.</h2></div><a href="/en/edition-2027" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Full selection →</a></div>
+    <div class="film-grid">
+      {films.map((f) => (
+        <article class="film-card">
+          <div class="film-poster" style={f.poster ? `background-image:url('${f.poster}');background-size:cover;background-position:center;` : ''}><span class="film-cat">{f.cat}</span></div>
+          <div class="film-body"><h3 class="film-title">{f.title}</h3><div class="film-meta">{f.meta}</div></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="programme-section">
+    <div class="programme-inner">
+      <div style="text-align:center;margin-bottom:30px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme · 2027 Edition</div><h2 class="section-title" style="margin:12px auto;text-align:center;">Four days<br />of <span class="red">highlights</span>.</h2></div>
+      {events.map((ev) => (
+        <div class="programme-event" data-type={ev.type}>
+          <div class="programme-event-time">{ev.time}</div>
+          <div class="programme-event-info"><h4>{ev.title}</h4><p>{ev.desc}</p></div>
+          <div class="programme-event-location"><span class={`programme-event-type event-type-${ev.type}`}>{typeLabel[ev.type] || ev.type}</span>{ev.place && <strong>{ev.place}</strong>}</div>
+          <div class="programme-event-arrow">→</div>
+        </div>
+      ))}
+      <div style="text-align:center;margin-top:36px;"><a href="/en/edition-2027#programme" class="nav-cta" style="background:var(--red);">Full programme ↗</a></div>
+    </div>
+  </section>
+
+  <section class="video-2025-section">
+    <div class="video-2025-inner">
+      <div class="video-2025-head"><div class="eyebrow"><span class="arrow">→</span> Official teaser</div><h2 class="section-title">ZIFFA <span class="red">2027</span><br />in <span class="italic">motion</span>.</h2><p>A taste of the festival: the energy, the images, the emotion of African cinema.</p></div>
+      <div class="video-wrapper">
+        <iframe src={videoEmbed} title="ZIFFA — festival video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="filmstrip-section">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> In pictures</div><h2 class="section-title">A <span class="red">celebration</span> of cinema.</h2></div><a href="/en/edition-2025#images" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Full gallery →</a></div>
+    <div class="filmstrip">
+      <div class="filmstrip-track">
+        {stripUrls.map((url) => (<figure><img src={url} alt="ZIFFA — highlight" loading="lazy" /></figure>))}
+        {stripUrls.map((url) => (<figure aria-hidden="true"><img src={url} alt="" loading="lazy" /></figure>))}
+      </div>
+    </div>
+  </section>
+
+  <section class="partners-section" id="partenaires">
+    <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Supporters & Partners</div>
+    <h2 class="section-title" style="margin:16px auto 0;max-width:700px;">They <span class="red">support</span><br />ZIFFA.</h2>
+    <p class="partners-intro">The festival is made possible thanks to institutions and partners committed to African cinema.</p>
+    <div class="partners-grid">
+      {partners.map((p) => (
+        <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>{p.logo && <img src={p.logo} alt={p.name} />}<span class="partner-logo-name">{p.name}</span></a>
+      ))}
+    </div>
+    <a href="/en/participer#partenariat" class="btn-ghost">Become a partner →</a>
+  </section>
+
+  <section class="newsletter" id="newsletter">
+    <div class="newsletter-inner">
+      <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Newsletter</div>
+      <h2>Never miss <span class="red">a thing</span><br />about the <span class="italic">festival</span>.</h2>
+      <p>Programmes, calls for films, jury announcements, behind the scenes: get ZIFFA news straight to your inbox.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing!'); this.reset();">
+        <input type="email" placeholder="your@email.com" required />
+        <button type="submit">Subscribe ↗</button>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const el = document.getElementById('countdown');
+  const target = new Date(el?.dataset.target || '2027-11-12T19:00:00').getTime();
+  const pad = (n) => String(n).padStart(2, '0');
+  const set = (k, v) => { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; };
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) { set('days', '0'); set('hours', '00'); set('mins', '00'); set('secs', '00'); return; }
+    set('days', String(Math.floor(diff / 86400000)));
+    set('hours', pad(Math.floor((diff % 86400000) / 3600000)));
+    set('mins', pad(Math.floor((diff % 3600000) / 60000)));
+    set('secs', pad(Math.floor((diff % 60000) / 1000)));
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>

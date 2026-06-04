@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+
+const typeLabel = { projection: 'Screening', masterclass: 'Masterclass', rencontre: 'Talk', ceremonie: 'Ceremony' };
+
+const edRes = await fetchAPI('editions', { 'filters[isCurrent][$eq]': 'true', populate: 'poster', 'pagination[limit]': '1' });
+const edition = (edRes.data || [])[0] || null;
+const poster = edition?.poster?.url ? mediaUrl(edition.poster.url) : null;
+
+const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '8' });
+const fallbackEvents = [
+  { time: 'Thu 12', type: 'ceremonie', title: 'Opening ceremony & inaugural film', desc: 'In the presence of guests and officials.', place: 'Aline Sitoé Diatta Theatre' },
+  { time: 'Fri 13', type: 'projection', title: 'Competition screenings', desc: 'Fiction, documentary and animation from the selection.', place: 'Casamance Hall' },
+  { time: 'Sat 14', type: 'masterclass', title: 'Masterclass: documentary writing', desc: 'With an international guest director.', place: 'Institut français' },
+  { time: 'Sun 15', type: 'ceremonie', title: 'Closing ceremony & awards', desc: 'Announcement of the official prize list.', place: 'Aline Sitoé Diatta Theatre' },
+];
+const events = [
+  ...(evRes.data || []).map((e) => ({ time: e.startTime || (e.day ? `Day ${e.day}` : '—'), type: e.type || 'projection', title: e.title, desc: e.description || '', place: e.location || '' })),
+  ...fallbackEvents,
+].slice(0, 6);
+
+const prizes = [
+  { icon: '🏆', name: 'ZIFFA Grand Prize', desc: 'The festival’s highest distinction.' },
+  { icon: '🎬', name: 'Fiction Award', desc: 'Best fiction film of the selection.' },
+  { icon: '🎞️', name: 'Documentary Award', desc: 'Best documentary vision.' },
+  { icon: '✨', name: 'Animation Award', desc: 'Best animated work.' },
+  { icon: '⏱️', name: 'Short Film Award', desc: 'Best short work.' },
+  { icon: '❤️', name: 'Audience Award', desc: 'Awarded by audience votes.' },
+];
+const jury = [
+  { ini: 'P', name: 'Jury president', role: 'TBA' },
+  { ini: 'J2', name: 'Jury member', role: 'Directing' },
+  { ini: 'J3', name: 'Jury member', role: 'Production' },
+  { ini: 'J4', name: 'Jury member', role: 'Press & critics' },
+];
+---
+<Base title="2027 Edition — Programme, awards & jury | ZIFFA" description="ZIFFA 2027 edition — awards, programme, jury, masterclasses and poster.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; 2027 Edition</div>
+      <div class="eyebrow"><span class="arrow">→</span> Next edition · 12–15 Nov 2027</div>
+      <h1><span class="yellow">2027</span>, edition <span class="italic">No.03</span>.</h1>
+      <p>Four days of screenings, encounters and training in Ziguinchor.</p>
+    </div>
+  </header>
+
+  <section class="section" id="prix">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Official competition</div><h2 class="section-title">The 2027 <span class="red">awards</span>.</h2></div></div>
+    <div class="prize-grid">
+      {prizes.map((p) => (<div class="prize-card"><div class="trophy">{p.icon}</div><h3>{p.name}</h3><p>{p.desc}</p></div>))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="programme-section" id="programme">
+    <div class="programme-inner">
+      <div style="text-align:center;margin-bottom:30px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Official programme</div><h2 class="section-title" style="margin:12px auto;text-align:center;">The <span class="red">programme</span>.</h2></div>
+      {events.map((ev) => (
+        <div class="programme-event" data-type={ev.type}>
+          <div class="programme-event-time">{ev.time}</div>
+          <div class="programme-event-info"><h4>{ev.title}</h4><p>{ev.desc}</p></div>
+          <div class="programme-event-location"><span class={`programme-event-type event-type-${ev.type}`}>{typeLabel[ev.type] || ev.type}</span>{ev.place && <strong>{ev.place}</strong>}</div>
+          <div class="programme-event-arrow">→</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" id="jury">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The 2027 jury</div><h2 class="section-title">An international <span class="italic">jury</span>.</h2></div></div>
+    <div class="people-grid">
+      {jury.map((j) => (<div class="person-card"><div class="person-avatar">{j.ini}</div><div class="person-name">{j.name}</div><div class="person-role">{j.role}</div></div>))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="section" id="masterclasses">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Knowledge sharing</div><h2 class="section-title">Master-<span class="italic">classes</span>.</h2></div><a href="/en/participer#accreditation" class="btn-ghost">Get accredited →</a></div>
+    <div class="ateliers-grid">
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3>Documentary <span class="italic">directing</span></h3><p>Building a strong documentary narrative, with a guest director.</p><div class="atelier-meta"><span>Sat 14 Nov</span><span>All levels</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3>Screen<span class="italic">writing</span></h3><p>From synopsis to treatment for fiction and short film.</p><div class="atelier-meta"><span>Fri 13 Nov</span><span>Beginner</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Practical workshop</span><h3>2D <span class="italic">animation</span></h3><p>Animation techniques and making animated short films.</p><div class="atelier-meta"><span>Sat 14 Nov</span><span>Intermediate</span></div></div>
+    </div>
+  </section>
+
+  <section class="objectifs-section" id="affiche">
+    <div class="objectifs-inner">
+      <div class="affiche-wrap">
+        <div class="affiche-poster">{poster ? <img src={poster} alt="ZIFFA 2027 poster" /> : <span class="placeholder">ZIFFA<br />2027</span>}</div>
+        <div>
+          <div class="eyebrow"><span class="arrow">→</span> Visual identity</div>
+          <h2 class="section-title" style="color:var(--bg);">The <span class="yellow-highlight">poster</span>.</h2>
+          <p class="objectifs-tagline" style="margin:16px 0 28px;">The official 2027 poster will be unveiled soon.</p>
+          <a href="/en/contact#newsletter" class="nav-cta" style="background:var(--yellow);color:var(--green-deep);">Get notified ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,99 +1,103 @@
 ---
-// En-tête partagé. Le lien actif est déduit de l'URL courante.
-const path = Astro.url.pathname;
-const is = (p) => (path === p || path.startsWith(p + '/') ? 'active' : '');
+import { getLangFromUrl, useTranslations, lp, altPath } from '../i18n.js';
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const base = (Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/');
+const is = (p) => (base === p || base.startsWith(p + '/') ? 'active' : '');
+const L = (p) => lp(p, lang);
+const frHref = altPath(Astro.url, 'fr');
+const enHref = altPath(Astro.url, 'en');
 ---
 <div class="top-strip">
-  <div><span class="dot"></span>ÉDITION 2027 · INSCRIPTIONS OUVERTES</div>
+  <div><span class="dot"></span>{t('topstrip.edition')}</div>
   <div class="top-strip-right">
-    <a href="/contact#contact">Presse</a>
-    <a href="/contact#contact">Contact</a>
+    <a href={L('/contact') + '#contact'}>{t('nav.presse')}</a>
+    <a href={L('/contact') + '#contact'}>{t('footer.contact')}</a>
   </div>
 </div>
 
 <nav class="navbar">
-  <a href="/" class="logo" aria-label="ZIFFA - Retour à l'accueil">
+  <a href={L('/')} class="logo" aria-label="ZIFFA">
     <img src="/ziffa.png" alt="ZIFFA - Ziguinchor International Festival Film and Animation">
   </a>
 
-  <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
 
   <ul class="nav-links">
     <li class="nav-item">
-      <a class={`nav-link ${is('/le-ziffa')}`} href="/le-ziffa">Le ZIFFA <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/le-ziffa')}`} href={L('/le-ziffa')}>{t('nav.leziffa')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">— Découvrir le festival</div>
-        <a href="/le-ziffa#histoire">Histoire du Festival</a>
-        <a href="/le-ziffa#valeurs">Nos valeurs</a>
-        <a href="/le-ziffa#equipe">Équipe</a>
-        <a href="/le-ziffa#presse">Presse</a>
-        <a href="/le-ziffa#partenaires">Nos partenaires</a>
-        <a href="/le-ziffa#archives">Archives</a>
+        <div class="dropdown-header">{t('nav.dd.decouvrir')}</div>
+        <a href={L('/le-ziffa') + '#histoire'}>{t('nav.histoire')}</a>
+        <a href={L('/le-ziffa') + '#valeurs'}>{t('nav.valeurs')}</a>
+        <a href={L('/le-ziffa') + '#equipe'}>{t('nav.equipe')}</a>
+        <a href={L('/le-ziffa') + '#presse'}>{t('nav.presse')}</a>
+        <a href={L('/le-ziffa') + '#partenaires'}>{t('nav.partenaires')}</a>
+        <a href={L('/le-ziffa') + '#archives'}>{t('nav.archives')}</a>
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/a-lannee')}`} href="/a-lannee">À l'année <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/a-lannee')}`} href={L('/a-lannee')}>{t('nav.annee')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">— Formations permanentes</div>
-        <a href="/a-lannee#formation-doc">Formation documentaire</a>
-        <a href="/a-lannee#formation-anim">Formation animation</a>
+        <div class="dropdown-header">{t('nav.dd.formations')}</div>
+        <a href={L('/a-lannee') + '#formation-doc'}>{t('nav.formdoc')}</a>
+        <a href={L('/a-lannee') + '#formation-anim'}>{t('nav.formanim')}</a>
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/edition-2027')}`} href="/edition-2027">Édition 2027 <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/edition-2027')}`} href={L('/edition-2027')}>{t('nav.ed2027')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">— Prochaine édition</div>
-        <a href="/edition-2027#prix">Prix</a>
-        <a href="/edition-2027#programme">Programme</a>
-        <a href="/edition-2027#jury">Jury</a>
-        <a href="/edition-2027#masterclasses">Masterclasses</a>
-        <a href="/edition-2027#affiche">Affiche</a>
+        <div class="dropdown-header">{t('nav.dd.prochaine')}</div>
+        <a href={L('/edition-2027') + '#prix'}>{t('nav.prix')}</a>
+        <a href={L('/edition-2027') + '#programme'}>{t('nav.programme')}</a>
+        <a href={L('/edition-2027') + '#jury'}>{t('nav.jury')}</a>
+        <a href={L('/edition-2027') + '#masterclasses'}>{t('nav.masterclasses')}</a>
+        <a href={L('/edition-2027') + '#affiche'}>{t('nav.affiche')}</a>
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/edition-2025')}`} href="/edition-2025">Édition 2025 <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/edition-2025')}`} href={L('/edition-2025')}>{t('nav.ed2025')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">— Édition passée</div>
-        <a href="/edition-2025#images">En images</a>
-        <a href="/edition-2025#prix">Prix</a>
-        <a href="/edition-2025#programme">Programme</a>
-        <a href="/edition-2025#jury">Jury</a>
-        <a href="/edition-2025#masterclasses">Masterclasses</a>
-        <a href="/edition-2025#affiche">Affiche</a>
+        <div class="dropdown-header">{t('nav.dd.passee')}</div>
+        <a href={L('/edition-2025') + '#images'}>{t('nav.enimages')}</a>
+        <a href={L('/edition-2025') + '#prix'}>{t('nav.prix')}</a>
+        <a href={L('/edition-2025') + '#programme'}>{t('nav.programme')}</a>
+        <a href={L('/edition-2025') + '#jury'}>{t('nav.jury')}</a>
+        <a href={L('/edition-2025') + '#masterclasses'}>{t('nav.masterclasses')}</a>
+        <a href={L('/edition-2025') + '#affiche'}>{t('nav.affiche')}</a>
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/participer')}`} href="/participer">Participer <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/participer')}`} href={L('/participer')}>{t('nav.participer')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">— Rejoignez-nous</div>
-        <a href="/participer#inscription">Inscrire un film</a>
-        <a href="/participer#accreditation">S'accréditer</a>
-        <a href="/participer#partenariat">Devenir partenaire</a>
+        <div class="dropdown-header">{t('nav.dd.rejoindre')}</div>
+        <a href={L('/participer') + '#inscription'}>{t('nav.inscrire')}</a>
+        <a href={L('/participer') + '#accreditation'}>{t('nav.accrediter')}</a>
+        <a href={L('/participer') + '#partenariat'}>{t('nav.partenariat')}</a>
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/contact')}`} href="/contact">Infos <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/contact')}`} href={L('/contact')}>{t('nav.infos')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">— Nous contacter</div>
-        <a href="/contact#contact">Contacts</a>
-        <a href="/contact#newsletter">Newsletter</a>
+        <div class="dropdown-header">{t('nav.dd.contacter')}</div>
+        <a href={L('/contact') + '#contact'}>{t('nav.contacts')}</a>
+        <a href={L('/contact') + '#newsletter'}>{t('nav.newsletter')}</a>
       </div>
     </li>
   </ul>
 
   <div class="nav-right">
     <div class="lang-pill">
-      <a href="#" class="active">FR</a>
-      <a href="#">EN</a>
+      <a href={frHref} class={lang === 'fr' ? 'active' : ''}>FR</a>
+      <a href={enHref} class={lang === 'en' ? 'active' : ''}>EN</a>
     </div>
-    <a href="/participer#accreditation" class="nav-cta">S'accréditer ↗</a>
+    <a href={L('/participer') + '#accreditation'} class="nav-cta">{t('nav.accrediter')} ↗</a>
   </div>
 </nav>
 
 <script>
-  // Menu mobile (hamburger) + ouverture des sous-menus au tap.
   const toggle = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
   if (toggle && links) {
@@ -108,9 +112,7 @@ const is = (p) => (path === p || path.startsWith(p + '/') ? 'active' : '');
           const item = link.parentElement;
           if (!item.classList.contains('open')) {
             e.preventDefault();
-            document.querySelectorAll('.nav-item.open').forEach((o) => {
-              if (o !== item) o.classList.remove('open');
-            });
+            document.querySelectorAll('.nav-item.open').forEach((o) => { if (o !== item) o.classList.remove('open'); });
             item.classList.add('open');
           }
         }

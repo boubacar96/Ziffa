@@ -3244,3 +3244,74 @@
   .form-alert.show { display: block; }
   .form-alert.ok { background: rgba(42,107,63,0.12); color: var(--green-deep); border: 1px solid var(--green); }
   .form-alert.err { background: rgba(214,56,50,0.1); color: var(--red-deep); border: 1px solid var(--red); }
+
+  /* ===== FORMULAIRE INSCRIPTION — design moderne ===== */
+  .insc-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 980px) { .insc-layout { grid-template-columns: 1fr; } }
+
+  .insc-step {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 26px 28px 22px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .insc-step::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--accent, var(--red));
+  }
+  .insc-step:focus-within { border-color: var(--accent, var(--green)); box-shadow: 0 14px 34px rgba(26,24,20,0.08); }
+  .insc-step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .insc-step-num {
+    width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 18px;
+    background: var(--accent, var(--red)); color: var(--bg);
+  }
+  .insc-step-head h3 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px;
+    color: var(--green-deep); letter-spacing: -0.02em; line-height: 1.1;
+  }
+  .insc-step-head h3 small { display: block; font-family: 'Inter', sans-serif; font-weight: 400; font-size: 12px; color: var(--ink-muted); margin-top: 3px; }
+
+  /* Zones d'upload stylées */
+  .file-drop {
+    position: relative; border: 2px dashed var(--line); border-radius: 14px;
+    padding: 20px; text-align: center; background: var(--bg); cursor: pointer; transition: all 0.2s;
+  }
+  .file-drop:hover { border-color: var(--red); background: var(--paper); }
+  .file-drop input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .file-drop .fd-icon { font-size: 24px; }
+  .file-drop .fd-text { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+  .file-drop .fd-text b { color: var(--red); }
+  .file-drop.has-files { border-style: solid; border-color: var(--green); background: var(--paper); }
+  .fd-files { margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green-deep); line-height: 1.6; }
+
+  /* Panneau latéral infos */
+  .insc-aside {
+    position: sticky; top: 96px;
+    background: var(--green-deep); color: var(--bg);
+    border-radius: 22px; padding: 30px 28px; overflow: hidden;
+  }
+  .insc-aside::before {
+    content: ''; position: absolute; top: -120px; right: -100px; width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(242,183,24,0.18) 0%, transparent 70%); pointer-events: none;
+  }
+  .insc-aside-inner { position: relative; z-index: 2; }
+  .insc-aside .deadline {
+    background: rgba(245,240,228,0.08); border: 1px solid rgba(232,181,71,0.35);
+    border-radius: 16px; padding: 18px; margin-bottom: 22px;
+  }
+  .insc-aside .deadline-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--yellow); }
+  .insc-aside .deadline-date { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px; margin-top: 4px; letter-spacing: -0.02em; }
+  .insc-aside h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--yellow); margin: 22px 0 12px; }
+  .insc-checklist { list-style: none; }
+  .insc-checklist li { font-size: 14px; color: rgba(245,240,228,0.85); padding: 7px 0 7px 26px; position: relative; line-height: 1.45; }
+  .insc-checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--yellow); font-weight: 700; }
+  .insc-cats { display: flex; flex-wrap: wrap; gap: 8px; }
+  .insc-cat { background: rgba(245,240,228,0.08); border: 1px solid rgba(232,181,71,0.3); border-radius: 50px; padding: 6px 14px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .insc-aside .aside-contact { margin-top: 22px; font-size: 13px; color: rgba(245,240,228,0.7); line-height: 1.6; }
+  .insc-aside .aside-contact a { color: var(--yellow); }

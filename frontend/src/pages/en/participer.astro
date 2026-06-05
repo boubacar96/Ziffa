@@ -5,78 +5,98 @@ import Base from '../../layouts/Base.astro';
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; Take part</div>
-      <div class="eyebrow"><span class="arrow">→</span> Join us</div>
+      <div class="eyebrow"><span class="arrow">→</span> Call for films · 2027 Edition</div>
       <h1>Submit<br />your <span class="yellow">film</span>.</h1>
-      <p>Directors, producers, students — present your work to the 2027 jury.</p>
+      <p>Directors, producers, students — present your work to the ZIFFA international jury.</p>
     </div>
   </header>
 
   <section class="section" id="inscription">
-    <div class="section-head">
-      <div><div class="eyebrow"><span class="arrow">→</span> Call for films</div><h2 class="section-title">Submit a <span class="red">film</span>.</h2></div>
-    </div>
-    <p class="lead" style="margin-bottom:30px;">Fill in the form below. Your entry is sent directly to the festival team (<a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>).</p>
+    <div class="insc-layout">
+      <div class="insc-main">
+        <div id="insc-alert" class="form-alert"></div>
 
-    <div id="insc-alert" class="form-alert"></div>
+        <form id="insc-form" class="insc-form" enctype="multipart/form-data" novalidate>
+          <div class="hp"><label>Do not fill<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
 
-    <form id="insc-form" class="insc-form" enctype="multipart/form-data" novalidate>
-      <div class="hp"><label>Do not fill<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
-
-      <fieldset>
-        <legend>1 · The film</legend>
-        <div class="grid2">
-          <div class="field"><label>Film title <span class="req">*</span></label><input type="text" name="filmTitle" required /></div>
-          <div class="field"><label>Category <span class="req">*</span></label>
-            <select name="category" required>
-              <option value="">— Choose —</option>
-              <option>Fiction</option><option>Documentary</option><option>Animation</option><option>Short film</option>
-            </select>
+          <div class="insc-step" style="--accent: var(--red);">
+            <div class="insc-step-head"><span class="insc-step-num">1</span><h3>The film<small>General information</small></h3></div>
+            <div class="grid2">
+              <div class="field"><label>Film title <span class="req">*</span></label><input type="text" name="filmTitle" required /></div>
+              <div class="field"><label>Category <span class="req">*</span></label>
+                <select name="category" required><option value="">— Choose —</option><option>Fiction</option><option>Documentary</option><option>Animation</option><option>Short film</option></select>
+              </div>
+              <div class="field"><label>Country</label><input type="text" name="country" /></div>
+              <div class="field"><label>Production year</label><input type="text" name="productionYear" /></div>
+              <div class="field"><label>Duration</label><input type="text" name="duration" placeholder="e.g. 88 min" /></div>
+              <div class="field"><label>Language / subtitles</label><input type="text" name="language" /></div>
+            </div>
           </div>
-          <div class="field"><label>Country</label><input type="text" name="country" /></div>
-          <div class="field"><label>Production year</label><input type="text" name="productionYear" /></div>
-          <div class="field"><label>Duration</label><input type="text" name="duration" placeholder="e.g. 88 min" /></div>
-          <div class="field"><label>Language / subtitles</label><input type="text" name="language" /></div>
+
+          <div class="insc-step" style="--accent: var(--green);">
+            <div class="insc-step-head"><span class="insc-step-num">2</span><h3>Director & contact<small>Who is submitting?</small></h3></div>
+            <div class="grid2">
+              <div class="field"><label>Director <span class="req">*</span></label><input type="text" name="director" required /></div>
+              <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required /></div>
+              <div class="field"><label>Phone</label><input type="tel" name="phone" /></div>
+            </div>
+            <div class="field"><label>Director biography <span class="req">*</span></label><textarea name="directorBio" required></textarea><div class="insc-help"><span id="bio-count">0</span> / 500 words</div></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--yellow);">
+            <div class="insc-step-head"><span class="insc-step-num">3</span><h3>Viewing<small>Link to the film</small></h3></div>
+            <div class="grid2">
+              <div class="field"><label>Viewing link <span class="req">*</span></label><input type="url" name="viewingLink" placeholder="YouTube, Vimeo, Google Drive…" required /></div>
+              <div class="field"><label>Link password (if needed)</label><input type="text" name="viewingPassword" /></div>
+            </div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--orange);">
+            <div class="insc-step-head"><span class="insc-step-num">4</span><h3>Synopsis<small>Short and long</small></h3></div>
+            <div class="field"><label>Short synopsis <span class="req">*</span></label><textarea name="synopsisShort" required placeholder="2-3 sentences"></textarea></div>
+            <div class="field"><label>Long synopsis <span class="req">*</span></label><textarea name="synopsisLong" required style="min-height:140px"></textarea></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--red);">
+            <div class="insc-step-head"><span class="insc-step-num">5</span><h3>Documents<small>Sheet, photos & poster</small></h3></div>
+            <div class="field"><label>Technical sheet (PDF or Word)</label>
+              <div class="file-drop"><input type="file" name="technicalSheet" accept=".pdf,.doc,.docx" /><div class="fd-icon">📄</div><div class="fd-text"><b>Click</b> or drop a file · PDF/Word</div><div class="fd-files"></div></div>
+            </div>
+            <div class="field"><label>Film photos <span class="req">*</span> (min. 2, HD)</label>
+              <div class="file-drop"><input type="file" name="photos" accept="image/*" multiple required /><div class="fd-icon">🖼️</div><div class="fd-text"><b>Click</b> or drop · at least 2 images</div><div class="fd-files"></div></div>
+            </div>
+            <div class="field"><label>Film poster (if available)</label>
+              <div class="file-drop"><input type="file" name="poster" accept="image/*" /><div class="fd-icon">🎬</div><div class="fd-text"><b>Click</b> or drop the poster</div><div class="fd-files"></div></div>
+            </div>
+            <div class="insc-help">Total attachments: 22 MB max. For larger files, use the viewing link.</div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="insc-submit">Send my entry ↗</button>
+        </form>
+      </div>
+
+      <aside class="insc-aside">
+        <div class="insc-aside-inner">
+          <div class="deadline">
+            <div class="deadline-label">— Submission deadline</div>
+            <div class="deadline-date">15 September 2027</div>
+          </div>
+          <h4>Prepare</h4>
+          <ul class="insc-checklist">
+            <li>Completed entry form</li>
+            <li>Viewing link (with password if needed)</li>
+            <li>Technical sheet (PDF or Word)</li>
+            <li>Short & long synopsis</li>
+            <li>Director biography (max 500 words)</li>
+            <li>At least 2 HD photos</li>
+            <li>Film poster (if available)</li>
+          </ul>
+          <h4>Accepted categories</h4>
+          <div class="insc-cats"><span class="insc-cat">Fiction</span><span class="insc-cat">Documentary</span><span class="insc-cat">Animation</span><span class="insc-cat">Short film</span></div>
+          <div class="aside-contact">A question? <a href="mailto:festival@ziffa.sn">festival@ziffa.sn</a></div>
         </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>2 · Director & contact</legend>
-        <div class="grid2">
-          <div class="field"><label>Director <span class="req">*</span></label><input type="text" name="director" required /></div>
-          <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required /></div>
-          <div class="field"><label>Phone</label><input type="tel" name="phone" /></div>
-        </div>
-        <div class="field">
-          <label>Director biography <span class="req">*</span> (max 500 words)</label>
-          <textarea name="directorBio" required></textarea>
-          <div class="insc-help"><span id="bio-count">0</span> / 500 words</div>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>3 · Viewing</legend>
-        <div class="grid2">
-          <div class="field"><label>Viewing link <span class="req">*</span></label><input type="url" name="viewingLink" placeholder="YouTube, Vimeo, Google Drive…" required /></div>
-          <div class="field"><label>Link password (if needed)</label><input type="text" name="viewingPassword" /></div>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>4 · Synopsis</legend>
-        <div class="field"><label>Short synopsis <span class="req">*</span></label><textarea name="synopsisShort" required placeholder="2-3 sentences"></textarea></div>
-        <div class="field"><label>Long synopsis <span class="req">*</span></label><textarea name="synopsisLong" required style="min-height:140px"></textarea></div>
-      </fieldset>
-
-      <fieldset>
-        <legend>5 · Documents</legend>
-        <div class="field"><label>Technical sheet (PDF or Word)</label><input type="file" name="technicalSheet" accept=".pdf,.doc,.docx" /></div>
-        <div class="field"><label>Film photos <span class="req">*</span> (min. 2, HD)</label><input type="file" name="photos" accept="image/*" multiple required /></div>
-        <div class="field"><label>Film poster (if available)</label><input type="file" name="poster" accept="image/*" /></div>
-        <div class="insc-help">Total attachments: 22 MB max. For larger files, use the viewing link.</div>
-      </fieldset>
-
-      <button type="submit" class="submit-btn" id="insc-submit">Send my entry ↗</button>
-    </form>
+      </aside>
+    </div>
   </section>
 
   <section class="section" id="accreditation" style="padding-top:0;">
@@ -96,12 +116,13 @@ import Base from '../../layouts/Base.astro';
   const submitBtn = document.getElementById('insc-submit');
   const bio = form?.querySelector('textarea[name="directorBio"]');
   const bioCount = document.getElementById('bio-count');
-  function words(s) { return (s.trim().match(/\S+/g) || []).length; }
-  if (bio && bioCount) {
-    const upd = () => { const n = words(bio.value); bioCount.textContent = n; bioCount.parentElement.classList.toggle('warn', n > 500); };
-    bio.addEventListener('input', upd); upd();
-  }
-  function showAlert(type, msg) { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  const words = (s) => (s.trim().match(/\S+/g) || []).length;
+  if (bio && bioCount) { const upd = () => { const n = words(bio.value); bioCount.textContent = n; bioCount.parentElement.classList.toggle('warn', n > 500); }; bio.addEventListener('input', upd); upd(); }
+  document.querySelectorAll('.file-drop input[type="file"]').forEach((input) => {
+    const drop = input.closest('.file-drop'); const list = drop.querySelector('.fd-files');
+    input.addEventListener('change', () => { const names = Array.from(input.files).map((f) => f.name); list.textContent = names.join(' · '); drop.classList.toggle('has-files', names.length > 0); });
+  });
+  const showAlert = (type, msg) => { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form.checkValidity()) { showAlert('err', 'Please fill in all required fields (*).'); return; }
@@ -111,7 +132,7 @@ import Base from '../../layouts/Base.astro';
     try {
       const res = await fetch('/api/film-submission', { method: 'POST', body: new FormData(form) });
       const data = await res.json();
-      if (data.ok) { showAlert('ok', '✅ Thank you! Your entry has been sent to the festival team. You will receive a reply by email.'); form.reset(); if (bioCount) bioCount.textContent = '0'; }
+      if (data.ok) { showAlert('ok', '✅ Thank you! Your entry has been sent to the festival team. You will receive a reply by email.'); form.reset(); if (bioCount) bioCount.textContent = '0'; document.querySelectorAll('.file-drop').forEach(d => { d.classList.remove('has-files'); d.querySelector('.fd-files').textContent = ''; }); }
       else { showAlert('err', '⚠️ ' + (data.error || 'An error occurred.')); }
     } catch (err) { showAlert('err', '⚠️ Submission failed. Check your connection and try again.'); }
     finally { submitBtn.disabled = false; submitBtn.textContent = original; }

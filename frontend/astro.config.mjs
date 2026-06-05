@@ -9,6 +9,9 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   server: { host: true, port: 4321 },
+  // Le contrôle d'origine d'Astro casse derrière le reverse proxy (décalage http/https)
+  // et bloque le POST du formulaire (403). Formulaire public sans session -> on le désactive.
+  security: { checkOrigin: false },
   i18n: {
     defaultLocale: 'fr',
     locales: ['fr', 'en'],

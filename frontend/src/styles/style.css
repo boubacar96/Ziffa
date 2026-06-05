@@ -3201,3 +3201,46 @@
   }
   .notfound h1 .yellow { color: var(--yellow); }
   .notfound p { color: rgba(245, 240, 228, 0.8); font-size: 18px; margin-bottom: 32px; }
+
+  /* ===== FORMULAIRE D'INSCRIPTION FILM ===== */
+  .insc-form { max-width: 880px; }
+  .insc-form fieldset {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin: 0 0 18px;
+  }
+  .insc-form legend {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--red); padding: 0 8px;
+  }
+  .insc-form .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .insc-form .grid2 { grid-template-columns: 1fr; } }
+  .insc-form .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .insc-form label { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-muted); }
+  .insc-form label .req { color: var(--red); }
+  .insc-form input, .insc-form textarea, .insc-form select {
+    width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+    padding: 13px 16px; font-family: inherit; font-size: 15px; color: var(--green-deep); outline: none;
+    transition: border-color 0.2s;
+  }
+  .insc-form input:focus, .insc-form textarea:focus, .insc-form select:focus { border-color: var(--red); }
+  .insc-form textarea { min-height: 90px; resize: vertical; }
+  .insc-form input[type="file"] { padding: 10px; background: var(--bg); cursor: pointer; }
+  .insc-help { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
+  .insc-help.warn { color: var(--red); }
+  .insc-form .submit-btn {
+    background: var(--red); color: var(--bg); border: none; border-radius: 50px;
+    padding: 16px 30px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s, transform 0.2s; width: auto;
+  }
+  .insc-form .submit-btn:hover { background: var(--green-deep); transform: translateY(-2px); }
+  .insc-form .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .form-alert {
+    padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; font-size: 14px; line-height: 1.5; display: none;
+  }
+  .form-alert.show { display: block; }
+  .form-alert.ok { background: rgba(42,107,63,0.12); color: var(--green-deep); border: 1px solid var(--green); }
+  .form-alert.err { background: rgba(214,56,50,0.1); color: var(--red-deep); border: 1px solid var(--red); }

@@ -1,24 +1,158 @@
 ---
 import Base from '../layouts/Base.astro';
-// TODO (migration) : porter le contenu de la page statique de référence
-//   ../../../participer.html
-// en réutilisant les composants/classes existants, et brancher les parties
-// dynamiques sur Strapi (cf. src/lib/strapi.js et l'exemple dans index.astro).
 ---
-<Base title="Participer — Inscrire, s'accréditer, partenariat | ZIFFA" description="Rejoignez-nous — ZIFFA.">
+<Base title="Participer — Inscrire un film | ZIFFA" description="Inscrivez votre film au ZIFFA 2027 : formulaire, lien de visionnage, fiche technique, synopsis, biographie et photos.">
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Participer</div>
       <div class="eyebrow"><span class="arrow">→</span> Rejoignez-nous</div>
-      <h1>Faites partie du <span class="yellow">ZIFFA</span>.</h1>
-      <p>Page en cours de migration vers Astro. Le contenu de référence existe
-         déjà dans <code>participer.html</code> (site statique) et sera porté ici.</p>
+      <h1>Inscrivez<br />votre <span class="yellow">film</span>.</h1>
+      <p>Réalisateurs, producteurs, étudiants — présentez votre œuvre devant le jury de l'édition 2027.</p>
     </div>
   </header>
 
-  <section class="section">
-    <p class="lead">Section à porter : reprends le balisage de <code>participer.html</code>
-       et remplace les contenus fixes par des appels Strapi quand c'est pertinent
-       (films, programme, jury, prix, partenaires, articles…).</p>
+  <!-- ===== INSCRIPTION FILM ===== -->
+  <section class="section" id="inscription">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="arrow">→</span> Appel à films</div>
+        <h2 class="section-title">Soumettre un <span class="red">film</span>.</h2>
+      </div>
+    </div>
+    <p class="lead" style="margin-bottom:30px;">Remplissez le formulaire ci-dessous. Votre dossier est envoyé directement à l'équipe du festival (<a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>).</p>
+
+    <div id="insc-alert" class="form-alert"></div>
+
+    <form id="insc-form" class="insc-form" enctype="multipart/form-data" novalidate>
+      <!-- Honeypot anti-spam -->
+      <div class="hp"><label>Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+      <fieldset>
+        <legend>1 · Le film</legend>
+        <div class="grid2">
+          <div class="field"><label>Titre du film <span class="req">*</span></label><input type="text" name="filmTitle" required /></div>
+          <div class="field"><label>Catégorie <span class="req">*</span></label>
+            <select name="category" required>
+              <option value="">— Choisir —</option>
+              <option>Fiction</option><option>Documentaire</option><option>Animation</option><option>Court-métrage</option>
+            </select>
+          </div>
+          <div class="field"><label>Pays</label><input type="text" name="country" /></div>
+          <div class="field"><label>Année de production</label><input type="text" name="productionYear" /></div>
+          <div class="field"><label>Durée</label><input type="text" name="duration" placeholder="ex. 88 min" /></div>
+          <div class="field"><label>Langue / sous-titres</label><input type="text" name="language" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2 · Réalisateur & contact</legend>
+        <div class="grid2">
+          <div class="field"><label>Réalisateur <span class="req">*</span></label><input type="text" name="director" required /></div>
+          <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required /></div>
+          <div class="field"><label>Téléphone</label><input type="tel" name="phone" /></div>
+        </div>
+        <div class="field">
+          <label>Biographie du réalisateur <span class="req">*</span> (max 500 mots)</label>
+          <textarea name="directorBio" required></textarea>
+          <div class="insc-help"><span id="bio-count">0</span> / 500 mots</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3 · Visionnage</legend>
+        <div class="grid2">
+          <div class="field"><label>Lien de visionnage <span class="req">*</span></label><input type="url" name="viewingLink" placeholder="YouTube, Vimeo, Google Drive…" required /></div>
+          <div class="field"><label>Mot de passe du lien (si nécessaire)</label><input type="text" name="viewingPassword" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>4 · Synopsis</legend>
+        <div class="field"><label>Synopsis court <span class="req">*</span></label><textarea name="synopsisShort" required placeholder="2-3 phrases"></textarea></div>
+        <div class="field"><label>Synopsis long <span class="req">*</span></label><textarea name="synopsisLong" required style="min-height:140px"></textarea></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>5 · Documents</legend>
+        <div class="field">
+          <label>Fiche technique (PDF ou Word)</label>
+          <input type="file" name="technicalSheet" accept=".pdf,.doc,.docx" />
+        </div>
+        <div class="field">
+          <label>Photos du film <span class="req">*</span> (min. 2, HD)</label>
+          <input type="file" name="photos" accept="image/*" multiple required />
+        </div>
+        <div class="field">
+          <label>Affiche du film (si disponible)</label>
+          <input type="file" name="poster" accept="image/*" />
+        </div>
+        <div class="insc-help">Total des fichiers joints : 22 Mo max. Pour des fichiers plus lourds, utilisez le lien de visionnage.</div>
+      </fieldset>
+
+      <button type="submit" class="submit-btn" id="insc-submit">Envoyer mon inscription ↗</button>
+    </form>
+  </section>
+
+  <!-- ===== ACCRÉDITATION (à venir) ===== -->
+  <section class="section" id="accreditation" style="padding-top:0;">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Accréditation professionnelle</div><h2 class="section-title">S'<span class="italic">accréditer</span>.</h2></div></div>
+    <p class="lead">Le formulaire d'accréditation (presse & professionnels) arrive prochainement. En attendant, écrivez à <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
+  </section>
+
+  <!-- ===== DEVENIR PARTENAIRE ===== -->
+  <section class="section" id="partenariat" style="padding-top:0;">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Devenir partenaire</div><h2 class="section-title">Soutenez le <span class="red">festival</span>.</h2></div></div>
+    <p class="lead">Institutions, entreprises, mécènes : associez votre image au festival. Contactez l'équipe à <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
   </section>
 </Base>
+
+<script>
+  const form = document.getElementById('insc-form');
+  const alertBox = document.getElementById('insc-alert');
+  const submitBtn = document.getElementById('insc-submit');
+  const bio = form?.querySelector('textarea[name="directorBio"]');
+  const bioCount = document.getElementById('bio-count');
+
+  function words(s) { return (s.trim().match(/\S+/g) || []).length; }
+  if (bio && bioCount) {
+    const upd = () => {
+      const n = words(bio.value);
+      bioCount.textContent = n;
+      bioCount.parentElement.classList.toggle('warn', n > 500);
+    };
+    bio.addEventListener('input', upd); upd();
+  }
+
+  function showAlert(type, msg) {
+    alertBox.className = 'form-alert show ' + type;
+    alertBox.textContent = msg;
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // Validations côté client
+    if (!form.checkValidity()) { showAlert('err', 'Merci de remplir tous les champs obligatoires (*).'); return; }
+    const photos = form.querySelector('input[name="photos"]').files;
+    if (photos.length < 2) { showAlert('err', 'Merci de joindre au moins 2 photos du film.'); return; }
+    if (words(bio.value) > 500) { showAlert('err', 'La biographie dépasse 500 mots.'); return; }
+
+    submitBtn.disabled = true;
+    const original = submitBtn.textContent;
+    submitBtn.textContent = 'Envoi en cours…';
+    try {
+      const res = await fetch('/api/film-submission', { method: 'POST', body: new FormData(form) });
+      const data = await res.json();
+      if (data.ok) {
+        showAlert('ok', '✅ Merci ! Votre inscription a bien été envoyée à l\'équipe du festival. Vous recevrez une réponse par email.');
+        form.reset(); if (bioCount) bioCount.textContent = '0';
+      } else {
+        showAlert('err', '⚠️ ' + (data.error || 'Une erreur est survenue.'));
+      }
+    } catch (err) {
+      showAlert('err', '⚠️ Échec de l\'envoi. Vérifiez votre connexion et réessayez.');
+    } finally {
+      submitBtn.disabled = false; submitBtn.textContent = original;
+    }
+  });
+</script>

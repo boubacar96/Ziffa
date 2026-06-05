@@ -48,6 +48,14 @@ services:
       PUBLIC_STRAPI_URL: https://${ADMIN_DOMAIN}
       HOST: 0.0.0.0
       PORT: "4321"
+      # SMTP pour l'envoi des inscriptions (formulaire "Inscrire un film")
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_TO: ${MAIL_TO:-festival@ziffa.sn}
+      MAIL_FROM: ${MAIL_FROM:-ZIFFA <no-reply@ziffa.sn>}
     depends_on:
       - cms
     networks: [internal, web]

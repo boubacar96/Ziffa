@@ -1,18 +1,119 @@
 ---
 import Base from '../../layouts/Base.astro';
 ---
-<Base title="Take part | ZIFFA" description="Take part in ZIFFA 2027: submit a film, get accredited, become a partner.">
+<Base title="Take part — Submit a film | ZIFFA" description="Submit your film to ZIFFA 2027: form, viewing link, technical sheet, synopsis, biography and photos.">
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; Take part</div>
       <div class="eyebrow"><span class="arrow">→</span> Join us</div>
-      <h1>Be part of<br />the <span class="yellow">ZIFFA</span>.</h1>
-      <p>Filmmakers, professionals, journalists and partners: three ways to take part in the 2027 edition.</p>
+      <h1>Submit<br />your <span class="yellow">film</span>.</h1>
+      <p>Directors, producers, students — present your work to the 2027 jury.</p>
     </div>
   </header>
+
   <section class="section" id="inscription">
-    <p class="lead">Film submission, accreditation and partnership forms — coming soon. In the meantime, reach us via the <a href="/en/contact#contact" style="color:var(--red);">Contact</a> page.</p>
+    <div class="section-head">
+      <div><div class="eyebrow"><span class="arrow">→</span> Call for films</div><h2 class="section-title">Submit a <span class="red">film</span>.</h2></div>
+    </div>
+    <p class="lead" style="margin-bottom:30px;">Fill in the form below. Your entry is sent directly to the festival team (<a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>).</p>
+
+    <div id="insc-alert" class="form-alert"></div>
+
+    <form id="insc-form" class="insc-form" enctype="multipart/form-data" novalidate>
+      <div class="hp"><label>Do not fill<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+      <fieldset>
+        <legend>1 · The film</legend>
+        <div class="grid2">
+          <div class="field"><label>Film title <span class="req">*</span></label><input type="text" name="filmTitle" required /></div>
+          <div class="field"><label>Category <span class="req">*</span></label>
+            <select name="category" required>
+              <option value="">— Choose —</option>
+              <option>Fiction</option><option>Documentary</option><option>Animation</option><option>Short film</option>
+            </select>
+          </div>
+          <div class="field"><label>Country</label><input type="text" name="country" /></div>
+          <div class="field"><label>Production year</label><input type="text" name="productionYear" /></div>
+          <div class="field"><label>Duration</label><input type="text" name="duration" placeholder="e.g. 88 min" /></div>
+          <div class="field"><label>Language / subtitles</label><input type="text" name="language" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2 · Director & contact</legend>
+        <div class="grid2">
+          <div class="field"><label>Director <span class="req">*</span></label><input type="text" name="director" required /></div>
+          <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required /></div>
+          <div class="field"><label>Phone</label><input type="tel" name="phone" /></div>
+        </div>
+        <div class="field">
+          <label>Director biography <span class="req">*</span> (max 500 words)</label>
+          <textarea name="directorBio" required></textarea>
+          <div class="insc-help"><span id="bio-count">0</span> / 500 words</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3 · Viewing</legend>
+        <div class="grid2">
+          <div class="field"><label>Viewing link <span class="req">*</span></label><input type="url" name="viewingLink" placeholder="YouTube, Vimeo, Google Drive…" required /></div>
+          <div class="field"><label>Link password (if needed)</label><input type="text" name="viewingPassword" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>4 · Synopsis</legend>
+        <div class="field"><label>Short synopsis <span class="req">*</span></label><textarea name="synopsisShort" required placeholder="2-3 sentences"></textarea></div>
+        <div class="field"><label>Long synopsis <span class="req">*</span></label><textarea name="synopsisLong" required style="min-height:140px"></textarea></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>5 · Documents</legend>
+        <div class="field"><label>Technical sheet (PDF or Word)</label><input type="file" name="technicalSheet" accept=".pdf,.doc,.docx" /></div>
+        <div class="field"><label>Film photos <span class="req">*</span> (min. 2, HD)</label><input type="file" name="photos" accept="image/*" multiple required /></div>
+        <div class="field"><label>Film poster (if available)</label><input type="file" name="poster" accept="image/*" /></div>
+        <div class="insc-help">Total attachments: 22 MB max. For larger files, use the viewing link.</div>
+      </fieldset>
+
+      <button type="submit" class="submit-btn" id="insc-submit">Send my entry ↗</button>
+    </form>
   </section>
-  <section class="section" id="accreditation"></section>
-  <section class="section" id="partenariat"></section>
+
+  <section class="section" id="accreditation" style="padding-top:0;">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Professional accreditation</div><h2 class="section-title">Get <span class="italic">accredited</span>.</h2></div></div>
+    <p class="lead">The accreditation form (press & professionals) is coming soon. Meanwhile, write to <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
+  </section>
+
+  <section class="section" id="partenariat" style="padding-top:0;">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Become a partner</div><h2 class="section-title">Support the <span class="red">festival</span>.</h2></div></div>
+    <p class="lead">Institutions, companies, patrons: associate your brand with the festival. Contact the team at <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
+  </section>
 </Base>
+
+<script>
+  const form = document.getElementById('insc-form');
+  const alertBox = document.getElementById('insc-alert');
+  const submitBtn = document.getElementById('insc-submit');
+  const bio = form?.querySelector('textarea[name="directorBio"]');
+  const bioCount = document.getElementById('bio-count');
+  function words(s) { return (s.trim().match(/\S+/g) || []).length; }
+  if (bio && bioCount) {
+    const upd = () => { const n = words(bio.value); bioCount.textContent = n; bioCount.parentElement.classList.toggle('warn', n > 500); };
+    bio.addEventListener('input', upd); upd();
+  }
+  function showAlert(type, msg) { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) { showAlert('err', 'Please fill in all required fields (*).'); return; }
+    if (form.querySelector('input[name="photos"]').files.length < 2) { showAlert('err', 'Please attach at least 2 film photos.'); return; }
+    if (words(bio.value) > 500) { showAlert('err', 'The biography exceeds 500 words.'); return; }
+    submitBtn.disabled = true; const original = submitBtn.textContent; submitBtn.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/film-submission', { method: 'POST', body: new FormData(form) });
+      const data = await res.json();
+      if (data.ok) { showAlert('ok', '✅ Thank you! Your entry has been sent to the festival team. You will receive a reply by email.'); form.reset(); if (bioCount) bioCount.textContent = '0'; }
+      else { showAlert('err', '⚠️ ' + (data.error || 'An error occurred.')); }
+    } catch (err) { showAlert('err', '⚠️ Submission failed. Check your connection and try again.'); }
+    finally { submitBtn.disabled = false; submitBtn.textContent = original; }
+  });
+</script>

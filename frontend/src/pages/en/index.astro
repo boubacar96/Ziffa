@@ -150,10 +150,15 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
     <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Supporters & Partners</div>
     <h2 class="section-title" style="margin:16px auto 0;max-width:700px;">They <span class="red">support</span><br />ZIFFA.</h2>
     <p class="partners-intro">The festival is made possible thanks to institutions and partners committed to African cinema.</p>
-    <div class="partners-grid">
-      {partners.map((p) => (
-        <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>{p.logo && <img src={p.logo} alt={p.name} />}<span class="partner-logo-name">{p.name}</span></a>
-      ))}
+    <div class="partners-marquee">
+      <div class="partners-marquee-track">
+        {partners.map((p) => (
+          <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>{p.logo && <img src={p.logo} alt={p.name} />}<span class="partner-logo-name">{p.name}</span></a>
+        ))}
+        {partners.map((p) => (
+          <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name} aria-hidden="true" tabindex="-1">{p.logo && <img src={p.logo} alt="" />}<span class="partner-logo-name">{p.name}</span></a>
+        ))}
+      </div>
     </div>
     <a href="/en/participer#partenariat" class="btn-ghost">Become a partner →</a>
   </section>

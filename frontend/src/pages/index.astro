@@ -236,13 +236,21 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Soutiens & Partenaires</div>
     <h2 class="section-title" style="margin:16px auto 0;max-width:700px;">Ils <span class="red">accompagnent</span><br />le ZIFFA.</h2>
     <p class="partners-intro">Le festival est rendu possible grâce au soutien d'institutions et de partenaires engagés pour le cinéma africain.</p>
-    <div class="partners-grid">
-      {partners.map((p) => (
-        <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>
-          {p.logo && <img src={p.logo} alt={p.name} />}
-          <span class="partner-logo-name">{p.name}</span>
-        </a>
-      ))}
+    <div class="partners-marquee">
+      <div class="partners-marquee-track">
+        {partners.map((p) => (
+          <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>
+            {p.logo && <img src={p.logo} alt={p.name} />}
+            <span class="partner-logo-name">{p.name}</span>
+          </a>
+        ))}
+        {partners.map((p) => (
+          <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name} aria-hidden="true" tabindex="-1">
+            {p.logo && <img src={p.logo} alt="" />}
+            <span class="partner-logo-name">{p.name}</span>
+          </a>
+        ))}
+      </div>
     </div>
     <a href="/participer#partenariat" class="btn-ghost">Devenir partenaire →</a>
   </section>

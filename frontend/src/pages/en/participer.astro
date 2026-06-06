@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import UnderConstruction from '../../components/UnderConstruction.astro';
 ---
 <Base title="Take part — Submit a film | ZIFFA" description="Submit your film to ZIFFA 2027: form, viewing link, technical sheet, synopsis, biography and photos.">
   <header class="page-hero">
@@ -99,15 +100,8 @@ import Base from '../../layouts/Base.astro';
     </div>
   </section>
 
-  <section class="section" id="accreditation" style="padding-top:0;">
-    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Professional accreditation</div><h2 class="section-title">Get <span class="italic">accredited</span>.</h2></div></div>
-    <p class="lead">The accreditation form (press & professionals) is coming soon. Meanwhile, write to <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
-  </section>
-
-  <section class="section" id="partenariat" style="padding-top:0;">
-    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Become a partner</div><h2 class="section-title">Support the <span class="red">festival</span>.</h2></div></div>
-    <p class="lead">Institutions, companies, patrons: associate your brand with the festival. Contact the team at <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
-  </section>
+  <UnderConstruction id="accreditation" eyebrow="Professional accreditation" />
+  <UnderConstruction id="partenariat" eyebrow="Become a partner" />
 </Base>
 
 <script>

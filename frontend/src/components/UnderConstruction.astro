@@ -1,0 +1,22 @@
+---
+import { getLangFromUrl, lp } from '../i18n.js';
+const lang = getLangFromUrl(Astro.url);
+const { id, eyebrow } = Astro.props;
+const t =
+  lang === 'en'
+    ? { eb: eyebrow || 'Coming soon', h: 'Under', hr: 'construction', p: 'This section is being prepared and will be available very soon.', home: 'Back to home', mail: 'Email us' }
+    : { eb: eyebrow || 'Bientôt disponible', h: 'Page en', hr: 'construction', p: 'Cette section est en cours de préparation. Elle sera disponible très prochainement.', home: "Retour à l'accueil", mail: 'Nous écrire' };
+---
+<section class="section uc" id={id}>
+  <div class="uc-inner">
+    <div class="uc-badge">🚧</div>
+    <div class="eyebrow"><span class="arrow">→</span> {t.eb}</div>
+    <h2>{t.h} <span class="red">{t.hr}</span>.</h2>
+    <p>{t.p}</p>
+    <div class="uc-actions">
+      <a href={lp('/', lang)} class="nav-cta">{t.home} ↗</a>
+      <a href="mailto:festival@ziffa.sn" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">{t.mail} →</a>
+    </div>
+    <div class="uc-bar"><span></span></div>
+  </div>
+</section>

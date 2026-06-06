@@ -3315,3 +3315,24 @@
   .insc-cat { background: rgba(245,240,228,0.08); border: 1px solid rgba(232,181,71,0.3); border-radius: 50px; padding: 6px 14px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
   .insc-aside .aside-contact { margin-top: 22px; font-size: 13px; color: rgba(245,240,228,0.7); line-height: 1.6; }
   .insc-aside .aside-contact a { color: var(--yellow); }
+
+  /* ===== BLOC "EN CONSTRUCTION" ===== */
+  .uc { text-align: center; }
+  .uc-inner { max-width: 640px; margin: 0 auto; }
+  .uc-badge {
+    width: 92px; height: 92px; border-radius: 50%; margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center; font-size: 42px;
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    box-shadow: 0 12px 30px rgba(232,122,31,0.25);
+  }
+  .uc .eyebrow { justify-content: center; }
+  .uc h2 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
+    font-size: clamp(32px, 5vw, 52px); letter-spacing: -0.03em; line-height: 1;
+    color: var(--green-deep); margin: 12px 0 14px;
+  }
+  .uc h2 .red { color: var(--red); }
+  .uc p { font-size: 18px; color: var(--ink-soft); line-height: 1.6; margin: 0 auto 28px; max-width: 480px; }
+  .uc-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .uc-bar { max-width: 320px; margin: 34px auto 0; height: 8px; border-radius: 50px; background: var(--bg-2); overflow: hidden; }
+  .uc-bar span { display: block; height: 100%; width: 55%; background: linear-gradient(90deg, var(--red), var(--yellow)); border-radius: 50px; }

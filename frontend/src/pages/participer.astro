@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import UnderConstruction from '../components/UnderConstruction.astro';
 ---
 <Base title="Participer — Inscrire un film | ZIFFA" description="Inscrivez votre film au ZIFFA 2027 : formulaire, lien de visionnage, fiche technique, synopsis, biographie et photos.">
   <header class="page-hero">
@@ -101,15 +102,8 @@ import Base from '../layouts/Base.astro';
     </div>
   </section>
 
-  <section class="section" id="accreditation" style="padding-top:0;">
-    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Accréditation professionnelle</div><h2 class="section-title">S'<span class="italic">accréditer</span>.</h2></div></div>
-    <p class="lead">Le formulaire d'accréditation (presse & professionnels) arrive prochainement. En attendant, écrivez à <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
-  </section>
-
-  <section class="section" id="partenariat" style="padding-top:0;">
-    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Devenir partenaire</div><h2 class="section-title">Soutenez le <span class="red">festival</span>.</h2></div></div>
-    <p class="lead">Institutions, entreprises, mécènes : associez votre image au festival. Contactez l'équipe à <a href="mailto:festival@ziffa.sn" style="color:var(--red)">festival@ziffa.sn</a>.</p>
-  </section>
+  <UnderConstruction id="accreditation" eyebrow="Accréditation professionnelle" />
+  <UnderConstruction id="partenariat" eyebrow="Devenir partenaire" />
 </Base>
 
 <script>

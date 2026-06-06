@@ -1,24 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
-// TODO (migration) : porter le contenu de la page statique de référence
-//   ../../../contact.html
-// en réutilisant les composants/classes existants, et brancher les parties
-// dynamiques sur Strapi (cf. src/lib/strapi.js et l'exemple dans index.astro).
+import UnderConstruction from '../components/UnderConstruction.astro';
 ---
-<Base title="Contact & Infos | ZIFFA" description="Nous contacter — ZIFFA.">
+<Base title="Contact & Infos | ZIFFA" description="Contactez l'équipe du ZIFFA.">
   <header class="page-hero">
     <div class="page-hero-inner">
-      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Contact & Infos</div>
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Infos</div>
       <div class="eyebrow"><span class="arrow">→</span> Nous contacter</div>
       <h1>On vous <span class="yellow">répond</span>.</h1>
-      <p>Page en cours de migration vers Astro. Le contenu de référence existe
-         déjà dans <code>contact.html</code> (site statique) et sera porté ici.</p>
+      <p>Une question sur la programmation, la presse, les partenariats ou les inscriptions ? Écrivez-nous.</p>
     </div>
   </header>
-
-  <section class="section">
-    <p class="lead">Section à porter : reprends le balisage de <code>contact.html</code>
-       et remplace les contenus fixes par des appels Strapi quand c'est pertinent
-       (films, programme, jury, prix, partenaires, articles…).</p>
-  </section>
+  <UnderConstruction id="contact" eyebrow="Page Contact" />
 </Base>

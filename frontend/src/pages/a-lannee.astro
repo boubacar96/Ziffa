@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import UnderConstruction from '../components/UnderConstruction.astro';
 import { fetchAPI, mediaUrl } from '../lib/strapi.js';
 
 // Formations depuis Strapi (type `formation`), avec repli.
@@ -30,7 +31,7 @@ const formationAnim = {
     </div>
   </header>
 
-  <section class="section">
+  <section class="section" id="formations">
     <p class="lead" style="margin-bottom:50px;">Ouvertes aux jeunes de la région, ces formations allient théorie et pratique, encadrées par des professionnels. Candidatures sur dossier via la page <a href="/contact#contact" style="color:var(--red);">Contact</a>.</p>
     <div class="ateliers-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
       <div class="atelier-card" id="formation-doc">
@@ -65,4 +66,6 @@ const formationAnim = {
       </div>
     </div>
   </section>
+
+  <UnderConstruction id="expo-photo" eyebrow="Expo photo" />
 </Base>

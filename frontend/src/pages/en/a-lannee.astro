@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import UnderConstruction from '../../components/UnderConstruction.astro';
 import { fetchAPI } from '../../lib/strapi.js';
 
 const fRes = await fetchAPI('formations', { populate: 'image' });
@@ -27,7 +28,7 @@ const formationAnim = {
     </div>
   </header>
 
-  <section class="section">
+  <section class="section" id="formations">
     <p class="lead" style="margin-bottom:50px;">Open to the region's youth, these trainings combine theory and practice, led by professionals. Applications by file via the <a href="/en/contact#contact" style="color:var(--red);">Contact</a> page.</p>
     <div class="ateliers-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
       <div class="atelier-card" id="formation-doc">
@@ -62,4 +63,6 @@ const formationAnim = {
       </div>
     </div>
   </section>
+
+  <UnderConstruction id="expo-photo" eyebrow="Photo exhibition" />
 </Base>

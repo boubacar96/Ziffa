@@ -41,9 +41,9 @@ const enHref = altPath(Astro.url, 'en');
     <li class="nav-item">
       <a class={`nav-link ${is('/a-lannee')}`} href={L('/a-lannee')}>{t('nav.annee')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">{t('nav.dd.formations')}</div>
-        <a href={L('/a-lannee') + '#formation-doc'}>{t('nav.formdoc')}</a>
-        <a href={L('/a-lannee') + '#formation-anim'}>{t('nav.formanim')}</a>
+        <div class="dropdown-header">{t('nav.dd.annee')}</div>
+        <a href={L('/a-lannee') + '#formations'}>{t('nav.formations')}</a>
+        <a href={L('/a-lannee') + '#expo-photo'}>{t('nav.expophoto')}</a>
       </div>
     </li>
     <li class="nav-item">

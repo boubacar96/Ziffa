@@ -98,14 +98,8 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
 
   <section class="countdown-section">
     <div class="countdown-inner">
-      <div class="eyebrow"><span class="arrow">→</span> Opening 17 November 2027 · Ziguinchor</div>
-      <h2 class="section-title">Only a <span class="yellow">few days</span> left.</h2>
-      <div class="countdown" id="countdown" data-target={festivalTarget}>
-        <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Days</span></div>
-        <div class="cd-box"><span class="cd-num" data-cd="hours">—</span><span class="cd-label">Hours</span></div>
-        <div class="cd-box"><span class="cd-num" data-cd="mins">—</span><span class="cd-label">Minutes</span></div>
-        <div class="cd-box"><span class="cd-num" data-cd="secs">—</span><span class="cd-label">Seconds</span></div>
-      </div>
+      <div class="eyebrow"><span class="arrow">→</span> Next edition · Ziguinchor</div>
+      <h2 class="section-title">See you in <span class="yellow">2027</span>.</h2>
     </div>
   </section>
 
@@ -131,20 +125,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
     </div>
   </section>
 
-  <section class="programme-section">
-    <div class="programme-inner">
-      <div style="text-align:center;margin-bottom:30px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme · 2027 Edition</div><h2 class="section-title" style="margin:12px auto;text-align:center;">Four days<br />of <span class="red">highlights</span>.</h2></div>
-      {events.map((ev) => (
-        <div class="programme-event" data-type={ev.type}>
-          <div class="programme-event-time">{ev.time}</div>
-          <div class="programme-event-info"><h4>{ev.title}</h4><p>{ev.desc}</p></div>
-          <div class="programme-event-location"><span class={`programme-event-type event-type-${ev.type}`}>{typeLabel[ev.type] || ev.type}</span>{ev.place && <strong>{ev.place}</strong>}</div>
-          <div class="programme-event-arrow">→</div>
-        </div>
-      ))}
-      <div style="text-align:center;margin-top:36px;"><a href="/en/edition-2027#programme" class="nav-cta" style="background:var(--red);">Full programme ↗</a></div>
-    </div>
-  </section>
+  {/* Programme hidden on home — to re-enable once the real programme is in Strapi */}
 
   <section class="video-2025-section">
     <div class="video-2025-inner">
@@ -189,20 +170,3 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
     </div>
   </section>
 </Base>
-
-<script>
-  const el = document.getElementById('countdown');
-  const target = new Date(el?.dataset.target || '2027-11-17T19:00:00').getTime();
-  const pad = (n) => String(n).padStart(2, '0');
-  const set = (k, v) => { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; };
-  function tick() {
-    const diff = target - Date.now();
-    if (diff <= 0) { set('days', '0'); set('hours', '00'); set('mins', '00'); set('secs', '00'); return; }
-    set('days', String(Math.floor(diff / 86400000)));
-    set('hours', pad(Math.floor((diff % 86400000) / 3600000)));
-    set('mins', pad(Math.floor((diff % 3600000) / 60000)));
-    set('secs', pad(Math.floor((diff % 60000) / 1000)));
-  }
-  tick();
-  setInterval(tick, 1000);
-</script>

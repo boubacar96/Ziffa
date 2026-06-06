@@ -140,17 +140,11 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     </div>
   </section>
 
-  <!-- ===== 2. COMPTE À REBOURS ===== -->
+  <!-- ===== 2. PROCHAINE ÉDITION ===== -->
   <section class="countdown-section">
     <div class="countdown-inner">
-      <div class="eyebrow"><span class="arrow">→</span> Ouverture le 17 novembre 2027 · Ziguinchor</div>
-      <h2 class="section-title">Plus que <span class="yellow">quelques jours</span>.</h2>
-      <div class="countdown" id="countdown" data-target={festivalTarget}>
-        <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Jours</span></div>
-        <div class="cd-box"><span class="cd-num" data-cd="hours">—</span><span class="cd-label">Heures</span></div>
-        <div class="cd-box"><span class="cd-num" data-cd="mins">—</span><span class="cd-label">Minutes</span></div>
-        <div class="cd-box"><span class="cd-num" data-cd="secs">—</span><span class="cd-label">Secondes</span></div>
-      </div>
+      <div class="eyebrow"><span class="arrow">→</span> Prochaine édition · Ziguinchor</div>
+      <h2 class="section-title">Rendez-vous en <span class="yellow">2027</span>.</h2>
     </div>
   </section>
 
@@ -197,29 +191,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     </div>
   </section>
 
-  <!-- ===== 5. PROGRAMME EN UN COUP D'ŒIL ===== -->
-  <section class="programme-section">
-    <div class="programme-inner">
-      <div style="text-align:center;margin-bottom:30px;">
-        <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme · Édition 2027</div>
-        <h2 class="section-title" style="margin:12px auto;text-align:center;">Quatre jours<br />de <span class="red">temps forts</span>.</h2>
-      </div>
-      {events.map((ev) => (
-        <div class="programme-event" data-type={ev.type}>
-          <div class="programme-event-time">{ev.time}</div>
-          <div class="programme-event-info"><h4>{ev.title}</h4><p>{ev.desc}</p></div>
-          <div class="programme-event-location">
-            <span class={`programme-event-type event-type-${ev.type}`}>{typeLabel[ev.type] || ev.type}</span>
-            {ev.place && <strong>{ev.place}</strong>}
-          </div>
-          <div class="programme-event-arrow">→</div>
-        </div>
-      ))}
-      <div style="text-align:center;margin-top:36px;">
-        <a href="/edition-2027#programme" class="nav-cta" style="background:var(--red);">Programme complet ↗</a>
-      </div>
-    </div>
-  </section>
+  {/* Programme masqué sur l'accueil — sera réactivé quand le vrai programme sera dans Strapi */}
 
   <!-- ===== 6. BANDE-ANNONCE ===== -->
   <section class="video-2025-section">
@@ -288,21 +260,3 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     </div>
   </section>
 </Base>
-
-<script>
-  // Compte à rebours — la date cible vient de Strapi (data-target) ou d'un repli.
-  const el = document.getElementById('countdown');
-  const target = new Date(el?.dataset.target || '2027-11-17T19:00:00').getTime();
-  const pad = (n) => String(n).padStart(2, '0');
-  function set(k, v) { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; }
-  function tick() {
-    const diff = target - Date.now();
-    if (diff <= 0) { set('days', '0'); set('hours', '00'); set('mins', '00'); set('secs', '00'); return; }
-    set('days', String(Math.floor(diff / 86400000)));
-    set('hours', pad(Math.floor((diff % 86400000) / 3600000)));
-    set('mins', pad(Math.floor((diff % 3600000) / 60000)));
-    set('secs', pad(Math.floor((diff % 60000) / 1000)));
-  }
-  tick();
-  setInterval(tick, 1000);
-</script>

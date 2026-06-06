@@ -47,26 +47,11 @@ const enHref = altPath(Astro.url, 'en');
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/edition-2027')}`} href={L('/edition-2027')}>{t('nav.ed2027')} <span class="caret">▾</span></a>
+      <a class={`nav-link ${is('/edition-2027') || is('/edition-2025')}`} href={L('/edition-2027')}>{t('nav.editions')} <span class="caret">▾</span></a>
       <div class="dropdown">
-        <div class="dropdown-header">{t('nav.dd.prochaine')}</div>
-        <a href={L('/edition-2027') + '#prix'}>{t('nav.prix')}</a>
-        <a href={L('/edition-2027') + '#programme'}>{t('nav.programme')}</a>
-        <a href={L('/edition-2027') + '#jury'}>{t('nav.jury')}</a>
-        <a href={L('/edition-2027') + '#masterclasses'}>{t('nav.masterclasses')}</a>
-        <a href={L('/edition-2027') + '#affiche'}>{t('nav.affiche')}</a>
-      </div>
-    </li>
-    <li class="nav-item">
-      <a class={`nav-link ${is('/edition-2025')}`} href={L('/edition-2025')}>{t('nav.ed2025')} <span class="caret">▾</span></a>
-      <div class="dropdown">
-        <div class="dropdown-header">{t('nav.dd.passee')}</div>
-        <a href={L('/edition-2025') + '#images'}>{t('nav.enimages')}</a>
-        <a href={L('/edition-2025') + '#prix'}>{t('nav.prix')}</a>
-        <a href={L('/edition-2025') + '#programme'}>{t('nav.programme')}</a>
-        <a href={L('/edition-2025') + '#jury'}>{t('nav.jury')}</a>
-        <a href={L('/edition-2025') + '#masterclasses'}>{t('nav.masterclasses')}</a>
-        <a href={L('/edition-2025') + '#affiche'}>{t('nav.affiche')}</a>
+        <div class="dropdown-header">{t('nav.dd.editions')}</div>
+        <a href={L('/edition-2027')}>{t('nav.ed2027')}</a>
+        <a href={L('/edition-2025')}>{t('nav.ed2025')}</a>
       </div>
     </li>
     <li class="nav-item">
@@ -74,7 +59,6 @@ const enHref = altPath(Astro.url, 'en');
       <div class="dropdown">
         <div class="dropdown-header">{t('nav.dd.rejoindre')}</div>
         <a href={L('/participer') + '#inscription'}>{t('nav.inscrire')}</a>
-        <a href={L('/participer') + '#accreditation'}>{t('nav.accrediter')}</a>
         <a href={L('/participer') + '#partenariat'}>{t('nav.partenariat')}</a>
       </div>
     </li>

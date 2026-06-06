@@ -88,10 +88,9 @@ const fallbackPartners = [
   { name: 'LONASE', url: 'https://www.lonase.sn', logo: '/partenaires/lonase.jpg' },
   { name: 'TALAATA Production', url: '#', logo: '/partenaires/talaata.jpg' },
 ];
-const partners = [
-  ...cmsPartners.map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null })),
-  ...fallbackPartners,
-].slice(0, 6);
+const cmsPartnersMapped = cmsPartners.map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null }));
+// Strapi seul dès qu'il y a au moins 1 partenaire ; sinon logos de démo.
+const partners = cmsPartnersMapped.length ? cmsPartnersMapped : fallbackPartners;
 
 // --- Mosaïque du hero ---
 const shapes = ['tall', 'square', 'wide'];

@@ -23,10 +23,9 @@ const fallbackPartners = [
   { name: 'LONASE', url: 'https://www.lonase.sn', logo: '/partenaires/lonase.jpg' },
   { name: 'TALAATA Production', url: '#', logo: '/partenaires/talaata.jpg' },
 ];
-const partners = [
-  ...(partRes.data || []).map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null })),
-  ...fallbackPartners,
-].slice(0, 6);
+const cmsPartnersMapped = (partRes.data || []).map((p) => ({ name: p.name, url: p.url || '#', logo: p.logo?.url ? mediaUrl(p.logo.url) : null }));
+// Strapi only as soon as there is at least 1 partner; otherwise demo logos.
+const partners = cmsPartnersMapped.length ? cmsPartnersMapped : fallbackPartners;
 
 const objectifs = [
   { num: '— 01', icon: '🎬', title: 'Promoting African cinema', desc: 'Spotlight African talent and bring the continent’s cinema to the international stage.' },

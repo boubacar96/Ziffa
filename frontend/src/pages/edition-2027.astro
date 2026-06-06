@@ -10,10 +10,10 @@ const poster = edition?.poster?.url ? mediaUrl(edition.poster.url) : null;
 
 const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '8' });
 const fallbackEvents = [
-  { time: 'Jeu 12', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "En présence des invités et des autorités.", place: 'Théâtre Aline Sitoé Diatta' },
-  { time: 'Ven 13', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
-  { time: 'Sam 14', type: 'masterclass', title: 'Masterclass : écriture documentaire', desc: 'Avec un réalisateur invité international.', place: 'Institut français' },
-  { time: 'Dim 15', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Annonce du palmarès officiel.", place: 'Théâtre Aline Sitoé Diatta' },
+  { time: 'Mer 17', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "En présence des invités et des autorités.", place: 'Théâtre Aline Sitoé Diatta' },
+  { time: 'Jeu 18', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
+  { time: 'Ven 19', type: 'masterclass', title: 'Masterclass : écriture documentaire', desc: 'Avec un réalisateur invité international.', place: 'Institut français' },
+  { time: 'Sam 20', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Annonce du palmarès officiel.", place: 'Théâtre Aline Sitoé Diatta' },
 ];
 const events = [
   ...(evRes.data || []).map((e) => ({ time: e.startTime || (e.day ? `Jour ${e.day}` : '—'), type: e.type || 'projection', title: e.title, desc: e.description || '', place: e.location || '' })),
@@ -39,7 +39,7 @@ const jury = [
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Édition 2027</div>
-      <div class="eyebrow"><span class="arrow">→</span> Prochaine édition · 12–15 Nov 2027</div>
+      <div class="eyebrow"><span class="arrow">→</span> Prochaine édition · 17–20 Nov 2027</div>
       <h1><span class="yellow">2027</span>, édition <span class="italic">N°03</span>.</h1>
       <p>Quatre jours de projections, de rencontres et de transmission à Ziguinchor.</p>
     </div>
@@ -91,9 +91,9 @@ const jury = [
   <section class="section" id="masterclasses">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Transmission</div><h2 class="section-title">Master-<span class="italic">classes</span>.</h2></div><a href="/participer#accreditation" class="btn-ghost">S'accréditer →</a></div>
     <div class="ateliers-grid">
-      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3><span class="italic">Réalisation</span> documentaire</h3><p>Construire un récit documentaire fort, avec un réalisateur invité.</p><div class="atelier-meta"><span>Samedi 14 Nov</span><span>Tous niveaux</span></div></div>
-      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3><span class="italic">Écriture</span> de scénario</h3><p>Du synopsis au traitement pour la fiction et le court-métrage.</p><div class="atelier-meta"><span>Vendredi 13 Nov</span><span>Débutant</span></div></div>
-      <div class="atelier-card"><span class="atelier-tag">— Atelier pratique</span><h3><span class="italic">Animation</span> 2D</h3><p>Techniques d'animation et création de courts-métrages animés.</p><div class="atelier-meta"><span>Samedi 14 Nov</span><span>Intermédiaire</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3><span class="italic">Réalisation</span> documentaire</h3><p>Construire un récit documentaire fort, avec un réalisateur invité.</p><div class="atelier-meta"><span>Samedi 20 Nov</span><span>Tous niveaux</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3><span class="italic">Écriture</span> de scénario</h3><p>Du synopsis au traitement pour la fiction et le court-métrage.</p><div class="atelier-meta"><span>Vendredi 19 Nov</span><span>Débutant</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Atelier pratique</span><h3><span class="italic">Animation</span> 2D</h3><p>Techniques d'animation et création de courts-métrages animés.</p><div class="atelier-meta"><span>Samedi 20 Nov</span><span>Intermédiaire</span></div></div>
     </div>
   </section>
 

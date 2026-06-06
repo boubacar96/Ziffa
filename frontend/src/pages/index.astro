@@ -18,7 +18,7 @@ const edition = (edRes.data || [])[0] || null;
 const festivalTarget =
   edition?.dateStart && new Date(edition.dateStart) > new Date()
     ? `${edition.dateStart}T19:00:00`
-    : '2027-11-12T19:00:00';
+    : '2027-11-17T19:00:00';
 
 // Vidéo (Vimeo) — depuis l'Édition (champ videoUrl) ou repli sur la vidéo 2025 fournie.
 function toEmbed(url) {
@@ -55,10 +55,10 @@ const films = [
 const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '4' });
 const cmsEvents = evRes.data || [];
 const fallbackEvents = [
-  { time: 'Jeu 12', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "Le coup d'envoi du festival, en présence des invités.", place: 'Théâtre Aline Sitoé Diatta' },
-  { time: 'Ven 13', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
-  { time: 'Sam 14', type: 'masterclass', title: 'Masterclasses & rencontres pro', desc: 'Transmission avec les cinéastes invités.', place: 'Institut français' },
-  { time: 'Dim 15', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Remise des prix de l'édition 2027.", place: 'Théâtre Aline Sitoé Diatta' },
+  { time: 'Mer 17', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "Le coup d'envoi du festival, en présence des invités.", place: 'Théâtre Aline Sitoé Diatta' },
+  { time: 'Jeu 18', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
+  { time: 'Ven 19', type: 'masterclass', title: 'Masterclasses & rencontres pro', desc: 'Transmission avec les cinéastes invités.', place: 'Institut français' },
+  { time: 'Sam 20', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Remise des prix de l'édition 2027.", place: 'Théâtre Aline Sitoé Diatta' },
 ];
 const events = [
   ...cmsEvents.map((e) => ({
@@ -143,7 +143,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
   <!-- ===== 2. COMPTE À REBOURS ===== -->
   <section class="countdown-section">
     <div class="countdown-inner">
-      <div class="eyebrow"><span class="arrow">→</span> Ouverture le 12 novembre 2027 · Ziguinchor</div>
+      <div class="eyebrow"><span class="arrow">→</span> Ouverture le 17 novembre 2027 · Ziguinchor</div>
       <h2 class="section-title">Plus que <span class="yellow">quelques jours</span>.</h2>
       <div class="countdown" id="countdown" data-target={festivalTarget}>
         <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Jours</span></div>
@@ -292,7 +292,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 <script>
   // Compte à rebours — la date cible vient de Strapi (data-target) ou d'un repli.
   const el = document.getElementById('countdown');
-  const target = new Date(el?.dataset.target || '2027-11-12T19:00:00').getTime();
+  const target = new Date(el?.dataset.target || '2027-11-17T19:00:00').getTime();
   const pad = (n) => String(n).padStart(2, '0');
   function set(k, v) { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; }
   function tick() {

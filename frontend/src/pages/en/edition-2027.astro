@@ -10,10 +10,10 @@ const poster = edition?.poster?.url ? mediaUrl(edition.poster.url) : null;
 
 const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '8' });
 const fallbackEvents = [
-  { time: 'Thu 12', type: 'ceremonie', title: 'Opening ceremony & inaugural film', desc: 'In the presence of guests and officials.', place: 'Aline Sitoé Diatta Theatre' },
-  { time: 'Fri 13', type: 'projection', title: 'Competition screenings', desc: 'Fiction, documentary and animation from the selection.', place: 'Casamance Hall' },
-  { time: 'Sat 14', type: 'masterclass', title: 'Masterclass: documentary writing', desc: 'With an international guest director.', place: 'Institut français' },
-  { time: 'Sun 15', type: 'ceremonie', title: 'Closing ceremony & awards', desc: 'Announcement of the official prize list.', place: 'Aline Sitoé Diatta Theatre' },
+  { time: 'Wed 17', type: 'ceremonie', title: 'Opening ceremony & inaugural film', desc: 'In the presence of guests and officials.', place: 'Aline Sitoé Diatta Theatre' },
+  { time: 'Thu 18', type: 'projection', title: 'Competition screenings', desc: 'Fiction, documentary and animation from the selection.', place: 'Casamance Hall' },
+  { time: 'Fri 19', type: 'masterclass', title: 'Masterclass: documentary writing', desc: 'With an international guest director.', place: 'Institut français' },
+  { time: 'Sat 20', type: 'ceremonie', title: 'Closing ceremony & awards', desc: 'Announcement of the official prize list.', place: 'Aline Sitoé Diatta Theatre' },
 ];
 const events = [
   ...(evRes.data || []).map((e) => ({ time: e.startTime || (e.day ? `Day ${e.day}` : '—'), type: e.type || 'projection', title: e.title, desc: e.description || '', place: e.location || '' })),
@@ -39,7 +39,7 @@ const jury = [
   <header class="page-hero">
     <div class="page-hero-inner">
       <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; 2027 Edition</div>
-      <div class="eyebrow"><span class="arrow">→</span> Next edition · 12–15 Nov 2027</div>
+      <div class="eyebrow"><span class="arrow">→</span> Next edition · 17–20 Nov 2027</div>
       <h1><span class="yellow">2027</span>, edition <span class="italic">No.03</span>.</h1>
       <p>Four days of screenings, encounters and training in Ziguinchor.</p>
     </div>
@@ -80,9 +80,9 @@ const jury = [
   <section class="section" id="masterclasses">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Knowledge sharing</div><h2 class="section-title">Master-<span class="italic">classes</span>.</h2></div><a href="/en/participer#accreditation" class="btn-ghost">Get accredited →</a></div>
     <div class="ateliers-grid">
-      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3>Documentary <span class="italic">directing</span></h3><p>Building a strong documentary narrative, with a guest director.</p><div class="atelier-meta"><span>Sat 14 Nov</span><span>All levels</span></div></div>
-      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3>Screen<span class="italic">writing</span></h3><p>From synopsis to treatment for fiction and short film.</p><div class="atelier-meta"><span>Fri 13 Nov</span><span>Beginner</span></div></div>
-      <div class="atelier-card"><span class="atelier-tag">— Practical workshop</span><h3>2D <span class="italic">animation</span></h3><p>Animation techniques and making animated short films.</p><div class="atelier-meta"><span>Sat 14 Nov</span><span>Intermediate</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3>Documentary <span class="italic">directing</span></h3><p>Building a strong documentary narrative, with a guest director.</p><div class="atelier-meta"><span>Sat 20 Nov</span><span>All levels</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Masterclass</span><h3>Screen<span class="italic">writing</span></h3><p>From synopsis to treatment for fiction and short film.</p><div class="atelier-meta"><span>Fri 19 Nov</span><span>Beginner</span></div></div>
+      <div class="atelier-card"><span class="atelier-tag">— Practical workshop</span><h3>2D <span class="italic">animation</span></h3><p>Animation techniques and making animated short films.</p><div class="atelier-meta"><span>Sat 20 Nov</span><span>Intermediate</span></div></div>
     </div>
   </section>
 

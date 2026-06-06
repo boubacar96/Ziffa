@@ -10,7 +10,7 @@ const edition = (edRes.data || [])[0] || null;
 const festivalTarget =
   edition?.dateStart && new Date(edition.dateStart) > new Date()
     ? `${edition.dateStart}T19:00:00`
-    : '2027-11-12T19:00:00';
+    : '2027-11-17T19:00:00';
 
 function toEmbed(url) {
   if (!url) return null;
@@ -36,10 +36,10 @@ const films = [
 
 const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '4' });
 const fallbackEvents = [
-  { time: 'Thu 12', type: 'ceremonie', title: 'Opening ceremony & inaugural film', desc: 'In the presence of guests and officials.', place: 'Aline Sitoé Diatta Theatre' },
-  { time: 'Fri 13', type: 'projection', title: 'Competition screenings', desc: 'Fiction, documentary and animation from the selection.', place: 'Casamance Hall' },
-  { time: 'Sat 14', type: 'masterclass', title: 'Masterclasses & pro meetings', desc: 'Knowledge-sharing with guest filmmakers.', place: 'Institut français' },
-  { time: 'Sun 15', type: 'ceremonie', title: 'Closing ceremony & awards', desc: 'Announcement of the official prize list.', place: 'Aline Sitoé Diatta Theatre' },
+  { time: 'Wed 17', type: 'ceremonie', title: 'Opening ceremony & inaugural film', desc: 'In the presence of guests and officials.', place: 'Aline Sitoé Diatta Theatre' },
+  { time: 'Thu 18', type: 'projection', title: 'Competition screenings', desc: 'Fiction, documentary and animation from the selection.', place: 'Casamance Hall' },
+  { time: 'Fri 19', type: 'masterclass', title: 'Masterclasses & pro meetings', desc: 'Knowledge-sharing with guest filmmakers.', place: 'Institut français' },
+  { time: 'Sat 20', type: 'ceremonie', title: 'Closing ceremony & awards', desc: 'Announcement of the official prize list.', place: 'Aline Sitoé Diatta Theatre' },
 ];
 const events = [
   ...(evRes.data || []).map((e) => ({ time: e.startTime || (e.day ? `Day ${e.day}` : '—'), type: e.type || 'projection', title: e.title, desc: e.description || '', place: e.location || '' })),
@@ -98,7 +98,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
 
   <section class="countdown-section">
     <div class="countdown-inner">
-      <div class="eyebrow"><span class="arrow">→</span> Opening 12 November 2027 · Ziguinchor</div>
+      <div class="eyebrow"><span class="arrow">→</span> Opening 17 November 2027 · Ziguinchor</div>
       <h2 class="section-title">Only a <span class="yellow">few days</span> left.</h2>
       <div class="countdown" id="countdown" data-target={festivalTarget}>
         <div class="cd-box"><span class="cd-num" data-cd="days">—</span><span class="cd-label">Days</span></div>
@@ -192,7 +192,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
 
 <script>
   const el = document.getElementById('countdown');
-  const target = new Date(el?.dataset.target || '2027-11-12T19:00:00').getTime();
+  const target = new Date(el?.dataset.target || '2027-11-17T19:00:00').getTime();
   const pad = (n) => String(n).padStart(2, '0');
   const set = (k, v) => { const e = document.querySelector(`[data-cd="${k}"]`); if (e) e.textContent = v; };
   function tick() {

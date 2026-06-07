@@ -32,12 +32,13 @@ const actsForDay = (d) => allActs.filter((a) => a.programmeDay?.documentId === d
 
   {pdfUrl && (
     <section class="section" id="pdf">
-      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> {t('prog.view_pdf')}</div><h2 class="section-title">The official <span class="red">PDF</span>.</h2></div></div>
-      <div class="prog-pdf-wrap">
-        <div class="prog-pdf-actions">
-          <a href={pdfUrl} target="_blank" rel="noopener" class="nav-cta">{t('prog.download_pdf')} ↓</a>
+      <div class="prog-pdf-download">
+        <div class="ppd-icon">📄</div>
+        <div class="ppd-text">
+          <div class="ppd-title">{t('prog.view_pdf')}</div>
+          <div class="ppd-sub">ZIFFA {year} · PDF</div>
         </div>
-        <iframe class="prog-pdf-frame" src={pdfUrl} title={`ZIFFA ${year} programme`}></iframe>
+        <a href={pdfUrl} target="_blank" rel="noopener" download class="nav-cta">{t('prog.download_pdf')} ↓</a>
       </div>
     </section>
   )}

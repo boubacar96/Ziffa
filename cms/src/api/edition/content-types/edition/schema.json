@@ -48,6 +48,19 @@
         "images"
       ]
     },
+    "programmePdf": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "programmeDays": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::programme-day.programme-day",
+      "mappedBy": "edition"
+    },
     "films": {
       "type": "relation",
       "relation": "oneToMany",

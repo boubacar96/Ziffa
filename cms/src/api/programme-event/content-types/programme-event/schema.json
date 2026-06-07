@@ -4,7 +4,7 @@
   "info": {
     "singularName": "programme-event",
     "pluralName": "programme-events",
-    "displayName": "Événement (programme)"
+    "displayName": "Activité (programme)"
   },
   "options": {
     "draftAndPublish": true
@@ -21,16 +21,27 @@
     "startTime": {
       "type": "string"
     },
+    "timeEnd": {
+      "type": "string"
+    },
     "duration": {
       "type": "string"
     },
     "type": {
       "type": "enumeration",
       "enum": [
+        "ouverture",
+        "cloture",
         "projection",
+        "competition",
+        "hors-competition",
         "masterclass",
         "rencontre",
-        "ceremonie"
+        "ceremonie",
+        "exposition",
+        "vernissage",
+        "cine-enfants",
+        "festivites"
       ]
     },
     "location": {
@@ -41,6 +52,21 @@
     },
     "date": {
       "type": "date"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "films": {
+      "type": "component",
+      "repeatable": true,
+      "component": "programme.film-line"
+    },
+    "programmeDay": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::programme-day.programme-day",
+      "inversedBy": "activities"
     },
     "edition": {
       "type": "relation",

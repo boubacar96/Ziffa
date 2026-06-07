@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI } from '../../lib/strapi.js';
+import { getLangFromUrl, useTranslations, lp } from '../../i18n.js';
+import { catLabel, timeRange } from '../../lib/programme.js';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const L = (p) => lp(p, lang);
+const { slug } = Astro.params;
+
+const dayRes = await fetchAPI('programme-days', {
+  'filters[slug][$eq]': slug, populate: 'edition', 'pagination[limit]': '1',
+});
+const day = (dayRes.data || [])[0] || null;
+
+const actRes = await fetchAPI('programme-events', {
+  'filters[programmeDay][slug][$eq]': slug, populate: 'films', sort: 'order:asc', 'pagination[limit]': '100',
+});
+const activities = actRes.data || [];
+
+const year = day?.edition?.year || 2027;
+const editionPath = L('/edition-' + year);
+const completePath = L('/programme-complet/' + year);
+const title = day ? `${day.label} — Programme ZIFFA ${year}` : 'Programme — ZIFFA';
+---
+<Base title={title} description={day ? `Programme du ${day.label} — Édition ZIFFA ${year}.` : 'Programme ZIFFA'}>
+  {day ? (
+    <>
+      <header class="prog-day-hero">
+        <div class="prog-day-hero-inner">
+          <a href={editionPath + '#programme'} class="prog-day-back">← {t('prog.back')}</a>
+          <div class="pdh-date" style="margin-top:18px;">Édition {year}</div>
+          <h1>{day.label}</h1>
+          {day.subtitle && <p class="pdh-sub">{day.subtitle}</p>}
+        </div>
+      </header>
+
+      <div class="prog-timeline">
+        {activities.length === 0 && <p class="prog-pdf-empty">{t('prog.soon')}</p>}
+        {activities.map((a) => (
+          <div class="prog-activity">
+            <div class="prog-act-time">{a.startTime || '—'}{a.timeEnd && <small>→ {a.timeEnd}</small>}</div>
+            <div class={`prog-act-body cat-${a.type}`}>
+              <div class="prog-act-head">
+                <span class={`prog-act-cat pcat-${a.type}`}>{catLabel(a.type, lang)}</span>
+                {a.location && <span class="prog-act-venue">{a.location}</span>}
+              </div>
+              <h3>{a.title}</h3>
+              {a.description && <p class="prog-act-desc">{a.description}</p>}
+              {a.films && a.films.length > 0 && (
+                <div class="prog-films">
+                  {a.films.map((f) => (
+                    <div class="prog-film">
+                      <span class="pf-title">{f.title}</span>
+                      {f.director && <span class="pf-dir">— {f.director}</span>}
+                      <span class="pf-meta">{[f.country, f.year, f.duration, f.language].filter(Boolean).join(' · ')}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="prog-complete-btn" style="padding-bottom:50px;">
+        <a href={completePath} class="nav-cta">{t('prog.complete_view')} ↗</a>
+      </div>
+    </>
+  ) : (
+    <section class="section" style="text-align:center;padding:80px 20px;">
+      <h1 class="section-title">404</h1>
+      <p class="prog-pdf-empty" style="max-width:480px;margin:20px auto;">{t('prog.soon')}</p>
+      <a href={L('/edition-2027') + '#programme'} class="nav-cta">{t('prog.back')} ↗</a>
+    </section>
+  )}
+</Base>

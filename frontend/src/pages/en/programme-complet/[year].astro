@@ -1,0 +1,85 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../../lib/strapi.js';
+import { getLangFromUrl, useTranslations, lp } from '../../../i18n.js';
+import { catLabel } from '../../../lib/programme.js';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const L = (p) => lp(p, lang);
+const { year } = Astro.params;
+
+const edRes = await fetchAPI('editions', { 'filters[year][$eq]': year, populate: 'programmePdf', 'pagination[limit]': '1' });
+const edition = (edRes.data || [])[0] || null;
+const pdfUrl = edition?.programmePdf?.url ? mediaUrl(edition.programmePdf.url) : null;
+
+const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': year, sort: 'order:asc', 'pagination[limit]': '20' });
+const days = daysRes.data || [];
+
+const actRes = await fetchAPI('programme-events', { 'filters[edition][year][$eq]': year, populate: '*', sort: 'order:asc', 'pagination[limit]': '300' });
+const allActs = actRes.data || [];
+const actsForDay = (d) => allActs.filter((a) => a.programmeDay?.documentId === d.documentId);
+---
+<Base title={`Full programme — ZIFFA ${year}`} description={`The full programme of the ZIFFA ${year} edition.`}>
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href={L('/')}>Home</a> &nbsp;/&nbsp; <a href={L('/edition-' + year)}>Edition {year}</a> &nbsp;/&nbsp; {t('prog.complete')}</div>
+      <div class="eyebrow"><span class="arrow">→</span> Edition {year}</div>
+      <h1>{t('prog.complete')} <span class="yellow">{year}</span>.</h1>
+      <p>Every screening, talk and event of the edition.</p>
+    </div>
+  </header>
+
+  {pdfUrl && (
+    <section class="section" id="pdf">
+      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> {t('prog.view_pdf')}</div><h2 class="section-title">The official <span class="red">PDF</span>.</h2></div></div>
+      <div class="prog-pdf-wrap">
+        <div class="prog-pdf-actions">
+          <a href={pdfUrl} target="_blank" rel="noopener" class="nav-cta">{t('prog.download_pdf')} ↓</a>
+        </div>
+        <iframe class="prog-pdf-frame" src={pdfUrl} title={`ZIFFA ${year} programme`}></iframe>
+      </div>
+    </section>
+  )}
+
+  <section class="section" id="detail">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> {t('prog.web_title')}</div><h2 class="section-title">Day <span class="italic">by day</span>.</h2></div></div>
+
+    {days.length === 0 && <p class="prog-pdf-empty">{t('prog.soon')}</p>}
+
+    {days.map((d) => (
+      <div style="margin-bottom:36px;">
+        <h3 style="font-size:26px;color:var(--green-deep);margin:24px 0 6px;">
+          <a href={L('/programme/' + d.slug)} style="color:inherit;text-decoration:none;">{d.label}</a>
+        </h3>
+        {d.subtitle && <p style="color:var(--ink-soft,#6b6b6b);margin:0 0 6px;">{d.subtitle}</p>}
+        <div class="prog-timeline" style="padding:18px 0 0;max-width:none;">
+          {actsForDay(d).map((a) => (
+            <div class="prog-activity">
+              <div class="prog-act-time">{a.startTime || '—'}{a.timeEnd && <small>→ {a.timeEnd}</small>}</div>
+              <div class={`prog-act-body cat-${a.type}`}>
+                <div class="prog-act-head">
+                  <span class={`prog-act-cat pcat-${a.type}`}>{catLabel(a.type, lang)}</span>
+                  {a.location && <span class="prog-act-venue">{a.location}</span>}
+                </div>
+                <h3 style="margin:12px 0 6px;">{a.title}</h3>
+                {a.description && <p class="prog-act-desc">{a.description}</p>}
+                {a.films && a.films.length > 0 && (
+                  <div class="prog-films">
+                    {a.films.map((f) => (
+                      <div class="prog-film">
+                        <span class="pf-title">{f.title}</span>
+                        {f.director && <span class="pf-dir">— {f.director}</span>}
+                        <span class="pf-meta">{[f.country, f.year, f.duration, f.language].filter(Boolean).join(' · ')}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+</Base>

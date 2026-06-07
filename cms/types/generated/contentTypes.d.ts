@@ -509,6 +509,11 @@ export interface ApiEditionEdition extends Struct.CollectionTypeSchema {
     photos: Schema.Attribute.Relation<'oneToMany', 'api::photo.photo'>;
     poster: Schema.Attribute.Media<'images'>;
     prizes: Schema.Attribute.Relation<'oneToMany', 'api::prize.prize'>;
+    programmeDays: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::programme-day.programme-day'
+    >;
+    programmePdf: Schema.Attribute.Media<'files'>;
     publishedAt: Schema.Attribute.DateTime;
     tagline: Schema.Attribute.Text;
     title: Schema.Attribute.String;
@@ -757,11 +762,49 @@ export interface ApiPrizePrize extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiProgrammeDayProgrammeDay
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'programme_days';
+  info: {
+    displayName: 'Jour de programme';
+    pluralName: 'programme-days';
+    singularName: 'programme-day';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    activities: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::programme-event.programme-event'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    edition: Schema.Attribute.Relation<'manyToOne', 'api::edition.edition'>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::programme-day.programme-day'
+    > &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'label'>;
+    subtitle: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProgrammeEventProgrammeEvent
   extends Struct.CollectionTypeSchema {
   collectionName: 'programme_events';
   info: {
-    displayName: '\u00C9v\u00E9nement (programme)';
+    displayName: 'Activit\u00E9 (programme)';
     pluralName: 'programme-events';
     singularName: 'programme-event';
   };
@@ -777,6 +820,7 @@ export interface ApiProgrammeEventProgrammeEvent
     description: Schema.Attribute.Text;
     duration: Schema.Attribute.String;
     edition: Schema.Attribute.Relation<'manyToOne', 'api::edition.edition'>;
+    films: Schema.Attribute.Component<'programme.film-line', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -784,11 +828,30 @@ export interface ApiProgrammeEventProgrammeEvent
     > &
       Schema.Attribute.Private;
     location: Schema.Attribute.String;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    programmeDay: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::programme-day.programme-day'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     startTime: Schema.Attribute.String;
+    timeEnd: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     type: Schema.Attribute.Enumeration<
-      ['projection', 'masterclass', 'rencontre', 'ceremonie']
+      [
+        'ouverture',
+        'cloture',
+        'projection',
+        'competition',
+        'hors-competition',
+        'masterclass',
+        'rencontre',
+        'ceremonie',
+        'exposition',
+        'vernissage',
+        'cine-enfants',
+        'festivites',
+      ]
     >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1316,6 +1379,7 @@ declare module '@strapi/strapi' {
       'api::person.person': ApiPersonPerson;
       'api::photo.photo': ApiPhotoPhoto;
       'api::prize.prize': ApiPrizePrize;
+      'api::programme-day.programme-day': ApiProgrammeDayProgrammeDay;
       'api::programme-event.programme-event': ApiProgrammeEventProgrammeEvent;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_programme_film_lines",
+  "info": {
+    "displayName": "Film (ligne)",
+    "icon": "film",
+    "description": "Un film projeté dans une activité du programme"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "director": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "year": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    }
+  }
+}

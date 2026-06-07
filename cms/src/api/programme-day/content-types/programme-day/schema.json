@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "programme_days",
+  "info": {
+    "singularName": "programme-day",
+    "pluralName": "programme-days",
+    "displayName": "Jour de programme"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "label"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "edition": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::edition.edition",
+      "inversedBy": "programmeDays"
+    },
+    "activities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::programme-event.programme-event",
+      "mappedBy": "programmeDay"
+    }
+  }
+}

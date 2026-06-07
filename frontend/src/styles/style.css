@@ -3362,3 +3362,125 @@
   @media (max-width: 1000px) {
     .partners-marquee .partner-logo { width: 150px; }
   }
+
+  /* ============================================================
+     PROGRAMME — cartes jours + timeline + films + PDF
+     ============================================================ */
+
+  /* ----- Grille des jours (sur la page Édition) ----- */
+  .prog-days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+  }
+  .prog-day-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 26px 24px;
+    background: var(--paper, #fff);
+    border: 1px solid var(--line, #e7e2d6);
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--ink, #1a1a1a);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .prog-day-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,.10);
+    border-color: var(--red);
+  }
+  .prog-day-card .pd-num { font-family: var(--font-icon, inherit); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--red); font-weight: 800; }
+  .prog-day-card .pd-label { font-size: 24px; font-weight: 800; line-height: 1.1; color: var(--green-deep); }
+  .prog-day-card .pd-sub { font-size: 14px; color: var(--ink-soft, #6b6b6b); }
+  .prog-day-card .pd-count { margin-top: 4px; font-size: 13px; color: var(--ink-soft, #6b6b6b); }
+  .prog-day-card .pd-go { margin-top: auto; font-weight: 700; color: var(--red); font-size: 14px; }
+
+  .prog-complete-btn { margin-top: 30px; text-align: center; }
+
+  /* ----- En-tête de la page d'un jour ----- */
+  .prog-day-hero { background: var(--green-deep); color: var(--bg, #fff); padding: 60px 0 50px; }
+  .prog-day-hero-inner { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .prog-day-back { color: var(--yellow); text-decoration: none; font-weight: 700; font-size: 14px; }
+  .prog-day-hero h1 { font-size: clamp(34px, 6vw, 58px); margin: 14px 0 6px; line-height: 1.02; }
+  .prog-day-hero .pdh-sub { font-size: 18px; opacity: .85; }
+  .prog-day-hero .pdh-date { font-family: var(--font-icon, inherit); letter-spacing: .12em; text-transform: uppercase; font-size: 13px; color: var(--yellow); font-weight: 800; }
+
+  /* ----- Timeline des activités ----- */
+  .prog-timeline { max-width: 1000px; margin: 0 auto; padding: 50px 28px 30px; }
+  .prog-activity {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 22px;
+    padding: 0 0 34px 0;
+    position: relative;
+  }
+  .prog-activity::before {
+    content: "";
+    position: absolute;
+    left: 121px; top: 8px; bottom: -8px;
+    width: 2px; background: var(--line, #e7e2d6);
+  }
+  .prog-activity:last-child::before { display: none; }
+  .prog-act-time { text-align: right; font-weight: 800; color: var(--green-deep); font-size: 16px; padding-top: 2px; }
+  .prog-act-time small { display: block; font-weight: 600; color: var(--ink-soft, #6b6b6b); font-size: 13px; }
+  .prog-act-body {
+    position: relative;
+    background: var(--paper, #fff);
+    border: 1px solid var(--line, #e7e2d6);
+    border-radius: 14px;
+    padding: 20px 22px;
+    border-left: 5px solid var(--red);
+  }
+  .prog-act-body::before {
+    content: "";
+    position: absolute; left: -29px; top: 10px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--red); border: 3px solid var(--bg, #fff);
+  }
+  .prog-act-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: space-between; }
+  .prog-act-cat { font-family: var(--font-icon, inherit); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 800; padding: 5px 11px; border-radius: 999px; }
+  .prog-act-venue { font-size: 13px; color: var(--ink-soft, #6b6b6b); font-weight: 600; }
+  .prog-act-venue::before { content: "📍 "; }
+  .prog-act-body h3 { font-size: 21px; margin: 12px 0 6px; color: var(--green-deep); }
+  .prog-act-desc { font-size: 15px; line-height: 1.65; color: var(--ink, #333); white-space: pre-line; }
+
+  /* ----- Films d'une activité ----- */
+  .prog-films { margin-top: 16px; display: grid; gap: 8px; }
+  .prog-film {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+    padding: 10px 14px; background: var(--bg-2, #f7f4ec); border-radius: 10px;
+    font-size: 14px;
+  }
+  .prog-film .pf-title { font-weight: 800; color: var(--green-deep); }
+  .prog-film .pf-dir { color: var(--ink, #333); }
+  .prog-film .pf-meta { color: var(--ink-soft, #6b6b6b); font-size: 13px; width: 100%; }
+
+  /* ----- Couleurs par catégorie (bandeau) ----- */
+  .pcat-ouverture, .pcat-cloture, .pcat-ceremonie, .pcat-festivites { background: rgba(232,122,31,.15); color: #B05D14; }
+  .pcat-ouverture ~ *, .pcat-cloture ~ * {}
+  .pcat-competition, .pcat-projection { background: rgba(214,56,50,.12); color: var(--red-deep); }
+  .pcat-hors-competition { background: rgba(214,56,50,.07); color: var(--red-deep); }
+  .pcat-masterclass, .pcat-rencontre { background: rgba(42,107,63,.12); color: var(--green-deep); }
+  .pcat-exposition, .pcat-vernissage, .pcat-cine-enfants { background: rgba(242,183,24,.20); color: var(--yellow-deep); }
+
+  .prog-act-body.cat-ouverture, .prog-act-body.cat-cloture, .prog-act-body.cat-ceremonie, .prog-act-body.cat-festivites { border-left-color: var(--orange); }
+  .prog-act-body.cat-ouverture::before, .prog-act-body.cat-cloture::before, .prog-act-body.cat-ceremonie::before, .prog-act-body.cat-festivites::before { background: var(--orange); }
+  .prog-act-body.cat-masterclass, .prog-act-body.cat-rencontre { border-left-color: var(--green); }
+  .prog-act-body.cat-masterclass::before, .prog-act-body.cat-rencontre::before { background: var(--green); }
+  .prog-act-body.cat-exposition, .prog-act-body.cat-vernissage, .prog-act-body.cat-cine-enfants { border-left-color: var(--yellow); }
+  .prog-act-body.cat-exposition::before, .prog-act-body.cat-vernissage::before, .prog-act-body.cat-cine-enfants::before { background: var(--yellow); }
+
+  /* ----- Visionneuse PDF (programme complet) ----- */
+  .prog-pdf-wrap { max-width: 1000px; margin: 0 auto; padding: 0 28px 50px; }
+  .prog-pdf-frame { width: 100%; height: 80vh; min-height: 600px; border: 1px solid var(--line, #e7e2d6); border-radius: 14px; background: #fff; }
+  .prog-pdf-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0 30px; }
+  .prog-pdf-empty { text-align: center; color: var(--ink-soft, #6b6b6b); padding: 40px; border: 1px dashed var(--line, #e7e2d6); border-radius: 14px; }
+
+  @media (max-width: 720px) {
+    .prog-activity { grid-template-columns: 1fr; gap: 8px; }
+    .prog-activity::before { display: none; }
+    .prog-act-time { text-align: left; }
+    .prog-act-body::before { display: none; }
+  }

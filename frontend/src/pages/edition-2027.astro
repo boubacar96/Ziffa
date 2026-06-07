@@ -2,23 +2,14 @@
 import Base from '../layouts/Base.astro';
 import { fetchAPI, mediaUrl } from '../lib/strapi.js';
 
-const typeLabel = { projection: 'Projection', masterclass: 'Masterclass', rencontre: 'Rencontre', ceremonie: 'Cérémonie' };
+const PROG_YEAR = 2027;
 
 const edRes = await fetchAPI('editions', { 'filters[isCurrent][$eq]': 'true', populate: 'poster', 'pagination[limit]': '1' });
 const edition = (edRes.data || [])[0] || null;
 const poster = edition?.poster?.url ? mediaUrl(edition.poster.url) : null;
 
-const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '8' });
-const fallbackEvents = [
-  { time: 'Mer 17', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "En présence des invités et des autorités.", place: 'Théâtre Aline Sitoé Diatta' },
-  { time: 'Jeu 18', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
-  { time: 'Ven 19', type: 'masterclass', title: 'Masterclass : écriture documentaire', desc: 'Avec un réalisateur invité international.', place: 'Institut français' },
-  { time: 'Sam 20', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Annonce du palmarès officiel.", place: 'Théâtre Aline Sitoé Diatta' },
-];
-const events = [
-  ...(evRes.data || []).map((e) => ({ time: e.startTime || (e.day ? `Jour ${e.day}` : '—'), type: e.type || 'projection', title: e.title, desc: e.description || '', place: e.location || '' })),
-  ...fallbackEvents,
-].slice(0, 6);
+const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': String(PROG_YEAR), sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' });
+const days = daysRes.data || [];
 
 const prizes = [
   { icon: '🏆', name: 'Grand Prix ZIFFA', desc: 'La plus haute distinction du festival.' },
@@ -57,21 +48,33 @@ const jury = [
 
   <hr class="section-divider" />
 
-  <!-- PROGRAMME (Strapi) -->
+  <!-- PROGRAMME (Strapi — cartes par jour) -->
   <section class="programme-section" id="programme">
     <div class="programme-inner">
-      <div style="text-align:center;margin-bottom:30px;">
+      <div style="text-align:center;margin-bottom:10px;">
         <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Programme officiel</div>
         <h2 class="section-title" style="margin:12px auto;text-align:center;">Le <span class="red">programme</span>.</h2>
       </div>
-      {events.map((ev) => (
-        <div class="programme-event" data-type={ev.type}>
-          <div class="programme-event-time">{ev.time}</div>
-          <div class="programme-event-info"><h4>{ev.title}</h4><p>{ev.desc}</p></div>
-          <div class="programme-event-location"><span class={`programme-event-type event-type-${ev.type}`}>{typeLabel[ev.type] || ev.type}</span>{ev.place && <strong>{ev.place}</strong>}</div>
-          <div class="programme-event-arrow">→</div>
-        </div>
-      ))}
+      {days.length > 0 ? (
+        <>
+          <div class="prog-days-grid">
+            {days.map((d, i) => (
+              <a class="prog-day-card" href={`/programme/${d.slug}`}>
+                <span class="pd-num">— Jour {String(i + 1).padStart(2, '0')}</span>
+                <span class="pd-label">{d.label}</span>
+                {d.subtitle && <span class="pd-sub">{d.subtitle}</span>}
+                <span class="pd-count">{(d.activities?.length || 0)} activités</span>
+                <span class="pd-go">Voir le détail →</span>
+              </a>
+            ))}
+          </div>
+          <div class="prog-complete-btn">
+            <a href={`/programme-complet/${PROG_YEAR}`} class="nav-cta">Voir le programme complet ↗</a>
+          </div>
+        </>
+      ) : (
+        <p class="prog-pdf-empty" style="max-width:520px;margin:0 auto;">Le programme détaillé sera bientôt disponible. Revenez bientôt !</p>
+      )}
     </div>
   </section>
 

@@ -11,6 +11,10 @@ const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.im
 const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const photos = [...cmsPhotos, ...fallbackPhotos].slice(0, 8);
 
+// Programme 2025 (dynamique, depuis Strapi).
+const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': '2025', sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' });
+const days = daysRes.data || [];
+
 const prizes = [
   { icon: '🏆', name: 'Grand Prix ZIFFA', winner: 'Lauréat 2025 — à confirmer' },
   { icon: '🎬', name: 'Prix de la Fiction', winner: 'Lauréat 2025 — à confirmer' },
@@ -70,13 +74,30 @@ const jury = [
 
   <hr class="section-divider" />
 
-  <!-- PROGRAMME 2025 (récap) -->
+  <!-- PROGRAMME 2025 (Strapi — cartes par jour) -->
   <section class="programme-section" id="programme">
     <div class="programme-inner">
-      <div style="text-align:center;margin-bottom:30px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Ce qu'il s'est passé</div><h2 class="section-title" style="margin:12px auto;text-align:center;">Le <span class="italic">programme</span> 2025.</h2></div>
-      <div class="programme-event" data-type="ceremonie"><div class="programme-event-time">J1</div><div class="programme-event-info"><h4>Cérémonie d'ouverture & film inaugural</h4><p>Lancement de la première édition.</p></div><div class="programme-event-location"><span class="programme-event-type event-type-ceremonie">Cérémonie</span><strong>Ziguinchor</strong></div><div class="programme-event-arrow">→</div></div>
-      <div class="programme-event" data-type="projection"><div class="programme-event-time">J2</div><div class="programme-event-info"><h4>Projections en compétition</h4><p>Fictions, documentaires et animations.</p></div><div class="programme-event-location"><span class="programme-event-type event-type-projection">Projections</span><strong>Salles partenaires</strong></div><div class="programme-event-arrow">→</div></div>
-      <div class="programme-event" data-type="masterclass"><div class="programme-event-time">J3</div><div class="programme-event-info"><h4>Masterclasses & rencontres</h4><p>Transmission avec les cinéastes invités.</p></div><div class="programme-event-location"><span class="programme-event-type event-type-masterclass">Masterclass</span><strong>Ziguinchor</strong></div><div class="programme-event-arrow">→</div></div>
+      <div style="text-align:center;margin-bottom:10px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Ce qu'il s'est passé</div><h2 class="section-title" style="margin:12px auto;text-align:center;">Le <span class="italic">programme</span> 2025.</h2></div>
+      {days.length > 0 ? (
+        <>
+          <div class="prog-days-grid">
+            {days.map((d, i) => (
+              <a class="prog-day-card" href={`/programme/${d.slug}`}>
+                <span class="pd-num">— Jour {String(i + 1).padStart(2, '0')}</span>
+                <span class="pd-label">{d.label}</span>
+                {d.subtitle && <span class="pd-sub">{d.subtitle}</span>}
+                <span class="pd-count">{(d.activities?.length || 0)} activités</span>
+                <span class="pd-go">Voir le détail →</span>
+              </a>
+            ))}
+          </div>
+          <div class="prog-complete-btn">
+            <a href="/programme-complet/2025" class="nav-cta">Voir le programme complet ↗</a>
+          </div>
+        </>
+      ) : (
+        <p class="prog-pdf-empty" style="max-width:520px;margin:0 auto;">Le programme de l'édition 2025 sera bientôt disponible.</p>
+      )}
     </div>
   </section>
 

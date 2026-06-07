@@ -39,11 +39,11 @@ const enHref = altPath(Astro.url, 'en');
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/a-lannee')}`} href={L('/a-lannee')}>{t('nav.annee')} <span class="caret">▾</span></a>
+      <span class={`nav-link nav-link--toggle ${is('/a-lannee')}`} role="button" tabindex="0">{t('nav.annee')} <span class="caret">▾</span></span>
       <div class="dropdown">
         <div class="dropdown-header">{t('nav.dd.annee')}</div>
-        <a href={L('/a-lannee') + '#formations'}>{t('nav.formations')}</a>
-        <a href={L('/a-lannee') + '#expo-photo'}>{t('nav.expophoto')}</a>
+        <a href={L('/a-lannee')}>{t('nav.formations')}</a>
+        <a href={L('/expo-photo')}>{t('nav.expophoto')}</a>
       </div>
     </li>
     <li class="nav-item">
@@ -55,11 +55,11 @@ const enHref = altPath(Astro.url, 'en');
       </div>
     </li>
     <li class="nav-item">
-      <a class={`nav-link ${is('/participer')}`} href={L('/participer')}>{t('nav.participer')} <span class="caret">▾</span></a>
+      <span class={`nav-link nav-link--toggle ${is('/participer')}`} role="button" tabindex="0">{t('nav.participer')} <span class="caret">▾</span></span>
       <div class="dropdown">
         <div class="dropdown-header">{t('nav.dd.rejoindre')}</div>
-        <a href={L('/participer') + '#inscription'}>{t('nav.inscrire')}</a>
-        <a href={L('/participer') + '#partenariat'}>{t('nav.partenariat')}</a>
+        <a href={L('/participer')}>{t('nav.inscrire')}</a>
+        <a href={L('/venir-au-festival')}>{t('nav.partenariat')}</a>
       </div>
     </li>
     <li class="nav-item">
@@ -77,7 +77,7 @@ const enHref = altPath(Astro.url, 'en');
       <a href={frHref} class={lang === 'fr' ? 'active' : ''}>FR</a>
       <a href={enHref} class={lang === 'en' ? 'active' : ''}>EN</a>
     </div>
-    <a href={L('/participer') + '#accreditation'} class="nav-cta">{t('nav.accrediter')} ↗</a>
+    <a href={L('/accreditation')} class="nav-cta">{t('nav.accrediter')} ↗</a>
   </div>
 </nav>
 

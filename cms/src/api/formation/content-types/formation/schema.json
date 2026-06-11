@@ -50,26 +50,6 @@
     },
     "description": {
       "type": "text"
-    },
-    "type": {
-      "type": "enumeration",
-      "enum": [
-        "documentaire",
-        "animation"
-      ]
-    },
-    "schedule": {
-      "type": "string"
-    },
-    "level": {
-      "type": "string"
-    },
-    "image": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": [
-        "images"
-      ]
     }
   }
 }

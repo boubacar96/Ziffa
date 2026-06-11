@@ -33,9 +33,14 @@
       "enum": [
         "jury",
         "equipe",
-        "invite"
+        "invite",
+        "photographe"
       ],
       "default": "jury"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
     },
     "order": {
       "type": "integer",

@@ -1,15 +1,114 @@
 ---
 import Base from '../layouts/Base.astro';
-import UnderConstruction from '../components/UnderConstruction.astro';
+import Socials from '../components/Socials.astro';
 ---
-<Base title="Contact & Infos | ZIFFA" description="Contactez l'équipe du ZIFFA.">
+<Base title="Contact | ZIFFA" description="Contactez l'équipe du ZIFFA : programmation, presse, partenariats, inscriptions. Email, téléphone et newsletter.">
   <header class="page-hero">
     <div class="page-hero-inner">
-      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Infos</div>
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Contact</div>
       <div class="eyebrow"><span class="arrow">→</span> Nous contacter</div>
       <h1>On vous <span class="yellow">répond</span>.</h1>
       <p>Une question sur la programmation, la presse, les partenariats ou les inscriptions ? Écrivez-nous.</p>
     </div>
   </header>
-  <UnderConstruction id="contact" eyebrow="Page Contact" />
+
+  <section class="section" id="contact">
+    <!-- Tuiles de contact -->
+    <div class="contact-tiles">
+      <a class="contact-tile ct-red" href="mailto:festival@ziffa.sn">
+        <span class="ct-ic">✉️</span>
+        <span class="ct-k">Email</span>
+        <span class="ct-v">festival@ziffa.sn</span>
+      </a>
+      <div class="contact-tile ct-green">
+        <span class="ct-ic">📞</span>
+        <span class="ct-k">Téléphone</span>
+        <span class="ct-v">XXXXXXXX</span>
+      </div>
+      <div class="contact-tile ct-yellow">
+        <span class="ct-ic">📍</span>
+        <span class="ct-k">Adresse</span>
+        <span class="ct-v">Ziguinchor, Casamance — Sénégal</span>
+      </div>
+    </div>
+
+    <!-- Formulaire + panneau -->
+    <div class="contact-grid">
+      <div class="contact-form-card">
+        <h2 class="contact-form-title">Écrivez-nous</h2>
+        <div id="ct-alert" class="form-alert"></div>
+        <form id="ct-form" class="insc-form" novalidate>
+          <div class="hp"><label>Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+          <input type="hidden" name="type" value="contact" />
+          <div class="grid2">
+            <div class="field"><label>Nom <span class="req">*</span></label><input type="text" name="name" required /></div>
+            <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" required /></div>
+          </div>
+          <div class="field"><label>Sujet</label>
+            <select name="subject"><option value="">— Choisir —</option><option>Programmation</option><option>Presse</option><option>Partenariats</option><option>Inscriptions</option><option>Accréditations</option><option>Autre</option></select>
+          </div>
+          <div class="field"><label>Message <span class="req">*</span></label><textarea name="message" required style="min-height:150px"></textarea></div>
+          <button type="submit" class="submit-btn" id="ct-submit">Envoyer le message ↗</button>
+        </form>
+      </div>
+
+      <aside class="contact-panel">
+        <div class="eyebrow" style="color:var(--yellow);"><span class="arrow">→</span> Parlons-en</div>
+        <h3>Toujours ravis<br />d'échanger.</h3>
+        <p>Programmation, presse, partenariats, inscriptions… l'équipe du ZIFFA vous répond rapidement, en français comme en anglais.</p>
+        <div class="contact-panel-foot">
+          <div class="contact-panel-label">Suivez-nous</div>
+          <Socials />
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="newsletter-section" id="newsletter">
+    <div class="newsletter-box">
+      <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Restez informé</div>
+      <h2 class="section-title" style="margin:12px auto;">La <span class="yellow-highlight">newsletter</span>.</h2>
+      <p>Programmation, appels à films, accréditations : recevez les annonces du ZIFFA directement par email.</p>
+      <div id="nl-alert" class="form-alert"></div>
+      <form id="nl-form" class="newsletter-form" novalidate>
+        <div class="hp"><label>Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <input type="hidden" name="type" value="newsletter" />
+        <input type="email" name="email" placeholder="votre@email.com" required />
+        <button type="submit" class="nav-cta" id="nl-submit">S'inscrire ↗</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Carte -->
+  <section class="section">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Nous trouver</div><h2 class="section-title">À <span class="red">Ziguinchor</span>.</h2></div></div>
+    <div class="contact-map">
+      <iframe src="https://www.google.com/maps?q=Ziguinchor,+S%C3%A9n%C3%A9gal&z=13&output=embed" title="Carte — Ziguinchor, Sénégal" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+    </div>
+  </section>
 </Base>
+
+<script>
+  function wire(formId, alertId, submitId, okMsg) {
+    const form = document.getElementById(formId);
+    const alertBox = document.getElementById(alertId);
+    const submitBtn = document.getElementById(submitId);
+    if (!form) return;
+    const show = (type, msg) => { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) { show('err', 'Merci de remplir les champs obligatoires (*).'); return; }
+      submitBtn.disabled = true; const original = submitBtn.textContent; submitBtn.textContent = 'Envoi…';
+      try {
+        const res = await fetch('/api/contact-submission', { method: 'POST', body: new FormData(form) });
+        const data = await res.json();
+        if (data.ok) { show('ok', okMsg); form.reset(); }
+        else { show('err', '⚠️ ' + (data.error || 'Une erreur est survenue.')); }
+      } catch (err) { show('err', "⚠️ Échec de l'envoi. Vérifiez votre connexion et réessayez."); }
+      finally { submitBtn.disabled = false; submitBtn.textContent = original; }
+    });
+  }
+  wire('ct-form', 'ct-alert', 'ct-submit', '✅ Merci ! Votre message a bien été envoyé. Nous vous répondrons par email.');
+  wire('nl-form', 'nl-alert', 'nl-submit', '✅ Merci ! Votre inscription à la newsletter est enregistrée.');
+</script>

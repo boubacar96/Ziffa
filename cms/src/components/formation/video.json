@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_formation_videos",
+  "info": {
+    "displayName": "Vidéo",
+    "icon": "play",
+    "description": "Une vidéo (YouTube, Vimeo…) d'une formation"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

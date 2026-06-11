@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { fallbackFormations, toVideoEmbed } from '../../lib/formations.js';
+import { marked } from 'marked';
+
+const { slug } = Astro.params;
+const res = await fetchAPI('formations', { 'filters[slug][$eq]': slug, populate: '*', 'pagination[limit]': '1' });
+const f = (res.data || [])[0];
+let formation = null;
+if (f) {
+  formation = {
+    title: f.title, excerpt: f.excerpt || '', content: f.content || '',
+    cover: f.cover?.url ? mediaUrl(f.cover.url) : null,
+    gallery: (f.gallery || []).map((g) => (g.url ? mediaUrl(g.url) : null)).filter(Boolean),
+    videos: (f.videos || []).map((v) => ({ title: v.title || '', url: toVideoEmbed(v.url) })),
+  };
+} else {
+  const fb = fallbackFormations('fr').find((x) => x.slug === slug);
+  if (fb) formation = { ...fb, videos: (fb.videos || []).map((v) => ({ title: v.title, url: toVideoEmbed(v.url) })) };
+}
+const contentHtml = formation ? marked.parse(formation.content || '') : '';
+const coverStyle = formation && formation.cover
+  ? `background-image:linear-gradient(rgba(26,69,39,.55),rgba(26,69,39,.85)),url('${formation.cover}')`
+  : '';
+---
+<Base title={formation ? `${formation.title} | Formations ZIFFA` : 'Formation | ZIFFA'} description={formation?.excerpt || ''}>
+  {formation ? (
+    <>
+      <header class="formation-hero" style={coverStyle}>
+        <div class="formation-hero-inner">
+          <a href="/formations" class="prog-day-back">← Toutes les formations</a>
+          <h1>{formation.title}</h1>
+          {formation.excerpt && <p>{formation.excerpt}</p>}
+        </div>
+      </header>
+
+      <article class="section formation-article">
+        {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
+
+        {formation.gallery.length > 0 && (
+          <div class="gallery-grid" style="margin-top:40px;">
+            {formation.gallery.map((src) => (
+              <figure><img src={src} alt={formation.title} loading="lazy" decoding="async" /></figure>
+            ))}
+          </div>
+        )}
+
+        {formation.videos.length > 0 && (
+          <div class="formation-videos">
+            {formation.videos.map((v) => (
+              <div class="formation-video">
+                <div class="video-wrapper"><iframe src={v.url} title={v.title || formation.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
+                {v.title && <div class="formation-video-title">{v.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+      </article>
+    </>
+  ) : (
+    <section class="section" style="text-align:center;padding:80px 20px;">
+      <h1 class="section-title">404</h1>
+      <p class="prog-pdf-empty" style="max-width:480px;margin:20px auto;">Cette formation est introuvable.</p>
+      <a href="/formations" class="nav-cta">← Toutes les formations</a>
+    </section>
+  )}
+</Base>

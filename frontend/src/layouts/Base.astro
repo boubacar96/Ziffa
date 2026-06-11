@@ -41,14 +41,21 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImage} />
 
+  <!-- Préconnexions pour charger plus vite les polices et les médias -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://admin.ziffa.sn" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
 </head>
 <body>
+  <a href="#main" class="skip-link">{lang === 'en' ? 'Skip to content' : 'Aller au contenu'}</a>
   <Header />
-  <slot />
+  <main id="main">
+    <slot />
+  </main>
   <Footer />
 
   <script>
@@ -67,17 +74,75 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
         document.querySelectorAll(sel).forEach((el) => { el.classList.add('reveal-el'); io.observe(el); });
       }
 
-      // Lightbox sur les galeries
+      // Lightbox galeries — navigation ‹ ›, clavier, légende
+      const GAL_SEL = '.gallery-grid img, .gallery-marquee img, .gallery-page img';
       const lb = document.createElement('div');
       lb.className = 'lightbox';
-      lb.innerHTML = '<button class="lightbox-close" aria-label="Fermer">✕</button><img alt="">';
+      lb.setAttribute('role', 'dialog');
+      lb.setAttribute('aria-modal', 'true');
+      lb.setAttribute('aria-label', document.documentElement.lang === 'en' ? 'Image viewer' : 'Visionneuse d’images');
+      lb.innerHTML = '<button class="lightbox-close" aria-label="Fermer">✕</button>'
+        + '<button class="lightbox-prev" aria-label="Précédent">‹</button>'
+        + '<figure class="lightbox-fig"><img alt=""><figcaption class="lightbox-caption"></figcaption></figure>'
+        + '<button class="lightbox-next" aria-label="Suivant">›</button>';
       document.body.appendChild(lb);
+      let lbLastFocus = null;
       const lbImg = lb.querySelector('img');
-      const close = () => lb.classList.remove('open');
-      lb.addEventListener('click', close);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-      document.querySelectorAll('.gallery-grid img').forEach((img) => {
-        img.addEventListener('click', () => { lbImg.src = img.currentSrc || img.src; lb.classList.add('open'); });
+      const lbCap = lb.querySelector('.lightbox-caption');
+      const prevBtn = lb.querySelector('.lightbox-prev');
+      const nextBtn = lb.querySelector('.lightbox-next');
+      let imgs = [];
+      let idx = 0;
+      const collect = () => {
+        const seen = new Set(); imgs = [];
+        document.querySelectorAll(GAL_SEL).forEach((im) => {
+          const s = im.currentSrc || im.src;
+          if (!seen.has(s)) { seen.add(s); imgs.push(im); }
+        });
+      };
+      const render = () => {
+        const im = imgs[idx]; if (!im) return;
+        lbImg.src = im.currentSrc || im.src;
+        const cap = im.getAttribute('alt') || '';
+        lbCap.textContent = cap; lbCap.style.display = cap ? '' : 'none';
+        const multi = imgs.length > 1;
+        prevBtn.style.display = nextBtn.style.display = multi ? '' : 'none';
+      };
+      const go = (d) => { idx = (idx + d + imgs.length) % imgs.length; render(); };
+      const closeBtn = lb.querySelector('.lightbox-close');
+      const openAt = (el) => {
+        collect();
+        const s = el.currentSrc || el.src;
+        idx = Math.max(0, imgs.findIndex((x) => (x.currentSrc || x.src) === s));
+        render(); lb.classList.add('open'); document.body.style.overflow = 'hidden';
+        lbLastFocus = document.activeElement;
+        closeBtn.focus();
+      };
+      const close = () => {
+        lb.classList.remove('open'); document.body.style.overflow = '';
+        if (lbLastFocus && lbLastFocus.focus) lbLastFocus.focus();
+      };
+      closeBtn.addEventListener('click', close);
+      prevBtn.addEventListener('click', (e) => { e.stopPropagation(); go(-1); });
+      nextBtn.addEventListener('click', (e) => { e.stopPropagation(); go(1); });
+      lb.addEventListener('click', (e) => { if (e.target === lb || e.target.classList.contains('lightbox-fig')) close(); });
+      document.addEventListener('keydown', (e) => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowLeft') go(-1);
+        else if (e.key === 'ArrowRight') go(1);
+        else if (e.key === 'Tab') {
+          // Piège de focus : on reste sur les boutons visibles du lightbox
+          const f = [closeBtn, prevBtn, nextBtn].filter((b) => b.style.display !== 'none');
+          const i = f.indexOf(document.activeElement);
+          e.preventDefault();
+          const ni = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : (i >= f.length - 1 ? 0 : i + 1);
+          f[ni].focus();
+        }
+      });
+      document.querySelectorAll(GAL_SEL).forEach((img) => {
+        img.style.cursor = 'zoom-in';
+        img.addEventListener('click', () => openAt(img));
       });
     })();
   </script>

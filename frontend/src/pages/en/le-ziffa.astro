@@ -4,15 +4,16 @@ import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
 
 const teamRes = await fetchAPI('people', { 'filters[type][$eq]': 'equipe', sort: 'order:asc', populate: 'photo' });
 const cmsTeam = teamRes.data || [];
+const mapPerson = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null, featured: !!p.featured });
 const fallbackTeam = [
-  { ini: 'BB', name: 'Babacar Ba', role: 'General management', bio: 'Founder of the festival, he drives its vision and partnerships.' },
-  { ini: 'DP', name: 'Programming', role: 'Programming', bio: 'Film selection, jury and filmmaker invitations.' },
-  { ini: 'CP', name: 'Production', role: 'Production', bio: 'Logistics, venues and audience welcome.' },
-  { ini: 'CM', name: 'Communication', role: 'Press & media', bio: 'Press relations, social media and festival image.' },
+  { ini: 'BB', name: 'Babacar Ba', role: 'General management', bio: 'Founder of the festival, he drives its vision and partnerships. Initiator of ZIFFA, he works to make Ziguinchor a crossroads for African and diaspora cinema.', photo: null, featured: true },
+  { ini: 'DP', name: 'Programming', role: 'Programming', bio: 'Film selection, jury and filmmaker invitations.', photo: null, featured: false },
+  { ini: 'CP', name: 'Production', role: 'Production', bio: 'Logistics, venues and audience welcome.', photo: null, featured: false },
+  { ini: 'CM', name: 'Communication', role: 'Press & media', bio: 'Press relations, social media and festival image.', photo: null, featured: false },
 ];
-const team = cmsTeam.length
-  ? cmsTeam.map((p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null }))
-  : fallbackTeam;
+const team = cmsTeam.length ? cmsTeam.map(mapPerson) : fallbackTeam;
+const founder = team.find((m) => m.featured) || null;
+const others = team.filter((m) => m !== founder);
 
 const partRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
 const fallbackPartners = [
@@ -65,8 +66,8 @@ const objectifs = [
         <p class="objectifs-tagline">Promote African cinema and develop the film industry in Casamance.</p>
       </div>
       <div class="objectifs-grid">
-        {objectifs.map((o) => (
-          <div class="objectif-card"><div class="objectif-num">{o.num}</div><div class="objectif-icon">{o.icon}</div><h3>{o.title}</h3><p>{o.desc}</p></div>
+        {objectifs.map((o, i) => (
+          <div class={`objectif-card objectif-card--filled oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><div class="objectif-num">{o.num}</div><h3>{o.title}</h3><p>{o.desc}</p></div>
         ))}
       </div>
     </div>
@@ -74,12 +75,13 @@ const objectifs = [
 
   <section class="section" id="equipe">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The people behind the festival</div><h2 class="section-title">The <span class="italic">team</span>.</h2></div></div>
-    <div class="people-grid">
+
+    <div class="team-grid">
       {team.map((m) => (
-        <div class="person-card">
-          <div class="person-avatar" style={m.photo ? `background-image:url('${m.photo}');background-size:cover;background-position:center;` : ''}>{m.photo ? '' : m.ini}</div>
-          <div class="person-name">{m.name}</div><div class="person-role">{m.role}</div>{m.bio && <p class="person-bio">{m.bio}</p>}
-        </div>
+        <button type="button" class={`team-portrait js-person ${m.featured ? 'team-portrait--focus' : ''}`} data-name={m.name} data-role={m.role} data-bio={m.bio} data-photo={m.photo || ''} data-ini={m.ini}>
+          <div class="team-photo" style={m.photo ? `background-image:url('${m.photo}')` : ''}>{m.photo ? '' : <span class="team-ini">{m.ini}</span>}{m.featured && <span class="team-badge">★ Founder</span>}</div>
+          <div class="team-info"><div class="team-name">{m.name}</div><div class="team-role">{m.role}</div></div>
+        </button>
       ))}
     </div>
   </section>
@@ -87,11 +89,12 @@ const objectifs = [
   <hr class="section-divider" />
 
   <section class="section" id="presse">
-    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Press area</div><h2 class="section-title">Press <span class="red">kit</span>.</h2></div><a href="/en/contact#contact" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Press contact →</a></div>
-    <div class="download-list">
-      <div class="download-row"><div><div class="dl-name">Press kit</div><div class="dl-meta">PDF · coming soon</div></div><a href="#" class="dl-btn">Download ↓</a></div>
-      <div class="download-row"><div><div class="dl-name">Logos & brand guidelines</div><div class="dl-meta">ZIP · PNG / SVG</div></div><a href="#" class="dl-btn">Download ↓</a></div>
-      <div class="download-row"><div><div class="dl-name">Official photo library</div><div class="dl-meta">High-resolution images</div></div><a href="/en/edition-2025#images" class="dl-btn">View gallery →</a></div>
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Press area</div><h2 class="section-title">Press <span class="red">kit</span>.</h2></div><a href="/en/presse" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Go to the press area →</a></div>
+    <p class="lead" style="max-width:760px;margin-bottom:30px;">All ZIFFA press resources, to download one by one, by selection or in a batch.</p>
+    <div class="presse-cards">
+      <a class="presse-card pc-red" href="/en/presse"><span class="presse-ic">📄</span><h3>Press kit</h3><p>Overview, key figures and contacts.</p><span class="presse-go">Open →</span></a>
+      <a class="presse-card pc-green" href="/en/presse"><span class="presse-ic">🎨</span><h3>Logos & brand</h3><p>Logos (colour, white) and usage rules.</p><span class="presse-go">Open →</span></a>
+      <a class="presse-card pc-yellow" href="/en/presse"><span class="presse-ic">📸</span><h3>Photo library</h3><p>High-resolution photos for the press.</p><span class="presse-go">Open →</span></a>
     </div>
   </section>
 
@@ -99,29 +102,73 @@ const objectifs = [
     <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Supporters & Partners</div>
     <h2 class="section-title" style="margin:16px auto 0;max-width:700px;">They <span class="red">support</span><br />ZIFFA.</h2>
     <p class="partners-intro">The festival is made possible thanks to committed institutions and partners.</p>
-    <div class="partners-grid">
-      {partners.map((p) => (
-        <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>{p.logo && <img src={p.logo} alt={p.name} />}<span class="partner-logo-name">{p.name}</span></a>
-      ))}
+    <div class="partners-marquee">
+      <div class="partners-marquee-track">
+        {partners.map((p) => (
+          <a href={p.url} target="_blank" rel="noopener" class="partner-logo" title={p.name}>{p.logo && <img src={p.logo} alt={p.name} />}<span class="partner-logo-name">{p.name}</span></a>
+        ))}
+        {partners.map((p) => (
+          <a href={p.url} target="_blank" rel="noopener" class="partner-logo" aria-hidden="true" tabindex="-1">{p.logo && <img src={p.logo} alt="" />}<span class="partner-logo-name">{p.name}</span></a>
+        ))}
+      </div>
     </div>
-    <a href="/en/venir-au-festival" class="btn-ghost">Come to the festival →</a>
   </section>
 
   <section class="section" id="archives">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Festival memory</div><h2 class="section-title">The <span class="italic">archives</span>.</h2></div></div>
-    <div class="edition-cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-      <div class="ed-card" style="background:var(--paper);border:1px solid var(--line);color:var(--ink);">
-        <div class="ed-card-num" style="color:var(--red);">— Edition 01</div>
-        <h4 style="color:var(--green-deep);">ZIFFA <span class="italic">2025</span></h4>
-        <p style="color:var(--ink-soft);">Pictures, prize list and programme of the first edition.</p>
-        <a href="/en/edition-2025" class="ed-card-link" style="color:var(--red);">Relive 2025 ↗</a>
-      </div>
-      <div class="ed-card" style="background:var(--paper);border:1px solid var(--line);color:var(--ink);">
-        <div class="ed-card-num" style="color:var(--red);">— Next edition</div>
-        <h4 style="color:var(--green-deep);">ZIFFA <span class="italic">2027</span></h4>
-        <p style="color:var(--ink-soft);">Programme, juries, awards and masterclasses to come.</p>
-        <a href="/en/edition-2027" class="ed-card-link" style="color:var(--red);">Discover 2027 ↗</a>
-      </div>
+    <div class="archive-cards">
+      <a class="archive-card" href="/en/edition-2025">
+        <div class="archive-head archive-head--past"><span class="archive-num">— Edition 01</span><span class="archive-year">2025</span></div>
+        <div class="archive-body"><p>Pictures, prize list and programme of the first edition.</p><span class="archive-link">Relive 2025 ↗</span></div>
+      </a>
+      <a class="archive-card" href="/en/edition-2027">
+        <div class="archive-head archive-head--next"><span class="archive-num">— Next edition</span><span class="archive-year">2027</span></div>
+        <div class="archive-body"><p>Programme, juries, awards and masterclasses to come.</p><span class="archive-link">Discover 2027 ↗</span></div>
+      </a>
     </div>
   </section>
+
+  <div class="person-modal" id="person-modal" hidden>
+    <div class="pm-backdrop" data-close></div>
+    <div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+      <button class="pm-close" data-close aria-label="Close">×</button>
+      <div class="pm-photo" id="pm-photo"></div>
+      <div class="pm-body">
+        <div class="pm-role" id="pm-role"></div>
+        <h3 id="pm-name"></h3>
+        <p id="pm-bio"></p>
+      </div>
+    </div>
+  </div>
 </Base>
+
+<script>
+  const modal = document.getElementById('person-modal');
+  if (modal) {
+    const pmPhoto = document.getElementById('pm-photo');
+    const pmName = document.getElementById('pm-name');
+    const pmRole = document.getElementById('pm-role');
+    const pmBio = document.getElementById('pm-bio');
+    const pmClose = modal.querySelector('.pm-close');
+    let pmLast = null;
+    const open = (d) => {
+      pmName.textContent = d.name || '';
+      pmRole.textContent = d.role || '';
+      pmBio.textContent = d.bio || '';
+      if (d.photo) { pmPhoto.style.backgroundImage = `url('${d.photo}')`; pmPhoto.textContent = ''; pmPhoto.classList.remove('pm-photo--ini'); }
+      else { pmPhoto.style.backgroundImage = ''; pmPhoto.textContent = d.ini || ''; pmPhoto.classList.add('pm-photo--ini'); }
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      pmLast = document.activeElement;
+      pmClose.focus();
+    };
+    const close = () => { modal.hidden = true; document.body.style.overflow = ''; if (pmLast && pmLast.focus) pmLast.focus(); };
+    document.querySelectorAll('.js-person').forEach((c) => c.addEventListener('click', () => open(c.dataset)));
+    modal.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (modal.hidden) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') { e.preventDefault(); pmClose.focus(); }
+    });
+  }
+</script>

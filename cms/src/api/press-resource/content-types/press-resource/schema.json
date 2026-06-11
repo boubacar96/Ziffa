@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "press_resources",
+  "info": {
+    "singularName": "press-resource",
+    "pluralName": "press-resources",
+    "displayName": "Ressource presse"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "category": {
+      "type": "string"
+    },
+    "files": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

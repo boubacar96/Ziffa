@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { fallbackFormations } from '../../lib/formations.js';
+
+const res = await fetchAPI('formations', { populate: 'cover', sort: 'order:asc', 'pagination[limit]': '50' });
+const cms = (res.data || []).map((f) => ({ slug: f.slug, title: f.title, excerpt: f.excerpt || f.description || '', cover: f.cover?.url ? mediaUrl(f.cover.url) : null }));
+const formations = cms.length ? cms.filter((f) => f.slug) : fallbackFormations('en');
+---
+<Base title="Our training | ZIFFA" description="ZIFFA training programmes: acting for camera, documentary directing, animation… Led by working professionals.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; <a href="/en/a-lannee">Year-round</a> &nbsp;/&nbsp; Training</div>
+      <div class="eyebrow"><span class="arrow">→</span> Train in filmmaking</div>
+      <h1>Our <span class="yellow">training</span>.</h1>
+      <p>Workshops led by working professionals, to train in directing, acting and animation.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="formations-grid">
+      {formations.map((f) => (
+        <a class="formation-card" href={`/en/formations/${f.slug}`}>
+          <div class="formation-cover" style={f.cover ? `background-image:url('${f.cover}')` : ''}></div>
+          <div class="formation-body">
+            <h3>{f.title}</h3>
+            {f.excerpt && <p>{f.excerpt}</p>}
+            <span class="formation-more">Read more →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

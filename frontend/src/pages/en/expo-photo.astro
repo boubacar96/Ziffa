@@ -1,7 +1,119 @@
 ---
 import Base from '../../layouts/Base.astro';
-import UnderConstruction from '../../components/UnderConstruction.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+
+const phRes = await fetchAPI('people', { 'filters[type][$eq]': 'photographe', sort: 'order:asc', populate: 'photo' });
+const cmsPh = phRes.data || [];
+const mapPh = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null });
+const fallbackPh = [
+  { ini: 'OD', name: 'Ousmane Diatta', role: 'Senegal', bio: '' },
+  { ini: 'AD', name: 'Abdoulaye Diémé', role: 'Senegal', bio: '' },
+  { ini: 'MD', name: 'Moustapha Diop', role: 'Senegal', bio: '' },
+  { ini: 'JK', name: 'John Kalapo', role: 'Mali', bio: '' },
+  { ini: 'FJ', name: 'Fatima Jarju', role: 'Gambia', bio: '' },
+  { ini: 'CS', name: 'Cheikh Sidath Sakhanokho', role: 'Senegal', bio: '' },
+  { ini: 'ML', name: 'Mamadou Ly', role: 'Senegal', bio: '' },
+];
+const photographers = cmsPh.length ? cmsPh.map(mapPh) : fallbackPh;
+
+const phoRes = await fetchAPI('photos', { 'filters[category][$eq]': 'expo', populate: 'image', 'pagination[limit]': '60' });
+const cmsPhotos = (phoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const fallbackPhotos = Array.from({ length: 9 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
+const photos = cmsPhotos.length ? cmsPhotos : fallbackPhotos;
 ---
-<Base title="Photo exhibition | ZIFFA" description="The ZIFFA photo exhibition will be available soon.">
-  <UnderConstruction id="expo-photo" eyebrow="Photo exhibition" />
+<Base title="Photo exhibition — Eyes on Ziguinchor | ZIFFA" description="ZIFFA's photography exhibition: « Eyes on the city of Ziguinchor » — photographers, gallery and practical info.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; <a href="/en/a-lannee">Year-round</a> &nbsp;/&nbsp; Photo exhibition</div>
+      <div class="eyebrow"><span class="arrow">→</span> Photography exhibition</div>
+      <h1>Eyes on <span class="yellow">Ziguinchor</span>.</h1>
+      <p>A photo exhibition at the heart of the festival: the city, its people and Casamance through the eyes of African photographers.</p>
+    </div>
+  </header>
+
+  <section class="section" id="presentation">
+    <div class="presentation-editorial" style="max-width:880px;">
+      <p>« <strong>Eyes on the city of Ziguinchor</strong> » gathers, in the gardens of the Alliance Française, the work of photographers from the continent and the diaspora around one territory: Casamance.</p>
+      <p>Artistic direction: <strong>Boubacar Touré Mandemory</strong>. A free, open-air visual walk that echoes the festival's film programme.</p>
+    </div>
+  </section>
+
+  <section class="section" id="photographes">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The eyes</div><h2 class="section-title">The <span class="italic">photographers</span>.</h2></div></div>
+    <div class="team-grid">
+      {photographers.map((m) => (
+        <button type="button" class="team-portrait js-person" data-name={m.name} data-role={m.role} data-bio={m.bio} data-photo={m.photo || ''} data-ini={m.ini}>
+          <div class="team-photo" style={m.photo ? `background-image:url('${m.photo}')` : ''}>{m.photo ? '' : <span class="team-ini">{m.ini}</span>}</div>
+          <div class="team-info"><div class="team-name">{m.name}</div><div class="team-role">{m.role}</div></div>
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="section" id="galerie">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> In pictures</div><h2 class="section-title">The <span class="red">gallery</span>.</h2></div></div>
+    <div class="gallery-grid">
+      {photos.map((src, i) => (
+        <figure class={i % 5 === 0 ? 'tall' : ''}><img src={src} alt="ZIFFA photo exhibition — Eyes on Ziguinchor" loading="lazy" decoding="async" /></figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="objectifs-section" id="infos">
+    <div class="objectifs-inner">
+      <div class="objectifs-header">
+        <div class="eyebrow"><span class="arrow">→</span> Practical info</div>
+        <h2 class="section-title">Come <span class="yellow-highlight">see the show</span>.</h2>
+      </div>
+      <div class="objectifs-grid">
+        <div class="objectif-card objectif-card--filled oc-red"><div class="objectif-num">— Venue</div><h3>Alliance Française</h3><p>In the gardens of the Alliance Française in Ziguinchor.</p></div>
+        <div class="objectif-card objectif-card--filled oc-green"><div class="objectif-num">— Access</div><h3>Free entry</h3><p>Open to all throughout the festival.</p></div>
+        <div class="objectif-card objectif-card--filled oc-yellow"><div class="objectif-num">— Dates</div><h3>During ZIFFA</h3><p>Opening on the first night, then on view every day.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="person-modal" id="person-modal" hidden>
+    <div class="pm-backdrop" data-close></div>
+    <div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+      <button class="pm-close" data-close aria-label="Close">×</button>
+      <div class="pm-photo" id="pm-photo"></div>
+      <div class="pm-body">
+        <div class="pm-role" id="pm-role"></div>
+        <h3 id="pm-name"></h3>
+        <p id="pm-bio"></p>
+      </div>
+    </div>
+  </div>
 </Base>
+
+<script>
+  const modal = document.getElementById('person-modal');
+  if (modal) {
+    const pmPhoto = document.getElementById('pm-photo');
+    const pmName = document.getElementById('pm-name');
+    const pmRole = document.getElementById('pm-role');
+    const pmBio = document.getElementById('pm-bio');
+    const pmClose = modal.querySelector('.pm-close');
+    let pmLast = null;
+    const open = (d) => {
+      pmName.textContent = d.name || '';
+      pmRole.textContent = d.role || '';
+      pmBio.textContent = d.bio || 'Guest photographer of the exhibition « Eyes on the city of Ziguinchor ».';
+      if (d.photo) { pmPhoto.style.backgroundImage = `url('${d.photo}')`; pmPhoto.textContent = ''; pmPhoto.classList.remove('pm-photo--ini'); }
+      else { pmPhoto.style.backgroundImage = ''; pmPhoto.textContent = d.ini || ''; pmPhoto.classList.add('pm-photo--ini'); }
+      modal.hidden = false; document.body.style.overflow = 'hidden';
+      pmLast = document.activeElement; pmClose.focus();
+    };
+    const close = () => { modal.hidden = true; document.body.style.overflow = ''; if (pmLast && pmLast.focus) pmLast.focus(); };
+    document.querySelectorAll('.js-person').forEach((c) => c.addEventListener('click', () => open(c.dataset)));
+    modal.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (modal.hidden) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') { e.preventDefault(); pmClose.focus(); }
+    });
+  }
+</script>

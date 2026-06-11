@@ -150,20 +150,18 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 
   <!-- ===== 3. LE FESTIVAL EN BREF ===== -->
   <section class="section">
-    <div class="section-head">
-      <div>
+    <div class="festival-split">
+      <div class="festival-text">
         <div class="eyebrow"><span class="arrow">→</span> Le festival</div>
         <h2 class="section-title">Le cinéma africain,<br /><span class="red">en Casamance</span>.</h2>
+        <p class="lead">Le ZIFFA célèbre la création cinématographique et l'animation du continent et de sa diaspora : quatre jours de projections, de rencontres et de transmission, ouverts à tous.</p>
+        <a href="/le-ziffa" class="nav-cta">Découvrir le festival ↗</a>
       </div>
-    </div>
-    <p class="lead" style="margin-bottom:10px;">
-      Le ZIFFA célèbre la création cinématographique et l'animation du continent et de sa diaspora :
-      quatre jours de projections, de rencontres et de transmission, ouverts à tous.
-    </p>
-    <div class="brief-stats">
-      <div class="stat-card stat-card-red"><div class="stat-card-content"><div class="stat-card-num">4<span class="plus">j</span></div><div class="stat-card-label">de festival</div></div></div>
-      <div class="stat-card stat-card-green"><div class="stat-card-content"><div class="stat-card-num">40<span class="plus">+</span></div><div class="stat-card-label">films projetés</div></div></div>
-      <div class="stat-card stat-card-yellow"><div class="stat-card-content"><div class="stat-card-num">10<span class="plus">+</span></div><div class="stat-card-label">pays représentés</div></div></div>
+      <div class="festival-stats">
+        <div class="fstat fstat-red"><div class="fstat-num" data-count="4"><span class="fstat-val">4</span><span class="fstat-suffix">j</span></div><div class="fstat-label">de festival</div></div>
+        <div class="fstat fstat-green"><div class="fstat-num" data-count="25"><span class="fstat-val">25</span></div><div class="fstat-label">films projetés</div></div>
+        <div class="fstat fstat-yellow"><div class="fstat-num" data-count="10"><span class="fstat-val">10</span><span class="fstat-suffix">+</span></div><div class="fstat-label">pays représentés</div></div>
+      </div>
     </div>
   </section>
 
@@ -194,23 +192,18 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 
   {/* Programme masqué sur l'accueil — sera réactivé quand le vrai programme sera dans Strapi */}
 
-  <!-- ===== 6. BANDE-ANNONCE ===== -->
-  <section class="video-2025-section">
-    <div class="video-2025-inner">
-      <div class="video-2025-head">
-        <div class="eyebrow"><span class="arrow">→</span> Teaser officiel</div>
-        <h2 class="section-title">ZIFFA <span class="red">2027</span><br />en <span class="italic">mouvement</span>.</h2>
+  <!-- ===== 6. TEASER OFFICIEL ===== -->
+  <section class="teaser-section">
+    <div class="teaser-inner">
+      <div class="teaser-head">
+        <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Teaser officiel</div>
+        <h2 class="section-title">ZIFFA <span class="red">2027</span> en <span class="italic">mouvement</span>.</h2>
         <p>Un avant-goût du festival : l'énergie, les images, l'émotion du cinéma africain.</p>
       </div>
-      <div class="video-wrapper">
-        <iframe
-          src={videoEmbed}
-          title="ZIFFA — vidéo du festival"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-          style="width:100%;height:100%;border:0;display:block;"
-        ></iframe>
+      <div class="teaser-player" id="teaser-player" data-embed={videoEmbed} role="button" tabindex="0" aria-label="Lire la bande-annonce ZIFFA">
+        <div class="teaser-poster"><span class="teaser-mark">ZIFFA · 2027</span></div>
+        <div class="teaser-play"><span>▶</span></div>
+        <div class="teaser-cta">Regarder la bande-annonce</div>
       </div>
     </div>
   </section>
@@ -253,7 +246,6 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         ))}
       </div>
     </div>
-    <a href="/venir-au-festival" class="btn-ghost">Venir au festival →</a>
   </section>
 
   <!-- ===== 9. NEWSLETTER ===== -->
@@ -269,3 +261,46 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
     </div>
   </section>
 </Base>
+
+<script>
+  const tp = document.getElementById('teaser-player');
+  if (tp) {
+    const play = () => {
+      if (tp.classList.contains('playing')) return;
+      const base = tp.dataset.embed;
+      const src = base + (base.includes('?') ? '&' : '?') + 'autoplay=1';
+      tp.innerHTML = '<iframe src="' + src + '" title="ZIFFA — bande-annonce" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:100%;border:0;display:block;"></iframe>';
+      tp.classList.add('playing');
+    };
+    tp.addEventListener('click', play);
+    tp.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+  }
+
+  // Compteurs animés des stats « Le festival »
+  const stats = document.querySelector('.festival-stats');
+  if (stats) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const run = () => {
+      stats.querySelectorAll('.fstat-num').forEach((el) => {
+        const val = el.querySelector('.fstat-val');
+        const target = parseInt(el.dataset.count, 10) || 0;
+        if (reduce) { val.textContent = String(target); return; }
+        const dur = 1100; const t0 = performance.now();
+        val.textContent = '0';
+        const step = (now) => {
+          const p = Math.min(1, (now - t0) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          val.textContent = String(Math.round(eased * target));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { run(); io.disconnect(); } });
+      }, { threshold: 0.4 });
+      io.observe(stats);
+    } else { run(); }
+  }
+</script>

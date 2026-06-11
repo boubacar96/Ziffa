@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { toVideoEmbed } from '../../lib/formations.js';
+import { fallbackMasterclasses } from '../../lib/masterclasses.js';
+import { marked } from 'marked';
+
+const { slug } = Astro.params;
+const res = await fetchAPI('masterclasses', { 'filters[slug][$eq]': slug, populate: '*', 'pagination[limit]': '1' });
+const f = (res.data || [])[0];
+let mc = null;
+if (f) {
+  mc = {
+    title: f.title, excerpt: f.excerpt || '', content: f.content || '',
+    cover: f.cover?.url ? mediaUrl(f.cover.url) : null,
+    gallery: (f.gallery || []).map((g) => (g.url ? mediaUrl(g.url) : null)).filter(Boolean),
+    videos: (f.videos || []).map((v) => ({ title: v.title || '', url: toVideoEmbed(v.url) })),
+  };
+} else {
+  const fb = fallbackMasterclasses('fr').find((x) => x.slug === slug);
+  if (fb) mc = { ...fb, videos: (fb.videos || []).map((v) => ({ title: v.title, url: toVideoEmbed(v.url) })) };
+}
+const contentHtml = mc ? marked.parse(mc.content || '') : '';
+const coverStyle = mc && mc.cover
+  ? `background-image:linear-gradient(rgba(26,69,39,.55),rgba(26,69,39,.85)),url('${mc.cover}')`
+  : '';
+---
+<Base title={mc ? `${mc.title} | Masterclass ZIFFA` : 'Masterclass | ZIFFA'} description={mc?.excerpt || ''}>
+  {mc ? (
+    <>
+      <header class="formation-hero" style={coverStyle}>
+        <div class="formation-hero-inner">
+          <a href="/edition-2025#masterclasses" class="prog-day-back">← Les masterclasses</a>
+          <h1>{mc.title}</h1>
+          {mc.excerpt && <p>{mc.excerpt}</p>}
+        </div>
+      </header>
+
+      <article class="section formation-article">
+        {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
+
+        {mc.gallery.length > 0 && (
+          <div class="gallery-grid" style="margin-top:40px;">
+            {mc.gallery.map((src) => (<figure><img src={src} alt={mc.title} loading="lazy" decoding="async" /></figure>))}
+          </div>
+        )}
+
+        {mc.videos.length > 0 && (
+          <div class="formation-videos">
+            {mc.videos.map((v) => (
+              <div class="formation-video">
+                <div class="video-wrapper"><iframe src={v.url} title={v.title || mc.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
+                {v.title && <div class="formation-video-title">{v.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+      </article>
+    </>
+  ) : (
+    <section class="section" style="text-align:center;padding:80px 20px;">
+      <h1 class="section-title">404</h1>
+      <p class="prog-pdf-empty" style="max-width:480px;margin:20px auto;">Cette masterclass est introuvable.</p>
+      <a href="/edition-2025#masterclasses" class="nav-cta">← Les masterclasses</a>
+    </section>
+  )}
+</Base>

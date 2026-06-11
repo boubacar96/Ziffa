@@ -1,0 +1,30 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../../lib/strapi.js';
+const { year } = Astro.params;
+const res = await fetchAPI('photos', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '200' });
+const cms = (res.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const fallback = Array.from({ length: 12 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
+const photos = cms.length ? cms : fallback;
+---
+<Base title={`Gallery ${year} | ZIFFA`} description={`Photo gallery of the ZIFFA ${year} edition.`}>
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/en">Home</a> &nbsp;/&nbsp; <a href={`/en/edition-${year}`}>Edition {year}</a> &nbsp;/&nbsp; Gallery</div>
+      <div class="eyebrow"><span class="arrow">→</span> In pictures · {year}</div>
+      <h1>Gallery <span class="yellow">{year}</span>.</h1>
+      <p>Relive the ZIFFA {year} edition in pictures. Click a photo to enlarge.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="gallery-grid">
+      {photos.map((src, i) => (
+        <figure class={i % 5 === 0 ? 'tall' : ''}><img src={src} alt={`ZIFFA ${year}`} loading="lazy" decoding="async" /></figure>
+      ))}
+    </div>
+    <div style="text-align:center;margin-top:36px;">
+      <a href={`/en/edition-${year}`} class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">← Back to edition {year}</a>
+    </div>
+  </section>
+</Base>

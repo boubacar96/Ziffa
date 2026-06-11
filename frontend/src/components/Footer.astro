@@ -1,5 +1,7 @@
 ---
 import { getLangFromUrl, useTranslations, lp } from '../i18n.js';
+import { NAV } from '../lib/nav.js';
+import Socials from './Socials.astro';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const L = (p) => lp(p, lang);
@@ -7,76 +9,66 @@ const L = (p) => lp(p, lang);
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-      <div class="footer-wordmark">TALAATA</div>
+      <img src="/talaata-white.png" alt="TALAATA Production" class="footer-logo" width="200" height="75" />
       <p class="footer-legal" style="font-size:13px;line-height:1.8;letter-spacing:0.2px;">
         Société à responsabilité limitée<br />
         au capital de 1.000.000 francs CFA<br />
         Siège social : Cité Diamalaye II, Villa Numéro 71TE (Sénégal)<br />
         RC : SN.DKR.2018.B.21407
       </p>
-      <div class="footer-contact-line">
-        Ziguinchor, Casamance — Sénégal
-      </div>
-      <div class="socials">
-        <a href="#" class="social-btn">Fb</a>
-        <a href="#" class="social-btn">Ig</a>
-        <a href="#" class="social-btn">In</a>
-        <a href="#" class="social-btn">Yt</a>
-      </div>
+      <div class="footer-contact-line">Ziguinchor, Casamance — Sénégal</div>
+      <Socials />
+
+      <form class="footer-news" id="footer-news" data-ok={lang === 'en' ? "✓ Thanks, you're subscribed!" : '✓ Merci, inscription enregistrée !'}>
+        <div class="footer-news-label">{t('nav.newsletter')}</div>
+        <div class="footer-news-row">
+          <input type="email" name="email" placeholder={lang === 'en' ? 'your@email.com' : 'votre@email.com'} required aria-label={t('nav.newsletter')} />
+          <button type="submit" aria-label="OK">→</button>
+        </div>
+        <input type="hidden" name="type" value="newsletter" />
+        <span class="hp"><input type="text" name="website" tabindex="-1" autocomplete="off" /></span>
+        <div class="footer-news-msg" id="footer-news-msg"></div>
+      </form>
     </div>
 
-    <div class="footer-map">
-      <span class="footer-map-tag">📍 Ziguinchor</span>
-      <iframe
-        src="https://www.google.com/maps?q=Ziguinchor,+S%C3%A9n%C3%A9gal&z=13&output=embed"
-        title="Carte — Ziguinchor, Sénégal"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen
-      ></iframe>
-    </div>
+    <nav class="footer-nav" aria-label="Pied de page">
+      {NAV.map((g) => (
+        <div class="footer-col">
+          <h4>{g.href ? <a href={L(g.href)}>{t(g.key)}</a> : t(g.key)}</h4>
+          {g.items.length > 0 && (
+            <ul>
+              {g.items.map((i) => (
+                <li><a href={L(i.href)}>{t(i.key)}</a></li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </nav>
   </div>
 
-  <div class="footer-grid">
-    <div class="footer-col">
-      <h4>{t('footer.festival')}</h4>
-      <ul>
-        <li><a href={L('/le-ziffa') + '#histoire'}>{t('footer.histoire')}</a></li>
-        <li><a href={L('/le-ziffa') + '#valeurs'}>{t('footer.valeurs')}</a></li>
-        <li><a href={L('/le-ziffa') + '#equipe'}>{t('footer.equipe')}</a></li>
-        <li><a href={L('/le-ziffa') + '#archives'}>{t('footer.archives')}</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>{t('footer.ed2027')}</h4>
-      <ul>
-        <li><a href={L('/edition-2027') + '#programme'}>{t('nav.programme')}</a></li>
-        <li><a href={L('/edition-2027') + '#prix'}>{t('nav.prix')}</a></li>
-        <li><a href={L('/edition-2027') + '#jury'}>{t('nav.jury')}</a></li>
-        <li><a href={L('/edition-2025') + '#images'}>{t('footer.galerie')}</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>{t('footer.participer')}</h4>
-      <ul>
-        <li><a href={L('/participer') + '#inscription'}>{t('nav.inscrire')}</a></li>
-        <li><a href={L('/a-lannee')}>{t('footer.formations')}</a></li>
-        <li><a href={L('/le-ziffa') + '#partenaires'}>{t('nav.partenaires')}</a></li>
-        <li><a href={L('/contact') + '#contact'}>{t('footer.presse')}</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>{t('footer.infos')}</h4>
-      <ul>
-        <li><a href={L('/contact') + '#contact'}>{t('footer.contact')}</a></li>
-        <li><a href={L('/contact') + '#newsletter'}>{t('nav.newsletter')}</a></li>
-        <li><a href={L('/edition-2025')}>{t('footer.ed2025link')}</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
+  <div class="footer-copy">
     <div>{t('footer.rights')}</div>
     <div>Ziguinchor International Film Festival &amp; Animation</div>
   </div>
 </footer>
+
+<script>
+  const fn = document.getElementById('footer-news');
+  if (fn) {
+    const msg = document.getElementById('footer-news-msg');
+    fn.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (fn.querySelector('input[name="website"]').value) return;
+      if (!fn.checkValidity()) { fn.reportValidity && fn.reportValidity(); return; }
+      const btn = fn.querySelector('button'); btn.disabled = true;
+      try {
+        const res = await fetch('/api/contact-submission', { method: 'POST', body: new FormData(fn) });
+        const data = await res.json();
+        msg.textContent = data.ok ? (fn.dataset.ok || '✓') : ('⚠️ ' + (data.error || 'Erreur.'));
+        if (data.ok) fn.reset();
+      } catch (err) { msg.textContent = '⚠️ Échec, réessayez.'; }
+      finally { btn.disabled = false; }
+    });
+  }
+</script>

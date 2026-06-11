@@ -1,7 +1,245 @@
 ---
 import Base from '../layouts/Base.astro';
-import UnderConstruction from '../components/UnderConstruction.astro';
+import { COUNTRIES } from '../lib/countries.js';
+
+const countries = COUNTRIES.map((c) => c.fr);
+const mediaOptions = ['Agence de presse', 'Presse écrite', 'Presse en ligne', 'Radio', 'TV', 'Correspondant de presse', 'Freelance'];
+const professionOptions = ['Réalisateur·rice', 'Producteur·rice', 'Distributeur·rice', 'Scénariste', 'Comédien·ne', 'Directeur·rice de la photographie', 'Monteur·euse', 'Ingénieur·e du son', 'Compositeur·rice', 'Décorateur·rice', 'Costumier·ère', 'Critique de cinéma', 'Programmateur·rice', 'Agent de vente', 'Autre'];
 ---
-<Base title="S'accréditer | ZIFFA" description="L'accréditation professionnelle du ZIFFA sera bientôt disponible.">
-  <UnderConstruction id="accreditation" eyebrow="Accréditation professionnelle" />
+<Base title="S'accréditer | ZIFFA" description="Demande d'accréditation au ZIFFA : presse, représentant de festival ou métiers du cinéma.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; S'accréditer</div>
+      <div class="eyebrow"><span class="arrow">→</span> Accréditation · Édition 2027</div>
+      <h1>S'<span class="yellow">accréditer</span>.</h1>
+      <p>Presse, représentants de festivals et professionnels du cinéma : demandez votre accréditation pour le ZIFFA.</p>
+    </div>
+  </header>
+
+  <section class="section" id="accreditation">
+    <div class="insc-main" style="max-width:900px;margin:0 auto;">
+      <div id="acc-alert" class="form-alert"></div>
+
+      <form id="acc-form" class="insc-form" enctype="multipart/form-data" novalidate>
+        <div class="hp"><label>Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+        <!-- Choix de l'option -->
+        <div class="insc-step" style="--accent: var(--red);">
+          <div class="insc-step-head"><span class="insc-step-num">1</span><h3>Votre option<small>Type d'accréditation</small></h3></div>
+          <div class="acc-options">
+            <label class="acc-opt"><input type="radio" name="option" value="press" required /> <span>I — Presse</span></label>
+            <label class="acc-opt"><input type="radio" name="option" value="festival" /> <span>II — Représentant de festival</span></label>
+            <label class="acc-opt"><input type="radio" name="option" value="trades" /> <span>III — Métiers du cinéma</span></label>
+          </div>
+        </div>
+
+        <!-- ===================== BRANCHE I — PRESSE ===================== -->
+        <div class="acc-branch" data-branch="press" hidden>
+          <div class="insc-step" style="--accent: var(--green);">
+            <div class="insc-step-head"><span class="insc-step-num">2</span><h3>Identité<small>La personne accréditée</small></h3></div>
+            <div class="grid2">
+              <div class="field"><label>Prénom <span class="req">*</span></label><input type="text" name="p_firstName" required /></div>
+              <div class="field"><label>Nom de famille <span class="req">*</span></label><input type="text" name="p_lastName" required /></div>
+            </div>
+            <div class="field"><label>Fonction / Occupation <span class="req">*</span></label><input type="text" name="p_function" required /></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--yellow);">
+            <div class="insc-step-head"><span class="insc-step-num">3</span><h3>Informations personnelles</h3></div>
+            <div class="field"><label>Profession</label><input type="text" name="p_profession" /></div>
+            <div class="grid2">
+              <div class="field"><label>Adresse</label><input type="text" name="p_address" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="p_whatsapp" /></div>
+              <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="p_email" required /></div>
+              <div class="field"><label>Ville</label><input type="text" name="p_city" /></div>
+            </div>
+            <div class="field"><label>Pays <span class="req">*</span></label>
+              <select name="p_country" required><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select>
+            </div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--orange);">
+            <div class="insc-step-head"><span class="insc-step-num">4</span><h3>Média & organe de presse</h3></div>
+            <div class="field"><label>Média <span class="req">*</span></label>
+              <select name="p_media" required><option value="">— Choisir —</option>{mediaOptions.map((m) => <option>{m}</option>)}</select>
+            </div>
+            <div class="grid2">
+              <div class="field"><label>Nom de l'organe <span class="req">*</span></label><input type="text" name="p_orgName" required /></div>
+              <div class="field"><label>Adresse de l'organe</label><input type="text" name="p_orgAddress" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="p_orgWhatsapp" /></div>
+              <div class="field"><label>Email de l'organe <span class="req">*</span></label><input type="email" name="p_orgEmail" required /></div>
+              <div class="field"><label>Ville</label><input type="text" name="p_orgCity" /></div>
+              <div class="field"><label>Pays</label><select name="p_orgCountry"><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+            </div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--red);">
+            <div class="insc-step-head"><span class="insc-step-num">5</span><h3>Documents</h3></div>
+            <div class="field"><label>Carte professionnelle <span class="req">*</span></label>
+              <div class="file-drop"><input type="file" name="p_card" required /><div class="fd-icon">💳</div><div class="fd-text"><b>Cliquer</b> ou glisser la carte pro</div><div class="fd-files"></div></div>
+            </div>
+            <div class="field"><label>Photo d'identité <span class="req">*</span></label>
+              <div class="file-drop"><input type="file" name="p_idPhoto" accept="image/*" required /><div class="fd-icon">📷</div><div class="fd-text"><b>Cliquer</b> ou glisser la photo</div><div class="fd-files"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============== BRANCHE II — REPRÉSENTANT DE FESTIVAL ============== -->
+        <div class="acc-branch" data-branch="festival" hidden>
+          <div class="insc-step" style="--accent: var(--green);">
+            <div class="insc-step-head"><span class="insc-step-num">2</span><h3>Le représentant</h3></div>
+            <div class="field"><label>Fonction / Occupation <span class="req">*</span></label><input type="text" name="f_function" required /></div>
+            <div class="grid2">
+              <div class="field"><label>Prénom <span class="req">*</span></label><input type="text" name="f_firstName" required /></div>
+              <div class="field"><label>Nom de famille <span class="req">*</span></label><input type="text" name="f_lastName" required /></div>
+            </div>
+            <div class="field"><label>Profession</label><input type="text" name="f_profession" /></div>
+            <div class="grid2">
+              <div class="field"><label>Adresse</label><input type="text" name="f_address" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="f_whatsapp" /></div>
+              <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="f_email" required /></div>
+              <div class="field"><label>Ville</label><input type="text" name="f_city" /></div>
+            </div>
+            <div class="field"><label>Pays</label><select name="f_country"><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--yellow);">
+            <div class="insc-step-head"><span class="insc-step-num">3</span><h3>Le festival</h3></div>
+            <div class="field"><label>Nom du festival <span class="req">*</span></label><input type="text" name="f_festName" required /></div>
+            <div class="grid2">
+              <div class="field"><label>Adresse du festival</label><input type="text" name="f_festAddress" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="f_festWhatsapp" /></div>
+              <div class="field"><label>Email</label><input type="email" name="f_festEmail" /></div>
+              <div class="field"><label>Ville</label><input type="text" name="f_festCity" /></div>
+            </div>
+            <div class="field"><label>Pays</label><select name="f_festCountry"><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--orange);">
+            <div class="insc-step-head"><span class="insc-step-num">4</span><h3>Responsable du festival & document</h3></div>
+            <div class="grid2">
+              <div class="field"><label>Prénom du responsable <span class="req">*</span></label><input type="text" name="f_dirFirstName" required /></div>
+              <div class="field"><label>Nom du responsable <span class="req">*</span></label><input type="text" name="f_dirLastName" required /></div>
+            </div>
+            <div class="field"><label>Email du responsable</label><input type="email" name="f_dirEmail" /></div>
+            <div class="field"><label>Photo d'identité <span class="req">*</span></label>
+              <div class="file-drop"><input type="file" name="f_idPhoto" accept="image/*" required /><div class="fd-icon">📷</div><div class="fd-text"><b>Cliquer</b> ou glisser la photo</div><div class="fd-files"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============== BRANCHE III — MÉTIERS DU CINÉMA ============== -->
+        <div class="acc-branch" data-branch="trades" hidden>
+          <div class="insc-step" style="--accent: var(--green);">
+            <div class="insc-step-head"><span class="insc-step-num">2</span><h3>Identité & profession</h3></div>
+            <div class="field"><label>Fonction / Occupation <span class="req">*</span></label><input type="text" name="t_function" required /></div>
+            <div class="grid2">
+              <div class="field"><label>Prénom <span class="req">*</span></label><input type="text" name="t_firstName" required /></div>
+              <div class="field"><label>Nom de famille <span class="req">*</span></label><input type="text" name="t_lastName" required /></div>
+              <div class="field"><label>Pays d'origine <span class="req">*</span></label><select name="t_countryOrigin" required><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+              <div class="field"><label>Autre nationalité <span class="req">*</span></label><select name="t_otherNationality" required><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+            </div>
+            <div class="field"><label>Profession <span class="req">*</span></label>
+              <select name="t_profession" required><option value="">— Choisir —</option>{professionOptions.map((p) => <option>{p}</option>)}</select>
+            </div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--yellow);">
+            <div class="insc-step-head"><span class="insc-step-num">3</span><h3>Adresse personnelle</h3></div>
+            <div class="grid2">
+              <div class="field"><label>Adresse</label><input type="text" name="t_address" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="t_whatsapp" /></div>
+              <div class="field"><label>Email <span class="req">*</span></label><input type="email" name="t_email" required /></div>
+              <div class="field"><label>Ville</label><input type="text" name="t_city" /></div>
+            </div>
+            <div class="field"><label>Pays</label><select name="t_country"><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--orange);">
+            <div class="insc-step-head"><span class="insc-step-num">4</span><h3>Société de production</h3></div>
+            <div class="field"><label>Nom de la société <span class="req">*</span></label><input type="text" name="t_prodName" required /></div>
+            <div class="grid2">
+              <div class="field"><label>Adresse</label><input type="text" name="t_prodAddress" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="t_prodWhatsapp" /></div>
+              <div class="field"><label>Email</label><input type="email" name="t_prodEmail" /></div>
+              <div class="field"><label>Ville</label><input type="text" name="t_prodCity" /></div>
+            </div>
+            <div class="field"><label>Pays</label><select name="t_prodCountry"><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--red);">
+            <div class="insc-step-head"><span class="insc-step-num">5</span><h3>Société de distribution</h3></div>
+            <div class="field"><label>Nom de la société <span class="req">*</span></label><input type="text" name="t_distName" required /></div>
+            <div class="grid2">
+              <div class="field"><label>Adresse</label><input type="text" name="t_distAddress" /></div>
+              <div class="field"><label>Numéro WhatsApp</label><input type="text" name="t_distWhatsapp" /></div>
+              <div class="field"><label>Email</label><input type="email" name="t_distEmail" /></div>
+              <div class="field"><label>Ville</label><input type="text" name="t_distCity" /></div>
+            </div>
+            <div class="field"><label>Pays</label><select name="t_distCountry"><option value="">— Pays —</option>{countries.map((c) => <option>{c}</option>)}</select></div>
+          </div>
+
+          <div class="insc-step" style="--accent: var(--green);">
+            <div class="insc-step-head"><span class="insc-step-num">6</span><h3>Documents</h3></div>
+            <div class="field"><label>Photo d'identité <span class="req">*</span></label>
+              <div class="file-drop"><input type="file" name="t_idPhoto" accept="image/*" required /><div class="fd-icon">📷</div><div class="fd-text"><b>Cliquer</b> ou glisser la photo</div><div class="fd-files"></div></div>
+            </div>
+            <div class="field"><label>Biofilmographie (PDF ou Word, pas de CV) <span class="req">*</span></label>
+              <div class="file-drop"><input type="file" name="t_biofilmo" accept=".pdf,.doc,.docx" required /><div class="fd-icon">📄</div><div class="fd-text"><b>Cliquer</b> ou glisser le fichier · max 10 Mo</div><div class="fd-files"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="acc-submit" hidden>Envoyer ma demande ↗</button>
+      </form>
+    </div>
+  </section>
 </Base>
+
+<script>
+  const form = document.getElementById('acc-form');
+  const alertBox = document.getElementById('acc-alert');
+  const submitBtn = document.getElementById('acc-submit');
+  const branches = form ? Array.from(form.querySelectorAll('.acc-branch')) : [];
+
+  function setBranch(val) {
+    branches.forEach((b) => {
+      const on = b.dataset.branch === val;
+      b.hidden = !on;
+      b.querySelectorAll('input, select, textarea').forEach((el) => { el.disabled = !on; });
+    });
+    if (submitBtn) submitBtn.hidden = !val;
+  }
+  setBranch(null);
+  form?.querySelectorAll('input[name="option"]').forEach((r) => r.addEventListener('change', () => setBranch(r.value)));
+
+  // Affichage des fichiers choisis
+  form?.querySelectorAll('.file-drop input[type="file"]').forEach((input) => {
+    const drop = input.closest('.file-drop');
+    const list = drop.querySelector('.fd-files');
+    input.addEventListener('change', () => {
+      const names = Array.from(input.files).map((f) => f.name);
+      list.textContent = names.join(' · ');
+      drop.classList.toggle('has-files', names.length > 0);
+    });
+  });
+
+  const showAlert = (type, msg) => { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.querySelector('input[name="option"]:checked')) { showAlert('err', "Merci de choisir une option d'accréditation."); return; }
+    if (!form.checkValidity()) { showAlert('err', 'Merci de remplir tous les champs obligatoires (*).'); return; }
+    submitBtn.disabled = true; const original = submitBtn.textContent; submitBtn.textContent = 'Envoi en cours…';
+    try {
+      const res = await fetch('/api/accreditation-submission', { method: 'POST', body: new FormData(form) });
+      const data = await res.json();
+      if (data.ok) {
+        showAlert('ok', "✅ Merci ! Votre demande d'accréditation a bien été envoyée. Vous recevrez une réponse par email.");
+        form.reset(); setBranch(null);
+        form.querySelectorAll('.file-drop').forEach((d) => { d.classList.remove('has-files'); d.querySelector('.fd-files').textContent = ''; });
+      } else { showAlert('err', '⚠️ ' + (data.error || 'Une erreur est survenue.')); }
+    } catch (err) { showAlert('err', "⚠️ Échec de l'envoi. Vérifiez votre connexion et réessayez."); }
+    finally { submitBtn.disabled = false; submitBtn.textContent = original; }
+  });
+</script>

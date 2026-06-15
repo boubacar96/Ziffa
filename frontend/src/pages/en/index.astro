@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls } from '../../lib/strapi.js';
 
 const catLabel = { fiction: 'Fiction', documentaire: 'Documentary', animation: 'Animation', 'court-metrage': 'Short film' };
 const typeLabel = { projection: 'Screening', masterclass: 'Masterclass', rencontre: 'Talk', ceremonie: 'Ceremony' };
@@ -47,7 +47,7 @@ const events = [
 ].slice(0, 4);
 
 const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
-const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const cmsPhotos = (photoRes.data || []).flatMap((p) => mediaUrls(p.image));
 const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const stripUrls = [...cmsPhotos, ...fallbackPhotos].slice(0, 10);
 

@@ -1,13 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls } from '../../lib/strapi.js';
 import { fallbackMasterclasses } from '../../lib/masterclasses.js';
 import { FILMS_2025 } from '../../lib/films2025.js';
 
 const VIDEO_2025 = 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
 
 const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
-const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const cmsPhotos = (photoRes.data || []).flatMap((p) => mediaUrls(p.image));
 const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const photos = [...cmsPhotos, ...fallbackPhotos].slice(0, 8);
 

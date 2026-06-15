@@ -15,6 +15,13 @@ export function mediaUrl(path) {
   return PUBLIC + path;
 }
 
+/** Renvoie la liste d'URLs absolues d'un champ média simple OU multiple. */
+export function mediaUrls(field) {
+  if (!field) return [];
+  const arr = Array.isArray(field) ? field : [field];
+  return arr.map((m) => (m && m.url ? mediaUrl(m.url) : null)).filter(Boolean);
+}
+
 /**
  * Appelle l'API REST de Strapi.
  * @param {string} endpoint  ex: 'articles'

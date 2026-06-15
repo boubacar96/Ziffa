@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { fetchAPI, mediaUrl } from '../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls } from '../lib/strapi.js';
 
 // Photographes (Strapi person type=photographe) avec repli sur l'expo 2025.
 const phRes = await fetchAPI('people', { 'filters[type][$eq]': 'photographe', sort: 'order:asc', populate: 'photo' });
@@ -19,7 +19,7 @@ const photographers = cmsPh.length ? cmsPh.map(mapPh) : fallbackPh;
 
 // Photos de l'expo (Strapi photo category=expo) avec repli démo.
 const phoRes = await fetchAPI('photos', { 'filters[category][$eq]': 'expo', populate: 'image', 'pagination[limit]': '60' });
-const cmsPhotos = (phoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const cmsPhotos = (phoRes.data || []).flatMap((p) => mediaUrls(p.image));
 const fallbackPhotos = Array.from({ length: 9 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const photos = cmsPhotos.length ? cmsPhotos : fallbackPhotos;
 ---

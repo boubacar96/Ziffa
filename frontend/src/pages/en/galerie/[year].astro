@@ -1,9 +1,9 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { fetchAPI, mediaUrl } from '../../../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls } from '../../../lib/strapi.js';
 const { year } = Astro.params;
 const res = await fetchAPI('photos', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '200' });
-const cms = (res.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const cms = (res.data || []).flatMap((p) => mediaUrls(p.image));
 const fallback = Array.from({ length: 12 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const photos = cms.length ? cms : fallback;
 ---

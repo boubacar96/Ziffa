@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { fetchAPI, mediaUrl } from '../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls } from '../lib/strapi.js';
 
 // ===========================================================================
 // Données dynamiques (Strapi) AVEC REPLI sur du contenu de démo.
@@ -73,7 +73,7 @@ const events = [
 
 // --- Galerie / pellicule ---
 const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
-const cmsPhotos = (photoRes.data || []).map((p) => (p.image?.url ? mediaUrl(p.image.url) : null)).filter(Boolean);
+const cmsPhotos = (photoRes.data || []).flatMap((p) => mediaUrls(p.image));
 const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const stripUrls = [...cmsPhotos, ...fallbackPhotos].slice(0, 10);
 

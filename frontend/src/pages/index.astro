@@ -92,6 +92,10 @@ const cmsPartnersMapped = cmsPartners.map((p) => ({ name: p.name, url: p.url || 
 // Strapi seul dès qu'il y a au moins 1 partenaire ; sinon logos de démo.
 const partners = cmsPartnersMapped.length ? cmsPartnersMapped : fallbackPartners;
 
+// --- Palmarès 2025 (accueil) : on ne garde que les prix qui ont un lauréat. ---
+const palmRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', 'pagination[limit]': '20' });
+const palmares = (palmRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '' })).filter((p) => p.winner);
+
 // --- Mosaïque du hero ---
 const shapes = ['tall', 'square', 'wide'];
 const heroCols = Array.from({ length: 6 }, (_, c) =>
@@ -224,6 +228,17 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
       </div>
     </div>
   </section>
+
+  {palmares.length > 0 && (
+    <section class="section" id="palmares-2025">
+      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Palmarès · Édition 2025</div><h2 class="section-title">Le <span class="red">palmarès</span> 2025.</h2></div><a href="/edition-2025#prix" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Voir l'édition 2025 →</a></div>
+      <div class="prize-grid">
+        {palmares.map((p, i) => (
+          <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner}</div></div>
+        ))}
+      </div>
+    </section>
+  )}
 
   <!-- ===== 8. PARTENAIRES ===== -->
   <section class="partners-section" id="partenaires">

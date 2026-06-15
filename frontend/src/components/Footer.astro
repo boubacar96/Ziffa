@@ -2,9 +2,13 @@
 import { getLangFromUrl, useTranslations, lp } from '../i18n.js';
 import { NAV } from '../lib/nav.js';
 import Socials from './Socials.astro';
+import { getGlobal } from '../lib/strapi.js';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const L = (p) => lp(p, lang);
+const g = await getGlobal();
+const socialLinks = { facebook: g.facebook || '#', instagram: g.instagram || '#', linkedin: g.linkedin || '#', youtube: g.youtube || '#' };
+const address = g.address || 'Ziguinchor, Casamance — Sénégal';
 ---
 <footer>
   <div class="footer-top">
@@ -16,8 +20,8 @@ const L = (p) => lp(p, lang);
         Siège social : Cité Diamalaye II, Villa Numéro 71TE (Sénégal)<br />
         RC : SN.DKR.2018.B.21407
       </p>
-      <div class="footer-contact-line">Ziguinchor, Casamance — Sénégal</div>
-      <Socials />
+      <div class="footer-contact-line">{address}</div>
+      <Socials links={socialLinks} />
 
       <form class="footer-news" id="footer-news" data-ok={lang === 'en' ? "✓ Thanks, you're subscribed!" : '✓ Merci, inscription enregistrée !'}>
         <div class="footer-news-label">{t('nav.newsletter')}</div>

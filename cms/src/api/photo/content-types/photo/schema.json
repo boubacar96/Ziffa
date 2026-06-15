@@ -18,15 +18,8 @@
         "images"
       ]
     },
-    "caption": {
-      "type": "string"
-    },
     "category": {
       "type": "string"
-    },
-    "featured": {
-      "type": "boolean",
-      "default": false
     },
     "edition": {
       "type": "relation",

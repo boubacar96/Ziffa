@@ -25,16 +25,6 @@
     "url": {
       "type": "string"
     },
-    "tier": {
-      "type": "enumeration",
-      "enum": [
-        "institution",
-        "or",
-        "argent",
-        "bronze"
-      ],
-      "default": "bronze"
-    },
     "order": {
       "type": "integer",
       "default": 0

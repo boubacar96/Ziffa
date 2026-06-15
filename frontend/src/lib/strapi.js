@@ -22,6 +22,12 @@ export function mediaUrls(field) {
   return arr.map((m) => (m && m.url ? mediaUrl(m.url) : null)).filter(Boolean);
 }
 
+/** Récupère le single type « Paramètres du site » (global). {} si vide/indisponible. */
+export async function getGlobal() {
+  const r = await fetchAPI('global', { populate: '*' });
+  return r.data || {};
+}
+
 /**
  * Appelle l'API REST de Strapi.
  * @param {string} endpoint  ex: 'articles'

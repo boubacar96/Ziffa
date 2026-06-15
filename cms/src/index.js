@@ -12,7 +12,7 @@ function slugify(s) {
 // Types lus publiquement par le site (find / findOne).
 const PUBLIC_READ = [
   'edition', 'film', 'programme-event', 'programme-day', 'photo',
-  'partner', 'prize', 'person', 'article', 'formation', 'global', 'press-resource', 'masterclass',
+  'partner', 'prize', 'person', 'formation', 'global', 'press-resource', 'masterclass',
 ];
 
 // Active la lecture publique (idempotent).

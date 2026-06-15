@@ -1,11 +1,17 @@
 ---
-// Icônes réseaux sociaux (liens à compléter avec les vraies URLs).
-const links = {
-  facebook: '#',
-  instagram: '#',
-  linkedin: '#',
-  youtube: '#',
-};
+// Icônes réseaux sociaux. Les liens viennent de « Paramètres du site » (global) :
+// soit passés en prop (si le parent a déjà chargé global), soit chargés ici.
+import { getGlobal } from '../lib/strapi.js';
+let { links } = Astro.props;
+if (!links) {
+  const g = await getGlobal();
+  links = {
+    facebook: g.facebook || '#',
+    instagram: g.instagram || '#',
+    linkedin: g.linkedin || '#',
+    youtube: g.youtube || '#',
+  };
+}
 ---
 <div class="socials">
   <a href={links.facebook} class="social-btn" aria-label="Facebook" target="_blank" rel="noopener">

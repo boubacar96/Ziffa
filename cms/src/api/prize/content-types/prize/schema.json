@@ -21,9 +21,6 @@
     "winner": {
       "type": "string"
     },
-    "icon": {
-      "type": "string"
-    },
     "edition": {
       "type": "relation",
       "relation": "manyToOne",

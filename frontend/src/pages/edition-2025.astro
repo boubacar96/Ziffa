@@ -19,7 +19,7 @@ const days = daysRes.data || [];
 
 // Palmarès 2025 (Strapi `prize`) avec repli.
 const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', 'pagination[limit]': '20' });
-const cmsPrizes = (prizeRes.data || []).map((p) => ({ icon: p.icon || '🏆', name: p.name, winner: p.winner || '' }));
+const cmsPrizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '' }));
 const fallbackPrizes = [
   { icon: '🏆', name: 'Meilleur long métrage de fiction de la sous-région', winner: '' },
   { icon: '🌍', name: 'Meilleur long métrage international de fiction', winner: '' },

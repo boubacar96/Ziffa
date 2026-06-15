@@ -15,7 +15,7 @@ const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]'
 const days = daysRes.data || [];
 
 const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', 'pagination[limit]': '20' });
-const cmsPrizes = (prizeRes.data || []).map((p) => ({ icon: p.icon || '🏆', name: p.name, winner: p.winner || '' }));
+const cmsPrizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '' }));
 const fallbackPrizes = [
   { icon: '🏆', name: 'Best fiction feature from the sub-region', winner: '' },
   { icon: '🌍', name: 'Best international fiction feature', winner: '' },

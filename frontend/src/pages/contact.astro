@@ -1,6 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import Socials from '../components/Socials.astro';
+import { getGlobal } from '../lib/strapi.js';
+const g = await getGlobal();
+const email = g.contactEmail || 'festival@ziffa.sn';
+const phone = g.phone || 'XXXXXXXX';
+const address = g.address || 'Ziguinchor, Casamance — Sénégal';
+const socialLinks = { facebook: g.facebook || '#', instagram: g.instagram || '#', linkedin: g.linkedin || '#', youtube: g.youtube || '#' };
 ---
 <Base title="Contact | ZIFFA" description="Contactez l'équipe du ZIFFA : programmation, presse, partenariats, inscriptions. Email, téléphone et newsletter.">
   <header class="page-hero">
@@ -15,20 +21,20 @@ import Socials from '../components/Socials.astro';
   <section class="section" id="contact">
     <!-- Tuiles de contact -->
     <div class="contact-tiles">
-      <a class="contact-tile ct-red" href="mailto:festival@ziffa.sn">
+      <a class="contact-tile ct-red" href={`mailto:${email}`}>
         <span class="ct-ic">✉️</span>
         <span class="ct-k">Email</span>
-        <span class="ct-v">festival@ziffa.sn</span>
+        <span class="ct-v">{email}</span>
       </a>
       <div class="contact-tile ct-green">
         <span class="ct-ic">📞</span>
         <span class="ct-k">Téléphone</span>
-        <span class="ct-v">XXXXXXXX</span>
+        <span class="ct-v">{phone}</span>
       </div>
       <div class="contact-tile ct-yellow">
         <span class="ct-ic">📍</span>
         <span class="ct-k">Adresse</span>
-        <span class="ct-v">Ziguinchor, Casamance — Sénégal</span>
+        <span class="ct-v">{address}</span>
       </div>
     </div>
 
@@ -58,7 +64,7 @@ import Socials from '../components/Socials.astro';
         <p>Programmation, presse, partenariats, inscriptions… l'équipe du ZIFFA vous répond rapidement, en français comme en anglais.</p>
         <div class="contact-panel-foot">
           <div class="contact-panel-label">Suivez-nous</div>
-          <Socials />
+          <Socials links={socialLinks} />
         </div>
       </aside>
     </div>

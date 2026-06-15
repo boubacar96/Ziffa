@@ -24,9 +24,6 @@
     "timeEnd": {
       "type": "string"
     },
-    "duration": {
-      "type": "string"
-    },
     "type": {
       "type": "enumeration",
       "enum": [
@@ -61,11 +58,6 @@
       "type": "component",
       "repeatable": true,
       "component": "programme.film-line"
-    },
-    "speaker": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::person.person"
     },
     "programmeDay": {
       "type": "relation",

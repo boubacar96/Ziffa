@@ -25,7 +25,7 @@ export function mediaUrls(field) {
 /** Récupère le single type « Paramètres du site » (global). {} si vide/indisponible. */
 export async function getGlobal() {
   const r = await fetchAPI('global', { populate: '*' });
-  return r.data || {};
+  return r.data && !Array.isArray(r.data) ? r.data : {};
 }
 
 /**

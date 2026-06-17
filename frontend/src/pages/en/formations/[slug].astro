@@ -29,7 +29,8 @@ const coverStyle = formation && formation.cover
     <>
       <header class="formation-hero" style={coverStyle}>
         <div class="formation-hero-inner">
-          <a href="/en/formations" class="prog-day-back">← All training</a>
+          <nav class="formation-crumb"><a href="/en">Home</a><span>›</span><a href="/en/a-lannee">Year-round</a><span>›</span><a href="/en/formations">Training</a></nav>
+          <span class="formation-tag">Training</span>
           <h1>{formation.title}</h1>
           {formation.excerpt && <p>{formation.excerpt}</p>}
         </div>
@@ -39,23 +40,31 @@ const coverStyle = formation && formation.cover
         {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
 
         {formation.gallery.length > 0 && (
-          <div class="gallery-grid" style="margin-top:40px;">
-            {formation.gallery.map((src) => (
-              <figure><img src={src} alt={formation.title} loading="lazy" decoding="async" /></figure>
-            ))}
-          </div>
+          <section class="formation-block">
+            <h2 class="formation-block-title">In pictures</h2>
+            <div class="gallery-grid">
+              {formation.gallery.map((src) => (
+                <figure><img src={src} alt={formation.title} loading="lazy" decoding="async" /></figure>
+              ))}
+            </div>
+          </section>
         )}
 
         {formation.videos.length > 0 && (
-          <div class="formation-videos">
-            {formation.videos.map((v) => (
-              <div class="formation-video">
-                <div class="video-wrapper"><iframe src={v.url} title={v.title || formation.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
-                {v.title && <div class="formation-video-title">{v.title}</div>}
-              </div>
-            ))}
-          </div>
+          <section class="formation-block">
+            <h2 class="formation-block-title">Videos</h2>
+            <div class="formation-videos">
+              {formation.videos.map((v) => (
+                <div class="formation-video">
+                  <div class="video-wrapper"><iframe src={v.url} title={v.title || formation.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
+                  {v.title && <div class="formation-video-title">{v.title}</div>}
+                </div>
+              ))}
+            </div>
+          </section>
         )}
+
+        <div class="formation-foot"><a href="/en/formations" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">← All training</a></div>
       </article>
     </>
   ) : (

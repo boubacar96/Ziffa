@@ -30,7 +30,8 @@ const coverStyle = mc && mc.cover
     <>
       <header class="formation-hero" style={coverStyle}>
         <div class="formation-hero-inner">
-          <a href="/edition-2025#masterclasses" class="prog-day-back">← Les masterclasses</a>
+          <nav class="formation-crumb"><a href="/">Accueil</a><span>›</span><a href="/edition-2025">Édition 2025</a><span>›</span><a href="/edition-2025#masterclasses">Masterclasses</a></nav>
+          <span class="formation-tag">Masterclass</span>
           <h1>{mc.title}</h1>
           {mc.excerpt && <p>{mc.excerpt}</p>}
         </div>
@@ -40,21 +41,29 @@ const coverStyle = mc && mc.cover
         {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
 
         {mc.gallery.length > 0 && (
-          <div class="gallery-grid" style="margin-top:40px;">
-            {mc.gallery.map((src) => (<figure><img src={src} alt={mc.title} loading="lazy" decoding="async" /></figure>))}
-          </div>
+          <section class="formation-block">
+            <h2 class="formation-block-title">En images</h2>
+            <div class="gallery-grid">
+              {mc.gallery.map((src) => (<figure><img src={src} alt={mc.title} loading="lazy" decoding="async" /></figure>))}
+            </div>
+          </section>
         )}
 
         {mc.videos.length > 0 && (
-          <div class="formation-videos">
-            {mc.videos.map((v) => (
-              <div class="formation-video">
-                <div class="video-wrapper"><iframe src={v.url} title={v.title || mc.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
-                {v.title && <div class="formation-video-title">{v.title}</div>}
-              </div>
-            ))}
-          </div>
+          <section class="formation-block">
+            <h2 class="formation-block-title">Vidéos</h2>
+            <div class="formation-videos">
+              {mc.videos.map((v) => (
+                <div class="formation-video">
+                  <div class="video-wrapper"><iframe src={v.url} title={v.title || mc.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
+                  {v.title && <div class="formation-video-title">{v.title}</div>}
+                </div>
+              ))}
+            </div>
+          </section>
         )}
+
+        <div class="formation-foot"><a href="/edition-2025#masterclasses" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">← Les masterclasses</a></div>
       </article>
     </>
   ) : (

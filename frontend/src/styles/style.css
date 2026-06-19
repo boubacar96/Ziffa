@@ -2825,6 +2825,18 @@
   .prize-card--accent.oc-orange { border-left-color: var(--orange); }
   .prize-card--accent .trophy { margin: 0 0 10px; }
 
+  /* ----- Prix illustrés (image plein cadre + texte en surimpression) ----- */
+  .prize-photo {
+    position: relative; aspect-ratio: 3 / 4; border-radius: 16px; overflow: hidden;
+    background-size: cover; background-position: center; background-color: var(--green-deep);
+    display: flex; align-items: flex-end; border: 1px solid var(--line);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .prize-photo:hover { transform: translateY(-5px); box-shadow: 0 18px 42px rgba(0,0,0,.24); }
+  .prize-photo-body { padding: 18px 18px 20px; width: 100%; }
+  .prize-photo-body h3 { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 18px; color: #fff; line-height: 1.15; margin: 0; }
+  .prize-photo-body .winner { margin-top: 7px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--yellow); }
+
   /* ----- Sélection de films (édition) ----- */
   .films-selection { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
   .film-sel-card {

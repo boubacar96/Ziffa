@@ -18,14 +18,14 @@ const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]'
 const days = daysRes.data || [];
 
 // Palmarès 2025 (Strapi `prize`) avec repli.
-const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', 'pagination[limit]': '20' });
-const cmsPrizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '' }));
+const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', populate: 'image', 'pagination[limit]': '20' });
+const cmsPrizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
 const fallbackPrizes = [
-  { icon: '🏆', name: 'Meilleur long métrage de fiction de la sous-région', winner: '' },
-  { icon: '🌍', name: 'Meilleur long métrage international de fiction', winner: '' },
-  { icon: '✨', name: 'Prix New Génération — West Africa', winner: '' },
-  { icon: '🌟', name: 'Prix New Génération — International', winner: '' },
-  { icon: '❤️', name: 'Prix du public', winner: '' },
+  { name: 'Meilleur long métrage de fiction de la sous-région', winner: '', image: null },
+  { name: 'Meilleur long métrage international de fiction', winner: '', image: null },
+  { name: 'Prix New Génération — West Africa', winner: '', image: null },
+  { name: 'Prix New Génération — International', winner: '', image: null },
+  { name: 'Prix du public', winner: '', image: null },
 ];
 const prizes = cmsPrizes.length ? cmsPrizes : fallbackPrizes;
 
@@ -151,7 +151,13 @@ const highlights = [
     <p class="lead" style="max-width:760px;margin-bottom:30px;">Des prix seront remis dans chaque catégorie (régionale et internationale) :</p>
     <div class="prize-grid">
       {prizes.map((p, i) => (
-        <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
+        {p.image ? (
+          <div class="prize-photo" style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
+            <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
+          </div>
+        ) : (
+          <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
+        )}
       ))}
     </div>
   </section>

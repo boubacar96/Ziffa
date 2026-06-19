@@ -21,6 +21,13 @@
     "winner": {
       "type": "string"
     },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
     "edition": {
       "type": "relation",
       "relation": "manyToOne",

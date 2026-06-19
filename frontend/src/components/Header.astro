@@ -40,7 +40,7 @@ const groupActive = (g) => {
             : <span class={`nav-link nav-link--toggle ${groupActive(g)}`} role="button" tabindex="0">{t(g.key)}{hasItems && <span class="caret"> ▾</span>}</span>}
           {hasItems && (
             <div class="dropdown">
-              {g.items.map((i) => <a href={L(i.href)}>{t(i.key)}</a>)}
+              {g.items.map((i) => <a href={L(i.href)}>{i.label ? i.label[lang] : t(i.key)}</a>)}
             </div>
           )}
         </li>

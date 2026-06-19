@@ -42,7 +42,7 @@ const address = g.address || 'Ziguinchor, Casamance — Sénégal';
           {g.items.length > 0 && (
             <ul>
               {g.items.map((i) => (
-                <li><a href={L(i.href)}>{t(i.key)}</a></li>
+                <li><a href={L(i.href)}>{i.label ? i.label[lang] : t(i.key)}</a></li>
               ))}
             </ul>
           )}

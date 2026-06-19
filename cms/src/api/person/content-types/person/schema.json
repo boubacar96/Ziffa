@@ -4,7 +4,7 @@
   "info": {
     "singularName": "person",
     "pluralName": "people",
-    "displayName": "Personne (jury / équipe)"
+    "displayName": "Personne (équipe / jury / photographe)"
   },
   "options": {
     "draftAndPublish": false

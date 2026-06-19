@@ -1,11 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { fetchAPI, mediaUrl, mediaUrls } from '../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../lib/strapi.js';
 import { fallbackMasterclasses } from '../lib/masterclasses.js';
 import { FILMS_2025 } from '../lib/films2025.js';
 
 // Vidéo de l'édition 2025 (Vimeo fournie par le client).
 const VIDEO_2025 = 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
+const teaserThumb = await getVimeoThumb(VIDEO_2025);
 
 // Galerie : photos du CMS, sinon repli sur les photos locales.
 const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
@@ -95,7 +96,7 @@ const highlights = [
         <p>Les temps forts de notre première édition : projections, masterclasses et rencontres.</p>
       </div>
       <div class="teaser-player" id="teaser-player" data-embed={VIDEO_2025} role="button" tabindex="0" aria-label="Lire le film de l'édition 2025">
-        <div class="teaser-poster"><span class="teaser-mark">ZIFFA · 2025</span></div>
+        <div class="teaser-poster" style={teaserThumb ? `background-image:linear-gradient(rgba(11,26,18,.30),rgba(11,26,18,.55)), url('${teaserThumb}')` : ''}>{!teaserThumb && <span class="teaser-mark">ZIFFA · 2025</span>}</div>
         <div class="teaser-play"><span>▶</span></div>
         <div class="teaser-cta">Regarder le film de l'édition</div>
       </div>

@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { fetchAPI, mediaUrl, mediaUrls } from '../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../lib/strapi.js';
 
 // ===========================================================================
 // Données dynamiques (Strapi) AVEC REPLI sur du contenu de démo.
@@ -28,6 +28,7 @@ function toEmbed(url) {
   return url;
 }
 const videoEmbed = toEmbed(edition?.videoUrl) || 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
+const teaserThumb = await getVimeoThumb(edition?.videoUrl || 'https://vimeo.com/1169196245/5c5f7be273');
 
 // --- Films à l'affiche ---
 const filmRes = await fetchAPI('films', { populate: 'poster', sort: 'year:desc', 'pagination[limit]': '6' });
@@ -205,7 +206,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         <p>Un avant-goût du festival : l'énergie, les images, l'émotion du cinéma africain.</p>
       </div>
       <div class="teaser-player" id="teaser-player" data-embed={videoEmbed} role="button" tabindex="0" aria-label="Lire la bande-annonce ZIFFA">
-        <div class="teaser-poster"><span class="teaser-mark">ZIFFA · 2025</span></div>
+        <div class="teaser-poster" style={teaserThumb ? `background-image:linear-gradient(rgba(11,26,18,.30),rgba(11,26,18,.55)), url('${teaserThumb}')` : ''}>{!teaserThumb && <span class="teaser-mark">ZIFFA · 2025</span>}</div>
         <div class="teaser-play"><span>▶</span></div>
         <div class="teaser-cta">Regarder la bande-annonce</div>
       </div>

@@ -22,6 +22,28 @@ export function mediaUrls(field) {
   return arr.map((m) => (m && m.url ? mediaUrl(m.url) : null)).filter(Boolean);
 }
 
+// Cache mémoire (durée de vie du process) pour éviter un appel oEmbed à chaque rendu.
+const _vimeoThumbCache = {};
+/** Récupère l'URL de la miniature (couverture) d'une vidéo Vimeo. null si indisponible. */
+export async function getVimeoThumb(url) {
+  if (!url) return null;
+  if (url in _vimeoThumbCache) return _vimeoThumbCache[url];
+  let thumb = null;
+  try {
+    const m = String(url).match(/vimeo\.com\/(?:video\/)?(\d+)(?:\?h=|\/)?([0-9a-f]+)?/i);
+    const pageUrl = m ? `https://vimeo.com/${m[1]}${m[2] ? '/' + m[2] : ''}` : url;
+    const res = await fetch(`https://vimeo.com/api/oembed.json?url=${encodeURIComponent(pageUrl)}&width=1280`);
+    if (res.ok) {
+      const data = await res.json();
+      thumb = data.thumbnail_url || null;
+    }
+  } catch (err) {
+    thumb = null;
+  }
+  _vimeoThumbCache[url] = thumb;
+  return thumb;
+}
+
 /** Récupère le single type « Paramètres du site » (global). {} si vide/indisponible. */
 export async function getGlobal() {
   const r = await fetchAPI('global', { populate: '*' });

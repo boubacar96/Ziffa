@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { fetchAPI, mediaUrl, mediaUrls } from '../../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../../lib/strapi.js';
 
 const catLabel = { fiction: 'Fiction', documentaire: 'Documentary', animation: 'Animation', 'court-metrage': 'Short film' };
 const typeLabel = { projection: 'Screening', masterclass: 'Masterclass', rencontre: 'Talk', ceremonie: 'Ceremony' };
@@ -19,6 +19,7 @@ function toEmbed(url) {
   return url;
 }
 const videoEmbed = toEmbed(edition?.videoUrl) || 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
+const teaserThumb = await getVimeoThumb(edition?.videoUrl || 'https://vimeo.com/1169196245/5c5f7be273');
 
 const filmRes = await fetchAPI('films', { populate: 'poster', sort: 'year:desc', 'pagination[limit]': '6' });
 const fallbackFilms = [
@@ -147,7 +148,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
         <p>A taste of the festival: the energy, the images, the emotion of African cinema.</p>
       </div>
       <div class="teaser-player" id="teaser-player" data-embed={videoEmbed} role="button" tabindex="0" aria-label="Play the ZIFFA teaser">
-        <div class="teaser-poster"><span class="teaser-mark">ZIFFA · 2025</span></div>
+        <div class="teaser-poster" style={teaserThumb ? `background-image:linear-gradient(rgba(11,26,18,.30),rgba(11,26,18,.55)), url('${teaserThumb}')` : ''}>{!teaserThumb && <span class="teaser-mark">ZIFFA · 2025</span>}</div>
         <div class="teaser-play"><span>▶</span></div>
         <div class="teaser-cta">Watch the teaser</div>
       </div>

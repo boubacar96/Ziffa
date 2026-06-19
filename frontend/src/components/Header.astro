@@ -40,7 +40,18 @@ const groupActive = (g) => {
             : <span class={`nav-link nav-link--toggle ${groupActive(g)}`} role="button" tabindex="0">{t(g.key)}{hasItems && <span class="caret"> ▾</span>}</span>}
           {hasItems && (
             <div class="dropdown">
-              {g.items.map((i) => <a href={L(i.href)}>{i.label ? i.label[lang] : t(i.key)}</a>)}
+              {g.items.map((i) => (
+                i.items && i.items.length ? (
+                  <div class="dd-sub">
+                    <a href={L(i.href)} class="dd-sub-link">{i.label ? i.label[lang] : t(i.key)}<span class="dd-arrow">›</span></a>
+                    <div class="dropdown-flyout">
+                      {i.items.map((s) => <a href={L(s.href)}>{s.label ? s.label[lang] : t(s.key)}</a>)}
+                    </div>
+                  </div>
+                ) : (
+                  <a href={L(i.href)}>{i.label ? i.label[lang] : t(i.key)}</a>
+                )
+              ))}
             </div>
           )}
         </li>

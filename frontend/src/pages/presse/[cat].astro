@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { PRESS_PARTS } from '../../lib/press.js';
+
+const { cat } = Astro.params;
+const part = PRESS_PARTS.find((p) => p.key === cat);
+
+let resources = [];
+if (part) {
+  const res = await fetchAPI('press-resources', { 'filters[category][$eq]': cat, populate: 'files', sort: 'order:asc', 'pagination[limit]': '50' });
+  resources = (res.data || []).map((r) => ({
+    title: r.title, description: r.description || '',
+    files: (r.files || []).map((f) => ({ name: f.name, url: mediaUrl(f.url) })),
+  }));
+}
+---
+{part ? (
+  <Base title={`${part.fr.title} | Espace presse ZIFFA`} description={part.fr.desc}>
+    <header class="page-hero">
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; <a href="/presse">Espace presse</a> &nbsp;/&nbsp; {part.fr.title}</div>
+        <div class="eyebrow"><span class="arrow">→</span> Espace presse</div>
+        <h1>{part.fr.title}<span class="yellow">.</span></h1>
+        <p>{part.fr.desc}</p>
+      </div>
+    </header>
+
+    <section class="section">
+      {resources.length > 0 ? (
+        <>
+          <div class="press-toolbar">
+            <label class="press-selectall"><input type="checkbox" id="press-all-cb" /> Tout sélectionner</label>
+            <div class="press-toolbar-actions">
+              <button type="button" class="btn-ghost" id="press-dl-selection" style="color:var(--green-deep);border-color:var(--line);">Télécharger la sélection</button>
+              <button type="button" class="nav-cta" id="press-dl-all">Tout télécharger ↓</button>
+            </div>
+          </div>
+          <div class="press-grid" id="press-grid">
+            {resources.map((r, idx) => (
+              <article class="press-card" data-idx={idx}>
+                <label class="press-check"><input type="checkbox" class="press-cb" /></label>
+                <h3>{r.title}</h3>
+                {r.description && <p>{r.description}</p>}
+                <div class="press-files">
+                  {r.files.length === 0 && <span class="press-empty">Fichier à venir</span>}
+                  {r.files.map((f) => (
+                    <a class="press-file" href={f.url} download data-url={f.url} data-name={f.name}><span>📄 {f.name}</span><span class="press-file-dl">↓</span></a>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p class="prog-pdf-empty" style="max-width:540px;">Les ressources de cette rubrique seront bientôt disponibles.</p>
+      )}
+      <div style="margin-top:34px;"><a href="/presse" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">← Espace presse</a></div>
+    </section>
+  </Base>
+) : (
+  <Base title="Espace presse | ZIFFA">
+    <section class="section" style="text-align:center;padding:80px 20px;">
+      <h1 class="section-title">404</h1>
+      <p class="prog-pdf-empty" style="max-width:480px;margin:20px auto;">Cette rubrique presse est introuvable.</p>
+      <a href="/presse" class="nav-cta">← Espace presse</a>
+    </section>
+  </Base>
+)}
+
+<script>
+  const grid = document.getElementById('press-grid');
+  if (grid) {
+    const cards = Array.from(grid.querySelectorAll('.press-card'));
+    const filesOf = (card) => Array.from(card.querySelectorAll('.press-file')).map((a) => ({ url: a.dataset.url, name: a.dataset.name }));
+    function downloadAll(files) {
+      files.forEach((f, i) => setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = f.url; a.download = f.name || ''; a.target = '_blank'; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); a.remove();
+      }, i * 400));
+    }
+    document.getElementById('press-all-cb')?.addEventListener('change', (e) => {
+      cards.forEach((c) => { const cb = c.querySelector('.press-cb'); cb.checked = e.target.checked; c.classList.toggle('selected', e.target.checked); });
+    });
+    cards.forEach((c) => c.querySelector('.press-cb').addEventListener('change', (e) => c.classList.toggle('selected', e.target.checked)));
+    document.getElementById('press-dl-selection')?.addEventListener('click', () => {
+      const sel = cards.filter((c) => c.querySelector('.press-cb').checked);
+      const files = sel.flatMap(filesOf);
+      if (!files.length) { alert('Sélectionnez au moins une ressource.'); return; }
+      downloadAll(files);
+    });
+    document.getElementById('press-dl-all')?.addEventListener('click', () => downloadAll(cards.flatMap(filesOf)));
+  }
+</script>

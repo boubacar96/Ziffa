@@ -19,7 +19,12 @@
       "type": "text"
     },
     "category": {
-      "type": "string"
+      "type": "enumeration",
+      "enum": [
+        "dossier",
+        "logos",
+        "photos"
+      ]
     },
     "files": {
       "type": "media",

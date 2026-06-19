@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { REGLEMENT } from '../../lib/reglement.js';
 ---
 <Base title="Take part — Submit a film | ZIFFA" description="Submit your film to ZIFFA 2027: form, viewing link, technical sheet, synopsis, biography and photos.">
   <header class="page-hero">
@@ -15,6 +16,11 @@ import Base from '../../layouts/Base.astro';
     <div class="insc-layout">
       <div class="insc-main">
         <div id="insc-alert" class="form-alert"></div>
+
+        <div class="insc-rules">
+          <p><strong>⚠️ You cannot submit a film</strong> without reading and approving the festival regulations. Open the <button type="button" class="rules-link" id="open-rules">festival regulations</button>, then tick the approval box at the bottom of the document.</p>
+          <div class="insc-rules-ok" id="rules-ok" hidden>✓ Regulations approved — you can now complete and send your entry.</div>
+        </div>
 
         <form id="insc-form" class="insc-form" enctype="multipart/form-data" novalidate>
           <div class="hp"><label>Do not fill<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
@@ -71,7 +77,8 @@ import Base from '../../layouts/Base.astro';
             <div class="insc-help">Total attachments: 22 MB max. For larger files, use the viewing link.</div>
           </div>
 
-          <button type="submit" class="submit-btn" id="insc-submit">Send my entry ↗</button>
+          <p class="insc-gate-note" id="insc-gate-note">To enable sending, open the <button type="button" class="rules-link" id="open-rules-2">festival regulations</button> and tick “I have read and approved the regulations”.</p>
+          <button type="submit" class="submit-btn" id="insc-submit" hidden>Send my entry ↗</button>
         </form>
       </div>
 
@@ -99,6 +106,20 @@ import Base from '../../layouts/Base.astro';
     </div>
   </section>
 
+  <!-- Regulations popup -->
+  <div class="rules-modal" id="rules-modal" hidden>
+    <div class="rules-backdrop" data-rules-close></div>
+    <div class="rules-dialog" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+      <button class="rules-x" type="button" data-rules-close aria-label="Close">×</button>
+      <h2 id="rules-title">Festival regulations</h2>
+      <div class="rules-body" set:html={REGLEMENT.en}></div>
+      <div class="rules-foot">
+        <label class="rules-check"><input type="checkbox" id="rules-cb" /> <span>I have read and approved the regulations</span></label>
+        <button type="button" class="nav-cta" data-rules-close>Close</button>
+      </div>
+    </div>
+  </div>
+
 </Base>
 
 <script>
@@ -114,8 +135,28 @@ import Base from '../../layouts/Base.astro';
     input.addEventListener('change', () => { const names = Array.from(input.files).map((f) => f.name); list.textContent = names.join(' · '); drop.classList.toggle('has-files', names.length > 0); });
   });
   const showAlert = (type, msg) => { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+
+  // --- Regulations: popup + approval checkbox that unlocks sending ---
+  const rulesModal = document.getElementById('rules-modal');
+  const rulesCb = document.getElementById('rules-cb');
+  const gateNote = document.getElementById('insc-gate-note');
+  const rulesOk = document.getElementById('rules-ok');
+  const openRules = () => { if (rulesModal) { rulesModal.hidden = false; document.body.style.overflow = 'hidden'; } };
+  const closeRules = () => { if (rulesModal) { rulesModal.hidden = true; document.body.style.overflow = ''; } };
+  document.getElementById('open-rules')?.addEventListener('click', openRules);
+  document.getElementById('open-rules-2')?.addEventListener('click', openRules);
+  rulesModal?.querySelectorAll('[data-rules-close]').forEach((el) => el.addEventListener('click', closeRules));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && rulesModal && !rulesModal.hidden) closeRules(); });
+  rulesCb?.addEventListener('change', () => {
+    const ok = rulesCb.checked;
+    if (submitBtn) submitBtn.hidden = !ok;
+    if (gateNote) gateNote.hidden = ok;
+    if (rulesOk) rulesOk.hidden = !ok;
+  });
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!rulesCb?.checked) { showAlert('err', 'Please read and approve the festival regulations before sending.'); openRules(); return; }
     if (!form.checkValidity()) { showAlert('err', 'Please fill in all required fields (*).'); return; }
     if (form.querySelector('input[name="photos"]').files.length < 2) { showAlert('err', 'Please attach at least 2 film photos.'); return; }
     if (words(bio.value) > 500) { showAlert('err', 'The biography exceeds 500 words.'); return; }

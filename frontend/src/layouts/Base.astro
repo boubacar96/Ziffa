@@ -65,7 +65,7 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
       // Apparition au scroll (progressif : rien n'est masqué si JS off)
       if (!reduce && 'IntersectionObserver' in window) {
         document.documentElement.classList.add('js-reveal');
-        const sel = '.section-head, .film-card, .objectif-card, .prize-card, .prize-photo, .team-portrait, .archive-card, .presse-card, .film-sel-card, .hl-card, .programme-event, .atelier-card, .stat-card, .ed-card, .partner-logo, .download-row, .gallery-grid figure, .cd-box, .timeline-item, .tier-card, .presentation-editorial';
+        const sel = '.section-head, .film-card, .objectif-card, .prize-card, .prize-photo, .team-portrait, .archive-card, .presse-card, .film-sel-card, .film-poster-card, .hl-card, .programme-event, .atelier-card, .stat-card, .ed-card, .partner-logo, .download-row, .gallery-grid figure, .cd-box, .timeline-item, .tier-card, .presentation-editorial';
         const io = new IntersectionObserver((entries) => {
           entries.forEach((e) => {
             if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }

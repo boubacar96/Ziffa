@@ -2890,6 +2890,12 @@
   .film-sel-card h3 { font-family: 'Baloo 2', sans-serif; font-size: 18px; color: var(--green-deep); line-height: 1.15; }
   .film-sel-dir { font-size: 14px; color: var(--ink); margin-top: 4px; }
   .film-sel-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .04em; color: var(--ink-soft); margin-top: 8px; }
+  /* Carte-affiche (film avec poster) */
+  .film-poster-card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
+  .film-poster-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px rgba(0,0,0,.14); }
+  .film-poster-img { aspect-ratio: 2 / 3; background: var(--green-deep) center/cover no-repeat; }
+  .film-poster-body { padding: 12px 14px 16px; }
+  .film-poster-body h3 { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 16px; color: var(--green-deep); line-height: 1.15; }
 
   /* ===== Kicker (petit texte au-dessus des titres) masqué partout ===== */
   .eyebrow { display: none !important; }

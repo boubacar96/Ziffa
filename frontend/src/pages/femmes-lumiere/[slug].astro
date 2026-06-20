@@ -1,0 +1,76 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { toVideoEmbed } from '../../lib/formations.js';
+import { fallbackFemmes } from '../../lib/femmes-lumiere.js';
+import { marked } from 'marked';
+
+const { slug } = Astro.params;
+const res = await fetchAPI('femmes-lumiere', { 'filters[slug][$eq]': slug, populate: '*', 'pagination[limit]': '1' });
+const f = (res.data || [])[0];
+let femme = null;
+if (f) {
+  femme = {
+    title: f.title, excerpt: f.excerpt || '', content: f.content || '',
+    cover: f.cover?.url ? mediaUrl(f.cover.url) : null,
+    gallery: (f.gallery || []).map((g) => (g.url ? mediaUrl(g.url) : null)).filter(Boolean),
+    videos: (f.videos || []).map((v) => ({ title: v.title || '', url: toVideoEmbed(v.url) })),
+  };
+} else {
+  const fb = fallbackFemmes('fr').find((x) => x.slug === slug);
+  if (fb) femme = { ...fb, videos: (fb.videos || []).map((v) => ({ title: v.title, url: toVideoEmbed(v.url) })) };
+}
+const contentHtml = femme ? marked.parse(femme.content || '') : '';
+const coverStyle = femme && femme.cover
+  ? `background-image:linear-gradient(rgba(26,69,39,.55),rgba(26,69,39,.85)),url('${femme.cover}')`
+  : '';
+---
+<Base title={femme ? `${femme.title} | Femmes en lumière ZIFFA` : 'Femmes en lumière | ZIFFA'} description={femme?.excerpt || ''}>
+  {femme ? (
+    <>
+      <header class="formation-hero" style={coverStyle}>
+        <div class="formation-hero-inner">
+          <nav class="formation-crumb"><a href="/">Accueil</a><span>›</span><a href="/a-lannee">À l'année</a><span>›</span><a href="/femmes-lumiere">Femmes en lumière</a></nav>
+          <span class="formation-tag">Femmes en lumière</span>
+          <h1>{femme.title}</h1>
+          {femme.excerpt && <p>{femme.excerpt}</p>}
+        </div>
+      </header>
+
+      <article class="section formation-article">
+        {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
+
+        {femme.gallery.length > 0 && (
+          <section class="formation-block">
+            <h2 class="formation-block-title">En images</h2>
+            <div class="gallery-grid">
+              {femme.gallery.map((src) => (
+                <figure><img src={src} alt={femme.title} loading="lazy" decoding="async" /></figure>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {femme.videos.length > 0 && (
+          <section class="formation-block">
+            <h2 class="formation-block-title">Vidéos</h2>
+            <div class="formation-videos">
+              {femme.videos.map((v) => (
+                <div class="formation-video">
+                  <div class="video-wrapper"><iframe src={v.url} title={v.title || femme.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
+                  {v.title && <div class="formation-video-title">{v.title}</div>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </article>
+    </>
+  ) : (
+    <section class="section" style="text-align:center;padding:80px 20px;">
+      <h1 class="section-title">404</h1>
+      <p class="prog-pdf-empty" style="max-width:480px;margin:20px auto;">Ce portrait est introuvable.</p>
+      <a href="/femmes-lumiere" class="nav-cta">← Femmes en lumière</a>
+    </section>
+  )}
+</Base>

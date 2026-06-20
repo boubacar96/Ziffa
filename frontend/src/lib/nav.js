@@ -17,6 +17,7 @@ export const NAV = [
     key: 'nav.annee', href: null, dd: 'nav.dd.annee',
     items: [
       { key: 'nav.formations', href: '/formations' },
+      { label: { fr: 'Femmes en lumière', en: 'Women in the spotlight' }, href: '/femmes-lumiere' },
       { key: 'nav.expophoto', href: '/expo-photo' },
     ],
   },

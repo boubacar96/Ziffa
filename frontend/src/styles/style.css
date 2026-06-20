@@ -3009,6 +3009,14 @@
     .hl-row { grid-template-columns: 1fr; gap: 16px; }
     .hl-row:nth-child(even) .hl-img { order: 0; }
   }
+  /* Temps forts en cartes image (piliers de l'édition) */
+  .hl-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+  .hl-card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; transition: transform .18s ease, box-shadow .18s ease; }
+  .hl-card:hover { transform: translateY(-5px); box-shadow: 0 18px 44px rgba(0,0,0,.12); }
+  .hl-card-img { aspect-ratio: 16 / 10; background: var(--green-deep) center/cover no-repeat; }
+  .hl-card-body { padding: 18px 20px 22px; }
+  .hl-card-body h3 { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 19px; color: var(--green-deep); line-height: 1.2; }
+  .hl-card-body p { margin-top: 7px; font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
 
   /* ----- Liste de prix / palmarès ----- */
   .prize-grid {

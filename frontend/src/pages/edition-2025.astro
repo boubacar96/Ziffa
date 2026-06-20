@@ -58,10 +58,11 @@ const edStats = [
   { n: 1000, suffix: '+', label: 'spectateurs' },
 ];
 const highlights = [
-  { img: photos[1] || '/photos/photo02.jpg', title: "Soirée d'ouverture", desc: 'Cérémonie, spectacles et premières projections.' },
-  { img: photos[4] || '/photos/photo05.jpg', title: 'Films en compétition', desc: 'Courts métrages internationaux et longs métrages.' },
-  { img: photos[6] || '/photos/photo07.jpg', title: 'Femmes en lumière', desc: 'Rencontres avec cinéastes et créatrices.' },
-  { img: photos[2] || '/photos/photo03.jpg', title: 'Cérémonie de clôture', desc: 'Palmarès et projection des films primés.' },
+  { img: photos[0] || '/photos/photo01.jpg', title: 'Cérémonies & organisation', desc: "Ouverture, clôture et coulisses du festival." },
+  { img: photos[3] || '/photos/photo04.jpg', title: 'Ateliers', desc: "Douze jours de stages : réalisation, montage, jeu d'acteur et animation." },
+  { img: photos[5] || '/photos/photo06.jpg', title: 'Animation & ciné-enfants', desc: "Séances de films d'animation et ateliers pour le jeune public." },
+  { img: photos[2] || '/photos/photo03.jpg', title: 'Masterclasses', desc: 'Transmission avec des cinéastes et professionnels invités.' },
+  { img: photos[6] || '/photos/photo07.jpg', title: 'Femmes en lumière', desc: 'Rencontres avec réalisatrices, productrices et créatrices.' },
 ];
 ---
 <Base title="Édition 2025 — Retour en images | ZIFFA" description="Revivez la première édition du ZIFFA (2025) : vidéo, galerie, palmarès, programme et jury.">
@@ -118,11 +119,11 @@ const highlights = [
   <!-- TEMPS FORTS -->
   <section class="section" id="temps-forts">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Moments marquants</div><h2 class="section-title">Les <span class="red">temps forts</span>.</h2></div></div>
-    <div class="highlights-editorial">
-      {highlights.map((h, i) => (
-        <article class="hl-row">
-          <div class="hl-img" style={`background-image:url('${h.img}')`}></div>
-          <div class="hl-text"><span class="hl-num">— {String(i + 1).padStart(2, '0')}</span><h3>{h.title}</h3><p>{h.desc}</p></div>
+    <div class="hl-cards">
+      {highlights.map((h) => (
+        <article class="hl-card">
+          <div class="hl-card-img" style={`background-image:url('${h.img}')`}></div>
+          <div class="hl-card-body"><h3>{h.title}</h3><p>{h.desc}</p></div>
         </article>
       ))}
     </div>

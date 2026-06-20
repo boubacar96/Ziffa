@@ -50,10 +50,11 @@ const edStats = [
   { n: 1000, suffix: '+', label: 'spectators' },
 ];
 const highlights = [
-  { img: photos[1] || '/photos/photo02.jpg', title: 'Opening night', desc: 'Ceremony, performances and first screenings.' },
-  { img: photos[4] || '/photos/photo05.jpg', title: 'Films in competition', desc: 'International shorts and feature films.' },
-  { img: photos[6] || '/photos/photo07.jpg', title: 'Women in the spotlight', desc: 'Talks with filmmakers and creators.' },
-  { img: photos[2] || '/photos/photo03.jpg', title: 'Closing ceremony', desc: 'Prize list and screening of the awarded films.' },
+  { img: photos[0] || '/photos/photo01.jpg', title: 'Ceremonies & organisation', desc: 'Opening, closing and behind the scenes of the festival.' },
+  { img: photos[3] || '/photos/photo04.jpg', title: 'Workshops', desc: 'Twelve days of training: directing, editing, acting and animation.' },
+  { img: photos[5] || '/photos/photo06.jpg', title: 'Animation & kids screenings', desc: 'Animated film sessions and workshops for young audiences.' },
+  { img: photos[2] || '/photos/photo03.jpg', title: 'Masterclasses', desc: 'Knowledge-sharing with guest filmmakers and professionals.' },
+  { img: photos[6] || '/photos/photo07.jpg', title: 'Women in the spotlight', desc: 'Talks with directors, producers and creators.' },
 ];
 ---
 <Base title="2025 Edition — In pictures | ZIFFA" description="Relive the first ZIFFA edition (2025): video, gallery, prize list, programme and jury.">
@@ -107,11 +108,11 @@ const highlights = [
 
   <section class="section" id="temps-forts">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Highlights</div><h2 class="section-title">The <span class="red">highlights</span>.</h2></div></div>
-    <div class="highlights-editorial">
-      {highlights.map((h, i) => (
-        <article class="hl-row">
-          <div class="hl-img" style={`background-image:url('${h.img}')`}></div>
-          <div class="hl-text"><span class="hl-num">— {String(i + 1).padStart(2, '0')}</span><h3>{h.title}</h3><p>{h.desc}</p></div>
+    <div class="hl-cards">
+      {highlights.map((h) => (
+        <article class="hl-card">
+          <div class="hl-card-img" style={`background-image:url('${h.img}')`}></div>
+          <div class="hl-card-body"><h3>{h.title}</h3><p>{h.desc}</p></div>
         </article>
       ))}
     </div>

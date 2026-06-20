@@ -2897,6 +2897,31 @@
   .film-poster-body { padding: 12px 14px 16px; }
   .film-poster-body h3 { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 16px; color: var(--green-deep); line-height: 1.15; }
 
+  /* ===== Raffinements design : transition de page, hero cinématique, micro-interactions ===== */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Transition de page : léger fondu à chaque arrivée */
+    main#main { animation: pageFade .45s ease both; }
+    @keyframes pageFade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Hero cinématique : zoom lent (Ken Burns) sur la mosaïque + entrée du contenu */
+    .hero-mosaic { animation: heroKenBurns 46s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+    @keyframes heroKenBurns { from { transform: scale(1.05); } to { transform: scale(1.13); } }
+    .hero-inner > * { opacity: 0; animation: heroRise .8s cubic-bezier(.2,.7,.2,1) forwards; }
+    .hero-inner > *:nth-child(1) { animation-delay: .10s; }
+    .hero-inner > *:nth-child(2) { animation-delay: .22s; }
+    .hero-inner > *:nth-child(3) { animation-delay: .34s; }
+    .hero-inner > *:nth-child(4) { animation-delay: .46s; }
+    .hero-inner > *:nth-child(5) { animation-delay: .58s; }
+    @keyframes heroRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+    /* Micro-interactions : zoom doux de l'image au survol des cartes */
+    .formation-cover, .hl-card-img, .film-poster-img, .team-photo { transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+    .formation-card:hover .formation-cover,
+    .hl-card:hover .hl-card-img,
+    .film-poster-card:hover .film-poster-img,
+    .team-portrait:hover .team-photo { transform: scale(1.06); }
+  }
+
   /* ===== Kicker (petit texte au-dessus des titres) masqué partout ===== */
   .eyebrow { display: none !important; }
 

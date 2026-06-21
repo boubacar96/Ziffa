@@ -403,11 +403,14 @@ async function recoverFilms2025(strapi) {
     return film;
   }
   for (const day of PROGRAMME_2025) {
+    let i = 0;
     for (const act of day.activities) {
+      i += 1;
       if (!act.films || !act.films.length) continue;
       const ids = [];
       for (const line of act.films) { try { const f = await getFilm(line); ids.push(f.documentId); } catch (e) { strapi.log.warn('[recover-films] ' + line.title + ' : ' + e.message); } }
-      const ev = events.find((e) => e.title === act.title && String(e.date) === String(day.date));
+      // Appariement par date + ordre (l'ordre = position dans la journée, posé par le seed) — gère les titres identiques.
+      const ev = events.find((e) => String(e.date) === String(day.date) && e.order === i);
       if (ev && ids.length) {
         try {
           const existing = (ev.filmsList || []).map((x) => x.documentId);

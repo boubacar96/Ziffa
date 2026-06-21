@@ -278,6 +278,50 @@ async function backfillDaySlugs(strapi) {
   }
 }
 
+// Libellés FR des champs dans l'admin (Content Manager). Le nom technique reste inchangé.
+const FR_LABELS = {
+  'api::person.person': { name: 'Nom', role: 'Rôle / fonction', bio: 'Biographie', photo: 'Photo', type: 'Catégorie (équipe / jury / photographe)', featured: 'Mettre en avant', order: "Ordre d'affichage", edition: 'Édition' },
+  'api::film.film': { title: 'Titre', category: 'Catégorie', synopsis: 'Synopsis', director: 'Réalisateur·rice', country: 'Pays', year: 'Année', duration: 'Durée', poster: 'Affiche', trailerUrl: 'Lien bande-annonce', edition: 'Édition' },
+  'api::prize.prize': { name: 'Nom du prix', description: 'Description', winner: 'Lauréat·e', image: 'Image', edition: 'Édition' },
+  'api::photo.photo': { image: 'Images', category: 'Catégorie', edition: 'Édition' },
+  'api::partner.partner': { name: 'Nom', logo: 'Logo', url: 'Lien (site web)', order: "Ordre d'affichage" },
+  'api::formation.formation': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage", description: 'Description (secours)' },
+  'api::masterclass.masterclass': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', speaker: 'Intervenant·e', order: "Ordre d'affichage", edition: 'Édition' },
+  'api::femme-lumiere.femme-lumiere': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage" },
+  'api::press-resource.press-resource': { title: 'Titre', description: 'Description', category: 'Catégorie (dossier / logos / photos)', files: 'Fichiers', order: "Ordre d'affichage" },
+  'api::edition.edition': { year: 'Année', number: "Numéro d'édition", title: 'Titre', tagline: 'Accroche', dateStart: 'Date de début', dateEnd: 'Date de fin', location: 'Lieu', isCurrent: 'Édition en cours ?', videoUrl: 'Lien vidéo (teaser)', poster: 'Affiche', programmePdf: 'PDF du programme' },
+  'api::programme-day.programme-day': { label: 'Libellé du jour', subtitle: 'Sous-titre', date: 'Date', slug: 'Slug (auto)', order: "Ordre d'affichage", edition: 'Édition', activities: 'Activités' },
+  'api::programme-event.programme-event': { title: 'Titre', description: 'Description', startTime: 'Heure de début', timeEnd: 'Heure de fin', type: 'Type de séance', location: 'Lieu', day: 'Jour (n° pour le tri)', date: 'Date', order: "Ordre d'affichage", films: 'Films de la séance', programmeDay: 'Jour de programme', edition: 'Édition' },
+};
+
+// Applique les libellés FR à la configuration du Content Manager (idempotent, tolérant).
+async function setFrenchLabels(strapi) {
+  const cm = strapi.plugin && strapi.plugin('content-manager');
+  const svc = cm && cm.service('content-types');
+  if (!svc || typeof svc.findConfiguration !== 'function' || typeof svc.updateConfiguration !== 'function') {
+    strapi.log.warn('[labels] Service Content Manager indisponible — libellés non appliqués.');
+    return;
+  }
+  for (const [uid, fields] of Object.entries(FR_LABELS)) {
+    try {
+      const ct = strapi.contentType(uid);
+      if (!ct) continue;
+      const conf = await svc.findConfiguration(ct);
+      if (!conf || !conf.metadatas) continue;
+      for (const [f, label] of Object.entries(fields)) {
+        const meta = conf.metadatas[f];
+        if (!meta) continue;
+        if (meta.edit) meta.edit.label = label;
+        if (meta.list) meta.list.label = label;
+      }
+      await svc.updateConfiguration(ct, conf);
+    } catch (e) {
+      strapi.log.warn('[labels] ' + uid + ' : ' + e.message);
+    }
+  }
+  strapi.log.info('[labels] Libellés FR appliqués au Content Manager.');
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -292,6 +336,7 @@ module.exports = {
       if (!isProd) await seedDemo(strapi);
       await seed2025(strapi);
       await backfillDaySlugs(strapi);
+      await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {
       strapi.log.error('[seed] échec : ' + err.message);

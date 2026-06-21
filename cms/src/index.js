@@ -373,6 +373,55 @@ async function unifyFilms(strapi) {
   strapi.log.info(`[unify-films] Films créés : ${created}, séances reliées : ${linked}.`);
 }
 
+// Recrée les films 2025 depuis le code (PROGRAMME_2025) et relie les séances (filmsList).
+// Source de vérité = le code, donc robuste même si la base a perdu des données. Idempotent.
+async function recoverFilms2025(strapi) {
+  const eds = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2025 }, pagination: { limit: 1 } });
+  const ed = eds && eds[0];
+  if (!ed) { strapi.log.warn('[recover-films] pas d\'édition 2025'); return; }
+  let events = [];
+  try {
+    events = await strapi.documents('api::programme-event.programme-event').findMany({
+      filters: { edition: { documentId: ed.documentId } },
+      populate: { filmsList: true }, pagination: { limit: 500 },
+    });
+  } catch (e) { strapi.log.warn('[recover-films] lecture séances : ' + e.message); }
+  const cache = {};
+  let created = 0, linked = 0;
+  async function getFilm(line) {
+    if (cache[line.title]) return cache[line.title];
+    const found = await strapi.documents('api::film.film').findMany({ filters: { title: line.title }, status: 'published', pagination: { limit: 1 } });
+    let film = found && found[0];
+    if (!film) {
+      film = await strapi.documents('api::film.film').create({
+        data: { title: line.title, director: line.director || null, country: line.country || null, year: line.year ? (parseInt(String(line.year), 10) || null) : null, duration: line.duration || null, language: line.language || null, edition: ed.documentId },
+      });
+      await strapi.documents('api::film.film').publish({ documentId: film.documentId });
+      created++;
+    }
+    cache[line.title] = film;
+    return film;
+  }
+  for (const day of PROGRAMME_2025) {
+    for (const act of day.activities) {
+      if (!act.films || !act.films.length) continue;
+      const ids = [];
+      for (const line of act.films) { try { const f = await getFilm(line); ids.push(f.documentId); } catch (e) { strapi.log.warn('[recover-films] ' + line.title + ' : ' + e.message); } }
+      const ev = events.find((e) => e.title === act.title && String(e.date) === String(day.date));
+      if (ev && ids.length) {
+        try {
+          const existing = (ev.filmsList || []).map((x) => x.documentId);
+          const union = Array.from(new Set([...existing, ...ids]));
+          await strapi.documents('api::programme-event.programme-event').update({ documentId: ev.documentId, data: { filmsList: union } });
+          await strapi.documents('api::programme-event.programme-event').publish({ documentId: ev.documentId });
+          linked++;
+        } catch (e) { strapi.log.warn('[recover-films] lien ' + act.title + ' : ' + e.message); }
+      }
+    }
+  }
+  strapi.log.info(`[recover-films] Films créés : ${created}, séances reliées : ${linked}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -387,7 +436,7 @@ module.exports = {
       if (!isProd) await seedDemo(strapi);
       await seed2025(strapi);
       await backfillDaySlugs(strapi);
-      await unifyFilms(strapi);
+      await recoverFilms2025(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

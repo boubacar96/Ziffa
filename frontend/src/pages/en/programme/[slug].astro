@@ -15,7 +15,7 @@ const dayRes = await fetchAPI('programme-days', {
 const day = (dayRes.data || [])[0] || null;
 
 const actRes = await fetchAPI('programme-events', {
-  'filters[programmeDay][slug][$eq]': slug, populate: 'films', sort: 'order:asc', 'pagination[limit]': '100',
+  'filters[programmeDay][slug][$eq]': slug, 'populate[0]': 'films', 'populate[1]': 'filmsList', sort: 'order:asc', 'pagination[limit]': '100',
 });
 const activities = actRes.data || [];
 
@@ -38,7 +38,9 @@ const title = day ? `${day.label} — ZIFFA ${year} programme` : 'Programme — 
 
       <div class="prog-timeline">
         {activities.length === 0 && <p class="prog-pdf-empty">{t('prog.soon')}</p>}
-        {activities.map((a) => (
+        {activities.map((a) => {
+          const films = (a.filmsList && a.filmsList.length) ? a.filmsList : (a.films || []);
+          return (
           <div class="prog-activity">
             <div class="prog-act-time">{a.startTime || '—'}{a.timeEnd && <small>→ {a.timeEnd}</small>}</div>
             <div class={`prog-act-body cat-${a.type}`}>
@@ -48,9 +50,9 @@ const title = day ? `${day.label} — ZIFFA ${year} programme` : 'Programme — 
               </div>
               <h3>{a.title}</h3>
               {a.description && <p class="prog-act-desc">{a.description}</p>}
-              {a.films && a.films.length > 0 && (
+              {films.length > 0 && (
                 <div class="prog-films">
-                  {a.films.map((f) => (
+                  {films.map((f) => (
                     <div class="prog-film">
                       <span class="pf-title">{f.title}</span>
                       {f.director && <span class="pf-dir">— {f.director}</span>}
@@ -61,7 +63,8 @@ const title = day ? `${day.label} — ZIFFA ${year} programme` : 'Programme — 
               )}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div class="prog-complete-btn" style="padding-bottom:50px;">

@@ -322,6 +322,57 @@ async function setFrenchLabels(strapi) {
   strapi.log.info('[labels] Libellés FR appliqués au Content Manager.');
 }
 
+// Unifie les films : crée des entrées « Film » depuis les composants « Films de la séance »
+// et relie chaque séance à ces films (filmsList). Idempotent, tolérant.
+async function unifyFilms(strapi) {
+  let events;
+  try {
+    events = await strapi.documents('api::programme-event.programme-event').findMany({
+      populate: { films: true, edition: true, filmsList: true },
+      pagination: { limit: 500 },
+    });
+  } catch (e) { strapi.log.warn('[unify-films] lecture séances : ' + e.message); return; }
+  let created = 0, linked = 0;
+  for (const ev of events || []) {
+    const lines = ev.films || [];
+    if (!lines.length) continue;
+    if ((ev.filmsList || []).length) continue; // déjà migré
+    const editionId = ev.edition && ev.edition.documentId;
+    const filmIds = [];
+    for (const line of lines) {
+      if (!line.title) continue;
+      try {
+        const found = await strapi.documents('api::film.film').findMany({ filters: { title: line.title }, pagination: { limit: 1 } });
+        let film = found && found[0];
+        if (!film) {
+          film = await strapi.documents('api::film.film').create({
+            data: {
+              title: line.title,
+              director: line.director || null,
+              country: line.country || null,
+              year: line.year ? (parseInt(String(line.year), 10) || null) : null,
+              duration: line.duration || null,
+              language: line.language || null,
+              edition: editionId || undefined,
+            },
+          });
+          await strapi.documents('api::film.film').publish({ documentId: film.documentId });
+          created++;
+        }
+        filmIds.push(film.documentId);
+      } catch (e) { strapi.log.warn('[unify-films] film "' + line.title + '" : ' + e.message); }
+    }
+    if (filmIds.length) {
+      try {
+        await strapi.documents('api::programme-event.programme-event').update({ documentId: ev.documentId, data: { filmsList: filmIds } });
+        await strapi.documents('api::programme-event.programme-event').publish({ documentId: ev.documentId });
+        linked++;
+      } catch (e) { strapi.log.warn('[unify-films] lien séance : ' + e.message); }
+    }
+  }
+  strapi.log.info(`[unify-films] Films créés : ${created}, séances reliées : ${linked}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -336,6 +387,7 @@ module.exports = {
       if (!isProd) await seedDemo(strapi);
       await seed2025(strapi);
       await backfillDaySlugs(strapi);
+      await unifyFilms(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

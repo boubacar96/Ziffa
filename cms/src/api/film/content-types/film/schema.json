@@ -39,6 +39,9 @@
     "duration": {
       "type": "string"
     },
+    "language": {
+      "type": "string"
+    },
     "poster": {
       "type": "media",
       "multiple": false,

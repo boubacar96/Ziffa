@@ -55,7 +55,9 @@ const actsForDay = (d) => allActs.filter((a) => a.programmeDay?.documentId === d
         </h3>
         {d.subtitle && <p style="color:var(--ink-soft,#6b6b6b);margin:0 0 6px;">{d.subtitle}</p>}
         <div class="prog-timeline" style="padding:18px 0 0;max-width:none;">
-          {actsForDay(d).map((a) => (
+          {actsForDay(d).map((a) => {
+            const films = (a.filmsList && a.filmsList.length) ? a.filmsList : (a.films || []);
+            return (
             <div class="prog-activity">
               <div class="prog-act-time">{a.startTime || '—'}{a.timeEnd && <small>→ {a.timeEnd}</small>}</div>
               <div class={`prog-act-body cat-${a.type}`}>
@@ -65,9 +67,9 @@ const actsForDay = (d) => allActs.filter((a) => a.programmeDay?.documentId === d
                 </div>
                 <h3 style="margin:12px 0 6px;">{a.title}</h3>
                 {a.description && <p class="prog-act-desc">{a.description}</p>}
-                {a.films && a.films.length > 0 && (
+                {films.length > 0 && (
                   <div class="prog-films">
-                    {a.films.map((f) => (
+                    {films.map((f) => (
                       <div class="prog-film">
                         <span class="pf-title">{f.title}</span>
                         {f.director && <span class="pf-dir">— {f.director}</span>}
@@ -78,7 +80,8 @@ const actsForDay = (d) => allActs.filter((a) => a.programmeDay?.documentId === d
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     ))}

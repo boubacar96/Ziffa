@@ -59,6 +59,11 @@
       "repeatable": true,
       "component": "programme.film-line"
     },
+    "filmsList": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::film.film"
+    },
     "programmeDay": {
       "type": "relation",
       "relation": "manyToOne",

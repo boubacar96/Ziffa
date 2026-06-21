@@ -2,10 +2,11 @@
 import Base from '../../layouts/Base.astro';
 
 const venues = [
-  { name: 'Alliance Française', lat: 12.5634929, lng: -16.2724609 },
-  { name: 'Centre Culturel Régional de Ziguinchor', lat: 12.5656892, lng: -16.2673909 },
-  { name: 'U.F.R Santé', lat: 12.5494994, lng: -16.2830714 },
+  { name: 'Alliance Française', area: 'Ziguinchor city centre', icon: '🎭', color: 'red' },
+  { name: 'Centre Culturel Régional', area: 'Ziguinchor', icon: '🏛️', color: 'green' },
+  { name: 'U.F.R Santé', area: 'Assane Seck University', icon: '🎓', color: 'yellow' },
 ];
+const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q + ' Ziguinchor')}`;
 
 const travel = [
   { color: 'red', icon: '✈️', title: 'By plane', text: "Flights <strong>Dakar → Ziguinchor</strong> (≈ 1 h) with Air Sénégal. The airport is 10 min from the city centre." },
@@ -32,8 +33,17 @@ const infos = [
 
   <section class="section" id="lieux">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> When &amp; where</div><h2 class="section-title">The <span class="red">venues</span>.</h2></div></div>
-    <p class="lead" style="max-width:760px;margin-bottom:24px;"><strong>17 – 20 November 2027</strong> · Ziguinchor, Casamance — Senegal. The festival takes place across three main venues:</p>
-    <div id="ziffa-map" class="contact-map" role="application" aria-label="Map of the festival venues in Ziguinchor"></div>
+    <p class="lead" style="max-width:760px;margin-bottom:24px;">The festival takes place across three main venues in Ziguinchor:</p>
+    <div class="presse-cards">
+      {venues.map((v) => (
+        <a class={`presse-card pc-${v.color}`} href={mapsUrl(v.name)} target="_blank" rel="noopener">
+          <span class="presse-ic">{v.icon}</span>
+          <h3>{v.name}</h3>
+          <p>{v.area}</p>
+          <span class="presse-go">View directions →</span>
+        </a>
+      ))}
+    </div>
   </section>
 
   <section class="section" id="comment-venir">
@@ -71,23 +81,4 @@ const infos = [
     </div>
     <div style="margin-top:34px;"><a href="/en/contact#contact" class="nav-cta">A question? Contact us ↗</a></div>
   </section>
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script is:inline define:vars={{ venues }}>
-    (function () {
-      if (!window.L) return;
-      const el = document.getElementById('ziffa-map');
-      if (!el) return;
-      const map = L.map(el, { scrollWheelZoom: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
-      const pts = [];
-      venues.forEach(function (v) {
-        const mk = L.marker([v.lat, v.lng]).addTo(map);
-        mk.bindPopup('<b>' + v.name + '</b><br><a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v.name + ' Ziguinchor') + '" target="_blank" rel="noopener">View on Google Maps ↗</a>');
-        pts.push([v.lat, v.lng]);
-      });
-      map.fitBounds(pts, { padding: [40, 40], maxZoom: 15 });
-    })();
-  </script>
 </Base>

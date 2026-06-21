@@ -15,7 +15,7 @@ const dayRes = await fetchAPI('programme-days', {
 const day = (dayRes.data || [])[0] || null;
 
 const actRes = await fetchAPI('programme-events', {
-  'filters[programmeDay][slug][$eq]': slug, 'populate[0]': 'films', 'populate[1]': 'filmsList', sort: 'order:asc', 'pagination[limit]': '100',
+  'filters[programmeDay][slug][$eq]': slug, populate: 'filmsList', sort: 'order:asc', 'pagination[limit]': '100',
 });
 const activities = actRes.data || [];
 

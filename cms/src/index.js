@@ -291,7 +291,7 @@ const FR_LABELS = {
   'api::press-resource.press-resource': { title: 'Titre', description: 'Description', category: 'Catégorie (dossier / logos / photos)', files: 'Fichiers', order: "Ordre d'affichage" },
   'api::edition.edition': { year: 'Année', number: "Numéro d'édition", title: 'Titre', tagline: 'Accroche', dateStart: 'Date de début', dateEnd: 'Date de fin', location: 'Lieu', isCurrent: 'Édition en cours ?', videoUrl: 'Lien vidéo (teaser)', poster: 'Affiche', programmePdf: 'PDF du programme' },
   'api::programme-day.programme-day': { label: 'Libellé du jour', subtitle: 'Sous-titre', date: 'Date', slug: 'Slug (auto)', order: "Ordre d'affichage", edition: 'Édition', activities: 'Activités' },
-  'api::programme-event.programme-event': { title: 'Titre', description: 'Description', startTime: 'Heure de début', timeEnd: 'Heure de fin', type: 'Type de séance', location: 'Lieu', day: 'Jour (n° pour le tri)', date: 'Date', order: "Ordre d'affichage", films: 'Films de la séance', programmeDay: 'Jour de programme', edition: 'Édition' },
+  'api::programme-event.programme-event': { title: 'Titre', description: 'Description', startTime: 'Heure de début', timeEnd: 'Heure de fin', type: 'Type de séance', location: 'Lieu', day: 'Jour (n° pour le tri)', date: 'Date', order: "Ordre d'affichage", filmsList: 'Films de la séance', programmeDay: 'Jour de programme', edition: 'Édition' },
 };
 
 // Applique les libellés FR à la configuration du Content Manager (idempotent, tolérant).

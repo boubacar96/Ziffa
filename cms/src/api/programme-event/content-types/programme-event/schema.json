@@ -54,11 +54,6 @@
       "type": "integer",
       "default": 0
     },
-    "films": {
-      "type": "component",
-      "repeatable": true,
-      "component": "programme.film-line"
-    },
     "filmsList": {
       "type": "relation",
       "relation": "manyToMany",

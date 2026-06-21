@@ -31,12 +31,12 @@
     "type": {
       "type": "enumeration",
       "enum": [
-        "jury",
+        "photographe",
         "equipe",
-        "invite",
-        "photographe"
+        "jury",
+        "invite"
       ],
-      "default": "jury"
+      "default": "equipe"
     },
     "featured": {
       "type": "boolean",

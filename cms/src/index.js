@@ -413,9 +413,8 @@ async function recoverFilms2025(strapi) {
       const ev = events.find((e) => String(e.date) === String(day.date) && e.order === i);
       if (ev && ids.length) {
         try {
-          const existing = (ev.filmsList || []).map((x) => x.documentId);
-          const union = Array.from(new Set([...existing, ...ids]));
-          await strapi.documents('api::programme-event.programme-event').update({ documentId: ev.documentId, data: { filmsList: union } });
+          // Remplacement exact : la séance contient exactement ses films (corrige tout lien erroné).
+          await strapi.documents('api::programme-event.programme-event').update({ documentId: ev.documentId, data: { filmsList: ids } });
           await strapi.documents('api::programme-event.programme-event').publish({ documentId: ev.documentId });
           linked++;
         } catch (e) { strapi.log.warn('[recover-films] lien ' + act.title + ' : ' + e.message); }

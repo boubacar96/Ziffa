@@ -206,9 +206,9 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         <p>Un avant-goût du festival : l'énergie, les images, l'émotion du cinéma africain.</p>
       </div>
       <div class="teaser-player" id="teaser-player" data-embed={videoEmbed} role="button" tabindex="0" aria-label="Lire la bande-annonce ZIFFA">
-        <div class="teaser-poster" style={teaserThumb ? `background-image:linear-gradient(rgba(11,26,18,.30),rgba(11,26,18,.55)), url('${teaserThumb}')` : ''}>{!teaserThumb && <span class="teaser-mark">ZIFFA · 2025</span>}</div>
+        <div class="teaser-poster" style={`background-image:linear-gradient(rgba(11,26,18,.28),rgba(11,26,18,.55)), url('/teaser-cover.jpg')${teaserThumb ? `, url('${teaserThumb}')` : ''}`}></div>
         <div class="teaser-play"><span>▶</span></div>
-        <div class="teaser-cta">Regarder la bande-annonce</div>
+        <div class="teaser-cta">Regarder le film du festival</div>
       </div>
     </div>
   </section>

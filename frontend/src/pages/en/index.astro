@@ -148,9 +148,9 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
         <p>A taste of the festival: the energy, the images, the emotion of African cinema.</p>
       </div>
       <div class="teaser-player" id="teaser-player" data-embed={videoEmbed} role="button" tabindex="0" aria-label="Play the ZIFFA teaser">
-        <div class="teaser-poster" style={teaserThumb ? `background-image:linear-gradient(rgba(11,26,18,.30),rgba(11,26,18,.55)), url('${teaserThumb}')` : ''}>{!teaserThumb && <span class="teaser-mark">ZIFFA · 2025</span>}</div>
+        <div class="teaser-poster" style={`background-image:linear-gradient(rgba(11,26,18,.28),rgba(11,26,18,.55)), url('/teaser-cover.jpg')${teaserThumb ? `, url('${teaserThumb}')` : ''}`}></div>
         <div class="teaser-play"><span>▶</span></div>
-        <div class="teaser-cta">Watch the teaser</div>
+        <div class="teaser-cta">Watch the festival film</div>
       </div>
     </div>
   </section>

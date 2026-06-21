@@ -283,7 +283,7 @@ const FR_LABELS = {
   'api::person.person': { name: 'Nom', role: 'Rôle / fonction', bio: 'Biographie', photo: 'Photo', type: 'Catégorie (équipe / jury / photographe)', featured: 'Mettre en avant', order: "Ordre d'affichage", edition: 'Édition' },
   'api::film.film': { title: 'Titre', category: 'Catégorie', synopsis: 'Synopsis', director: 'Réalisateur·rice', country: 'Pays', year: 'Année', duration: 'Durée', poster: 'Affiche', trailerUrl: 'Lien bande-annonce', edition: 'Édition' },
   'api::prize.prize': { name: 'Nom du prix', description: 'Description', winner: 'Lauréat·e', image: 'Image', edition: 'Édition' },
-  'api::photo.photo': { image: 'Images', category: 'Catégorie', edition: 'Édition' },
+  'api::photo.photo': { image: 'Images', category: 'Catégorie (galerie / expo)', edition: 'Édition' },
   'api::partner.partner': { name: 'Nom', logo: 'Logo', url: 'Lien (site web)', order: "Ordre d'affichage" },
   'api::formation.formation': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage", description: 'Description (secours)' },
   'api::masterclass.masterclass': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', speaker: 'Intervenant·e', order: "Ordre d'affichage", edition: 'Édition' },

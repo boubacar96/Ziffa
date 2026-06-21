@@ -19,7 +19,12 @@
       ]
     },
     "category": {
-      "type": "string"
+      "type": "enumeration",
+      "enum": [
+        "galerie",
+        "expo"
+      ],
+      "default": "galerie"
     },
     "edition": {
       "type": "relation",

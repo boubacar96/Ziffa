@@ -2,9 +2,10 @@
 import Base from '../../layouts/Base.astro';
 
 const venues = [
-  { name: 'Alliance Française', area: 'Ziguinchor city centre', icon: '🎭', color: 'red' },
+  { name: 'Mémorial du bateau le Joola', area: 'Ceremonies', icon: '🕯️', color: 'red' },
   { name: 'Centre Culturel Régional', area: 'Ziguinchor', icon: '🏛️', color: 'green' },
-  { name: 'U.F.R Santé', area: 'Assane Seck University', icon: '🎓', color: 'yellow' },
+  { name: 'U.F.R Santé', area: 'Assane Seck University — festival HQ', icon: '🎓', color: 'yellow' },
+  { name: 'Place Bambaya', area: 'Open-air screening', icon: '🎪', color: 'green' },
 ];
 const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q + ' Ziguinchor')}`;
 

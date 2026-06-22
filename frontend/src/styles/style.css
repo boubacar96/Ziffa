@@ -4135,3 +4135,81 @@
   .tier-grid > *,
   .highlights-grid > *  { flex-basis: 240px; max-width: 360px; }
   .hl-cards > *         { flex-basis: 260px; max-width: 380px; }
+
+  /* ===== Carte interactive « Venir au festival » (Leaflet sur-mesure) ===== */
+  .zmap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
+  .zmap-canvas { position: relative; }
+  #ziffa-map {
+    width: 100%; height: 540px; border-radius: 24px; overflow: hidden; z-index: 0;
+    border: 1px solid var(--line); box-shadow: 0 30px 60px -34px rgba(26, 69, 39, .55);
+  }
+  #ziffa-map .leaflet-tile { filter: saturate(.92) brightness(1.02); }
+  .zmap-reset {
+    position: absolute; top: 14px; right: 14px; z-index: 500;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 999px;
+    padding: 9px 15px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+    color: var(--green-deep); cursor: pointer; box-shadow: 0 8px 20px -10px rgba(0, 0, 0, .45);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .zmap-reset:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -10px rgba(0, 0, 0, .5); }
+
+  .zmap-aside { display: flex; flex-direction: column; gap: 12px; }
+  .zmap-hint { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: .04em; color: var(--ink-muted); margin: 4px 2px 2px; }
+  .zmap-card {
+    display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer;
+    background: var(--paper); border: 1px solid var(--line); border-left: 5px solid var(--vc);
+    border-radius: 16px; padding: 14px 16px; color: var(--ink); font: inherit;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+  }
+  .zmap-card:hover { transform: translateX(4px); box-shadow: 0 16px 32px -20px rgba(26, 69, 39, .5); }
+  .zmap-card.is-active { background: var(--vc); border-color: var(--vc); color: #fff; }
+  .zmap-num {
+    flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--vc); color: #fff;
+    display: grid; place-items: center; font-family: 'Baloo 2', sans-serif; font-weight: 700;
+  }
+  .zmap-card.is-active .zmap-num { background: #fff; color: var(--vc); }
+  .zmap-ic { font-size: 21px; line-height: 1; }
+  .zmap-txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .zmap-txt strong { font-family: 'Baloo 2', sans-serif; font-size: 16px; }
+  .zmap-txt em { font-style: normal; font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .zmap-card.is-active .zmap-txt em { color: rgba(255, 255, 255, .85); }
+  .zmap-go { margin-left: auto; color: var(--vc); font-weight: 700; transition: transform .2s ease; }
+  .zmap-card:hover .zmap-go { transform: translateX(4px); }
+  .zmap-card.is-active .zmap-go { color: #fff; }
+
+  /* Marqueurs personnalisés (pin teardrop numéroté) */
+  .zpin-wrap { background: none !important; border: none !important; }
+  .zpin { position: relative; width: 38px; height: 48px; animation: zdrop .5s cubic-bezier(.2, .8, .2, 1) both; }
+  .zpin-dot {
+    position: absolute; left: 2px; top: 0; width: 34px; height: 34px; background: var(--vc);
+    border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+    box-shadow: 0 9px 18px -5px rgba(0, 0, 0, .6); transition: filter .2s ease;
+  }
+  .zpin-dot b { position: absolute; inset: 0; transform: rotate(45deg); display: grid; place-items: center; color: #fff; font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 15px; }
+  .zpin-wrap.is-hover .zpin-dot { filter: brightness(1.08); }
+  .zpin-wrap.is-active .zpin-dot::after {
+    content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 2px solid var(--vc);
+    animation: zpulse 1.5s ease-out infinite;
+  }
+  @keyframes zdrop { from { transform: translateY(-16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes zpulse { 0% { transform: scale(.6); opacity: .85; } 100% { transform: scale(1.9); opacity: 0; } }
+
+  /* Popup Leaflet à la charte */
+  #ziffa-map .leaflet-popup-content-wrapper { border-radius: 16px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .5); }
+  #ziffa-map .leaflet-popup-content { margin: 14px 16px; }
+  .zpop { display: flex; flex-direction: column; gap: 4px; }
+  .zpop-role { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+  .zpop strong { font-family: 'Baloo 2', sans-serif; font-size: 17px; color: var(--green-deep); line-height: 1.15; }
+  .zpop a { margin-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--red); text-decoration: none; }
+  .zpop a:hover { text-decoration: underline; }
+
+  @media (max-width: 860px) {
+    .zmap { grid-template-columns: 1fr; }
+    .zmap-canvas { order: 1; }
+    .zmap-aside { order: 2; }
+    #ziffa-map { height: 380px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zpin { animation: none; }
+    .zpin-wrap.is-active .zpin-dot::after { animation: none; }
+  }

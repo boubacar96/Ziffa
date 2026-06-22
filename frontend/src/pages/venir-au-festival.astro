@@ -2,12 +2,11 @@
 import Base from '../layouts/Base.astro';
 
 const venues = [
-  { name: 'Mémorial du bateau le Joola', area: 'Cérémonies', icon: '🕯️', color: 'red' },
-  { name: 'Centre Culturel Régional', area: 'Ziguinchor', icon: '🏛️', color: 'green' },
-  { name: 'U.F.R Santé', area: 'Université Assane Seck — QG du festival', icon: '🎓', color: 'yellow' },
-  { name: 'Place Bambaya', area: 'Projection plein air', icon: '🎪', color: 'green' },
+  { n: 1, name: 'Mémorial du bateau le Joola', role: 'Cérémonies & hommages', icon: '🕯️', hex: '#D63832', lat: 12.5688, lng: -16.2742 },
+  { n: 2, name: 'Centre Culturel Régional', role: 'Projections & rencontres', icon: '🏛️', hex: '#2A6B3F', lat: 12.5656892, lng: -16.2673909 },
+  { n: 3, name: 'U.F.R Santé — Université Assane Seck', role: 'QG du festival', icon: '🎓', hex: '#F2B718', lat: 12.5494994, lng: -16.2830714 },
+  { n: 4, name: 'Place Bambaya', role: 'Projection plein air', icon: '🎪', hex: '#2A6B3F', lat: 12.5746631, lng: -16.2850057 },
 ];
-const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q + ' Ziguinchor')}`;
 
 const travel = [
   { color: 'red', icon: '✈️', title: 'En avion', text: "Vols <strong>Dakar → Ziguinchor</strong> (≈ 1 h) avec Air Sénégal. L'aéroport est à 10 min du centre-ville." },
@@ -34,16 +33,23 @@ const infos = [
 
   <section class="section" id="lieux">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Quand &amp; où</div><h2 class="section-title">Les <span class="red">lieux</span>.</h2></div></div>
-    <p class="lead" style="max-width:760px;margin-bottom:24px;">Le festival se déploie sur trois sites principaux à Ziguinchor :</p>
-    <div class="presse-cards">
-      {venues.map((v) => (
-        <a class={`presse-card pc-${v.color}`} href={mapsUrl(v.name)} target="_blank" rel="noopener">
-          <span class="presse-ic">{v.icon}</span>
-          <h3>{v.name}</h3>
-          <p>{v.area}</p>
-          <span class="presse-go">Voir l'itinéraire →</span>
-        </a>
-      ))}
+    <p class="lead" style="max-width:760px;margin-bottom:24px;">Le festival se déploie sur plusieurs sites à Ziguinchor. Cliquez sur un lieu pour le situer sur la carte :</p>
+    <div class="zmap">
+      <div class="zmap-canvas">
+        <div id="ziffa-map" role="application" aria-label="Carte des lieux du festival à Ziguinchor"></div>
+        <button id="zmap-reset" class="zmap-reset" type="button">⤢ Vue d'ensemble</button>
+      </div>
+      <div class="zmap-aside">
+        {venues.map((v) => (
+          <button class="zmap-card" data-i={v.n - 1} style={`--vc:${v.hex}`} type="button">
+            <span class="zmap-num">{v.n}</span>
+            <span class="zmap-ic">{v.icon}</span>
+            <span class="zmap-txt"><strong>{v.name}</strong><em>{v.role}</em></span>
+            <span class="zmap-go">→</span>
+          </button>
+        ))}
+        <p class="zmap-hint">Astuce : cliquez sur un marqueur pour l'itinéraire Google Maps.</p>
+      </div>
     </div>
   </section>
 
@@ -82,4 +88,67 @@ const infos = [
     </div>
     <div style="margin-top:34px;"><a href="/contact#contact" class="nav-cta">Une question ? Contactez-nous ↗</a></div>
   </section>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script is:inline define:vars={{ venues }}>
+    (function () {
+      if (!window.L) return;
+      const el = document.getElementById('ziffa-map');
+      if (!el) return;
+      const map = L.map(el, { scrollWheelZoom: false, zoomControl: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19, subdomains: 'abcd', attribution: '&copy; OpenStreetMap, &copy; CARTO',
+      }).addTo(map);
+
+      const markers = [], pts = [];
+      const dirUrl = (name) => 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(name + ' Ziguinchor');
+
+      venues.forEach(function (v, i) {
+        const icon = L.divIcon({
+          className: 'zpin-wrap',
+          html: '<div class="zpin" style="--vc:' + v.hex + '"><span class="zpin-dot"><b>' + v.n + '</b></span></div>',
+          iconSize: [38, 48], iconAnchor: [19, 46], popupAnchor: [0, -42],
+        });
+        const m = L.marker([v.lat, v.lng], { icon }).addTo(map);
+        m.bindPopup(
+          '<div class="zpop"><span class="zpop-role" style="color:' + v.hex + '">' + v.icon + ' ' + v.role + '</span>' +
+          '<strong>' + v.name + '</strong>' +
+          '<a href="' + dirUrl(v.name) + '" target="_blank" rel="noopener">Itinéraire ↗</a></div>',
+          { closeButton: false }
+        );
+        m.on('click', function () { select(i); });
+        markers.push(m); pts.push([v.lat, v.lng]);
+      });
+
+      const bounds = L.latLngBounds(pts);
+
+      function clearActive() {
+        document.querySelectorAll('.zmap-card').forEach((c) => c.classList.remove('is-active'));
+        document.querySelectorAll('.zpin-wrap').forEach((p) => p.classList.remove('is-active'));
+      }
+      function select(i) {
+        clearActive();
+        const v = venues[i];
+        map.flyTo([v.lat, v.lng], 16, { duration: 0.8 });
+        markers[i].openPopup();
+        const card = document.querySelector('.zmap-card[data-i="' + i + '"]');
+        if (card) card.classList.add('is-active');
+        if (markers[i]._icon) markers[i]._icon.classList.add('is-active');
+      }
+      function overview() { clearActive(); map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 15, duration: 0.8 }); }
+
+      document.querySelectorAll('.zmap-card').forEach(function (card) {
+        const i = parseInt(card.dataset.i, 10);
+        card.addEventListener('click', function () { select(i); });
+        card.addEventListener('mouseenter', function () { if (markers[i]._icon) markers[i]._icon.classList.add('is-hover'); });
+        card.addEventListener('mouseleave', function () { if (markers[i]._icon) markers[i]._icon.classList.remove('is-hover'); });
+      });
+      const reset = document.getElementById('zmap-reset');
+      if (reset) reset.addEventListener('click', overview);
+
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      setTimeout(function () { map.invalidateSize(); }, 200);
+    })();
+  </script>
 </Base>

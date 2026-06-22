@@ -2845,7 +2845,7 @@
 
   /* ----- Prix illustrés (image plein cadre + texte en surimpression) ----- */
   .prize-photo {
-    position: relative; aspect-ratio: 3 / 4; border-radius: 16px; overflow: hidden;
+    position: relative; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden;
     background-size: cover; background-position: center; background-color: var(--green-deep);
     display: flex; align-items: flex-end; border: 1px solid var(--line);
     transition: transform .18s ease, box-shadow .18s ease;

@@ -7,57 +7,98 @@ export function toVideoEmbed(url) {
   return url;
 }
 
-// Formations de démonstration (repli tant que rien n'est saisi dans Strapi).
+// Ateliers de formation de l'édition 2025 (repli tant que rien n'est saisi dans Strapi).
+// Source : dossier ZIFFA + rapport d'activités FOTTI.
 const FR = [
   {
-    slug: 'jeu-acteur-camera', title: 'Jouer face caméra',
-    excerpt: "Pour les comédien·ne·s qui veulent perfectionner leur jeu à l'image, en conditions réelles.",
-    cover: '/photos/photo03.jpg',
-    duration: '3 jours', audience: 'Comédien·ne·s', level: 'Intermédiaire', location: 'Ziguinchor', dates: 'Novembre 2025',
-    content: "## Objectifs\n\nCette formation est axée sur la **direction d'acteur**, le rapport à la caméra et à l'image.\n\n- Exercices d'essai filmés\n- Mises en situation et improvisations\n- Retours individualisés avec un·e réalisateur·ice\n\nUn travail intensif pour gagner en présence et en justesse devant l'objectif.",
-    gallery: ['/photos/photo04.jpg', '/photos/photo05.jpg'], videos: [],
-  },
-  {
-    slug: 'realisation-documentaire', title: 'Réalisation documentaire',
-    excerpt: "De l'idée au montage : construire un récit documentaire à partir du réel.",
+    slug: 'realisation-montage', title: 'Réalisation & montage',
+    excerpt: "Résidence-formation de 12 jours autour du thème « Femmes en lumière » : écriture, tournage et montage de deux films.",
     cover: '/photos/photo06.jpg',
-    duration: '5 jours', audience: 'Réalisateur·ice·s en herbe', level: 'Tous niveaux', location: 'Ziguinchor', dates: 'Novembre 2025',
-    content: "## Le programme\n\nRepérage, tournage, entretien, écriture et **post-production**.\n\nLes stagiaires réalisent un court documentaire de bout en bout, encadrés par des professionnels.",
-    gallery: ['/photos/photo07.jpg'], videos: [],
+    duration: '12 jours', audience: 'Jeunes professionnels (18–30 ans)', level: 'Sur candidature',
+    location: 'Salle Elupaay — Ziguinchor / Bignona', dates: '3 → 15 novembre 2025',
+    content: "Sous la direction de **Filipa Cardoso** (réalisatrice et monteuse) et **Jean-François Metz** (chef opérateur), 15 stagiaires (9 femmes, 6 hommes) ont travaillé collectivement deux scénarios — l’un de fiction, l’autre de documentaire — puis tourné entre Ziguinchor et Bignona. **116 candidatures** reçues de toute l’Afrique de l’Ouest.\n\nDeux films ont été réalisés : ***Yiro Koto*** (fiction) et ***Amang Etam*** (documentaire).",
+    gallery: [],
+    videos: [
+      { title: 'Yiro Koto (fiction)', url: 'https://vimeo.com/1154101681' },
+      { title: 'Amang Etam (documentaire)', url: 'https://vimeo.com/1154101139' },
+    ],
   },
   {
-    slug: 'animation-2d', title: 'Animation 2D',
-    excerpt: "Découvrir les techniques de l'animation 2D et réaliser un court métrage animé.",
+    slug: 'jeu-acteur', title: 'Jeu d’acteur',
+    excerpt: "Explorer la vérité du personnage, l’émotion et l’authenticité de l’interprétation.",
+    cover: '/photos/photo03.jpg',
+    duration: '12 jours', audience: 'Jeunes professionnels', level: 'Sur candidature',
+    location: 'Alliance française — Ziguinchor', dates: '3 → 15 novembre 2025',
+    content: "Les 12 résidents ont plongé au cœur du jeu d’acteur aux côtés de **Oumar Diolo** (Sénégal/Belgique) et **Malang Sonko** (Sénégal). Entre émotions, gestes et intentions, l’atelier a permis d’explorer la **vérité du personnage** et la force de l’interprétation.",
+    gallery: [], videos: [],
+  },
+  {
+    slug: 'stop-motion', title: 'Stop-motion',
+    excerpt: "Initiation au cinéma d’animation image par image, avec réalisation de courts films.",
     cover: '/photos/photo08.jpg',
-    duration: '4 jours', audience: 'Étudiant·e·s & passionné·e·s', level: 'Débutant à intermédiaire', location: 'Ziguinchor', dates: 'Novembre 2025',
-    content: "## Au menu\n\nStoryboard, character design, principes du mouvement et réalisation.\n\nAccessible aux **débutants** comme aux intermédiaires.",
+    duration: '12 jours', audience: '12 jeunes ziguinchorois (18–30 ans)', level: 'Sélection Arts for Kids',
+    location: 'Radio Kasumaay — Ziguinchor', dates: '3 → 15 novembre 2025',
+    content: "Sous la direction de **Patrick Talercio** (Smala Cinéma), assisté de **Lula Stanczyk**, douze jeunes ont réalisé des films d’animation image par image. La sélection a été assurée par l’association partenaire **Arts for Kids**.\n\nDeux films ont été réalisés : ***Fanikendo*** et ***Aïcha***.",
+    gallery: [],
+    videos: [
+      { title: 'Fanikendo', url: 'https://vimeo.com/1154101539' },
+      { title: 'Aïcha', url: 'https://vimeo.com/1154100782' },
+    ],
+  },
+  {
+    slug: 'semiologie-cinema', title: 'Sémiologie du cinéma',
+    excerpt: "Décoder une œuvre — plans, montage, lumière, son, mise en scène — pour comprendre les intentions de l’auteur.",
+    cover: '/photos/photo09.jpg',
+    duration: '', audience: 'Étudiants de l’Université Assane Seck', level: 'Ouvert aux étudiants',
+    location: 'Université Assane Seck — Ziguinchor', dates: 'Novembre 2025',
+    content: "Animé par **John Shank**, réalisateur et sémiologue basé à Bruxelles, cet atelier dédié aux étudiants propose d’observer et de comprendre les techniques de l’image, du son et de la narration, afin d’identifier les intentions véhiculées par l’auteur.",
     gallery: [], videos: [],
   },
 ];
 
 const EN = [
   {
-    slug: 'jeu-acteur-camera', title: 'Acting for camera',
-    excerpt: 'For actors who want to sharpen their on-screen performance, in real conditions.',
-    cover: '/photos/photo03.jpg',
-    duration: '3 days', audience: 'Actors', level: 'Intermediate', location: 'Ziguinchor', dates: 'November 2025',
-    content: "## Goals\n\nThis training focuses on **directing actors**, the relationship to the camera and the image.\n\n- Filmed audition exercises\n- Scenarios and improvisation\n- Individual feedback with a director\n\nIntensive work to gain presence and truth in front of the lens.",
-    gallery: ['/photos/photo04.jpg', '/photos/photo05.jpg'], videos: [],
-  },
-  {
-    slug: 'realisation-documentaire', title: 'Documentary directing',
-    excerpt: 'From idea to edit: building a documentary narrative from reality.',
+    slug: 'realisation-montage', title: 'Directing & editing',
+    excerpt: 'A 12-day residency on the theme “Women in the spotlight”: writing, shooting and editing two films.',
     cover: '/photos/photo06.jpg',
-    duration: '5 days', audience: 'Aspiring directors', level: 'All levels', location: 'Ziguinchor', dates: 'November 2025',
-    content: "## The programme\n\nResearch, shooting, interviews, writing and **post-production**.\n\nTrainees make a short documentary from start to finish, mentored by professionals.",
-    gallery: ['/photos/photo07.jpg'], videos: [],
+    duration: '12 days', audience: 'Young professionals (18–30)', level: 'By application',
+    location: 'Elupaay Hall — Ziguinchor / Bignona', dates: '3 → 15 November 2025',
+    content: "Led by **Filipa Cardoso** (director and editor) and **Jean-François Metz** (cinematographer), 15 trainees (9 women, 6 men) collectively developed two scripts — one fiction, one documentary — then shot between Ziguinchor and Bignona. **116 applications** received from across West Africa.\n\nTwo films were made: ***Yiro Koto*** (fiction) and ***Amang Etam*** (documentary).",
+    gallery: [],
+    videos: [
+      { title: 'Yiro Koto (fiction)', url: 'https://vimeo.com/1154101681' },
+      { title: 'Amang Etam (documentary)', url: 'https://vimeo.com/1154101139' },
+    ],
   },
   {
-    slug: 'animation-2d', title: '2D animation',
-    excerpt: '2D animation techniques and making an animated short film.',
+    slug: 'jeu-acteur', title: 'Acting',
+    excerpt: 'Exploring the truth of the character, emotion and authenticity in performance.',
+    cover: '/photos/photo03.jpg',
+    duration: '12 days', audience: 'Young professionals', level: 'By application',
+    location: 'Alliance française — Ziguinchor', dates: '3 → 15 November 2025',
+    content: "The 12 residents dived into the heart of acting alongside **Oumar Diolo** (Senegal/Belgium) and **Malang Sonko** (Senegal). Through emotion, gesture and intention, the workshop explored the **truth of the character** and the power of performance.",
+    gallery: [], videos: [],
+  },
+  {
+    slug: 'stop-motion', title: 'Stop-motion',
+    excerpt: 'An introduction to frame-by-frame animation, with the making of short films.',
     cover: '/photos/photo08.jpg',
-    duration: '4 days', audience: 'Students & enthusiasts', level: 'Beginner to intermediate', location: 'Ziguinchor', dates: 'November 2025',
-    content: "## On the menu\n\nStoryboard, character design, principles of movement and production.\n\nOpen to **beginners** and intermediate levels.",
+    duration: '12 days', audience: '12 young people from Ziguinchor (18–30)', level: 'Selected by Arts for Kids',
+    location: 'Radio Kasumaay — Ziguinchor', dates: '3 → 15 November 2025',
+    content: "Led by **Patrick Talercio** (Smala Cinéma), assisted by **Lula Stanczyk**, twelve young people created frame-by-frame animated films. Selection was handled by the partner association **Arts for Kids**.\n\nTwo films were made: ***Fanikendo*** and ***Aïcha***.",
+    gallery: [],
+    videos: [
+      { title: 'Fanikendo', url: 'https://vimeo.com/1154101539' },
+      { title: 'Aïcha', url: 'https://vimeo.com/1154100782' },
+    ],
+  },
+  {
+    slug: 'semiologie-cinema', title: 'Film semiotics',
+    excerpt: 'Decoding a work — shots, editing, light, sound, staging — to understand the author’s intentions.',
+    cover: '/photos/photo09.jpg',
+    duration: '', audience: 'Assane Seck University students', level: 'Open to students',
+    location: 'Assane Seck University — Ziguinchor', dates: 'November 2025',
+    content: "Led by **John Shank**, a director and semiotician based in Brussels, this student-focused workshop invites participants to observe and understand the techniques of image, sound and narration, in order to identify the author’s intentions.",
     gallery: [], videos: [],
   },
 ];

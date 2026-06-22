@@ -509,6 +509,67 @@ async function seedTeam2025(strapi) {
   strapi.log.info(`[team-2025] Équipe — créées:${created}, mises à jour:${updated}.`);
 }
 
+// Ateliers de formation 2025 (dossier ZIFFA + rapport FOTTI), avec films Vimeo réalisés.
+const FORMATIONS_2025 = [
+  {
+    slug: 'realisation-montage', title: 'Réalisation & montage', order: 1,
+    excerpt: "Résidence-formation de 12 jours autour du thème « Femmes en lumière » : écriture, tournage et montage de deux films.",
+    duration: '12 jours', audience: 'Jeunes professionnels (18–30 ans)', level: 'Sur candidature',
+    location: 'Salle Elupaay — Ziguinchor / Bignona', dates: '3 → 15 novembre 2025',
+    content: "Sous la direction de **Filipa Cardoso** (réalisatrice et monteuse) et **Jean-François Metz** (chef opérateur), 15 stagiaires (9 femmes, 6 hommes) ont travaillé collectivement deux scénarios — l’un de fiction, l’autre de documentaire — puis tourné entre Ziguinchor et Bignona. **116 candidatures** reçues de toute l’Afrique de l’Ouest.\n\nDeux films ont été réalisés : ***Yiro Koto*** (fiction) et ***Amang Etam*** (documentaire).",
+    videos: [
+      { title: 'Yiro Koto (fiction)', url: 'https://vimeo.com/1154101681' },
+      { title: 'Amang Etam (documentaire)', url: 'https://vimeo.com/1154101139' },
+    ],
+  },
+  {
+    slug: 'jeu-acteur', title: 'Jeu d’acteur', order: 2,
+    excerpt: "Explorer la vérité du personnage, l’émotion et l’authenticité de l’interprétation.",
+    duration: '12 jours', audience: 'Jeunes professionnels', level: 'Sur candidature',
+    location: 'Alliance française — Ziguinchor', dates: '3 → 15 novembre 2025',
+    content: "Les 12 résidents ont plongé au cœur du jeu d’acteur aux côtés de **Oumar Diolo** (Sénégal/Belgique) et **Malang Sonko** (Sénégal). Entre émotions, gestes et intentions, l’atelier a permis d’explorer la **vérité du personnage** et la force de l’interprétation.",
+    videos: [],
+  },
+  {
+    slug: 'stop-motion', title: 'Stop-motion', order: 3,
+    excerpt: "Initiation au cinéma d’animation image par image, avec réalisation de courts films.",
+    duration: '12 jours', audience: '12 jeunes ziguinchorois (18–30 ans)', level: 'Sélection Arts for Kids',
+    location: 'Radio Kasumaay — Ziguinchor', dates: '3 → 15 novembre 2025',
+    content: "Sous la direction de **Patrick Talercio** (Smala Cinéma), assisté de **Lula Stanczyk**, douze jeunes ont réalisé des films d’animation image par image. La sélection a été assurée par l’association partenaire **Arts for Kids**.\n\nDeux films ont été réalisés : ***Fanikendo*** et ***Aïcha***.",
+    videos: [
+      { title: 'Fanikendo', url: 'https://vimeo.com/1154101539' },
+      { title: 'Aïcha', url: 'https://vimeo.com/1154100782' },
+    ],
+  },
+  {
+    slug: 'semiologie-cinema', title: 'Sémiologie du cinéma', order: 4,
+    excerpt: "Décoder une œuvre — plans, montage, lumière, son, mise en scène — pour comprendre les intentions de l’auteur.",
+    duration: '', audience: 'Étudiants de l’Université Assane Seck', level: 'Ouvert aux étudiants',
+    location: 'Université Assane Seck — Ziguinchor', dates: 'Novembre 2025',
+    content: "Animé par **John Shank**, réalisateur et sémiologue basé à Bruxelles, cet atelier dédié aux étudiants propose d’observer et de comprendre les techniques de l’image, du son et de la narration, afin d’identifier les intentions véhiculées par l’auteur.",
+    videos: [],
+  },
+];
+
+async function seedFormations2025(strapi) {
+  // Retrait de l'entrée de démonstration générique.
+  const stray = await strapi.documents('api::formation.formation').findMany({ filters: { slug: 'formation-animation-2-d' }, pagination: { limit: 5 } });
+  let removed = 0;
+  for (const s of (stray || [])) { try { await strapi.documents('api::formation.formation').delete({ documentId: s.documentId }); removed++; } catch (e) { strapi.log.warn('[formations-2025] suppression ' + s.slug + ' : ' + e.message); } }
+  let created = 0, updated = 0;
+  for (const f of FORMATIONS_2025) {
+    const data = { title: f.title, slug: f.slug, excerpt: f.excerpt, duration: f.duration || null, audience: f.audience || null, level: f.level || null, location: f.location || null, dates: f.dates || null, content: f.content, order: f.order || 0, videos: f.videos || [] };
+    const found = await strapi.documents('api::formation.formation').findMany({ filters: { slug: f.slug }, pagination: { limit: 1 } });
+    let doc = found && found[0];
+    try {
+      if (doc) { doc = await strapi.documents('api::formation.formation').update({ documentId: doc.documentId, data }); updated++; }
+      else { doc = await strapi.documents('api::formation.formation').create({ data }); created++; }
+      await strapi.documents('api::formation.formation').publish({ documentId: doc.documentId });
+    } catch (e) { strapi.log.warn('[formations-2025] ' + f.slug + ' : ' + e.message); }
+  }
+  strapi.log.info(`[formations-2025] Ateliers — créés:${created}, mis à jour:${updated}, retirés:${removed}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -526,6 +587,7 @@ module.exports = {
       await recoverFilms2025(strapi);
       await seedMasterclasses2025(strapi);
       await seedTeam2025(strapi);
+      await seedFormations2025(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

@@ -7,10 +7,10 @@ const teamRes = await fetchAPI('people', { 'filters[type][$eq]': 'equipe', sort:
 const cmsTeam = teamRes.data || [];
 const mapPerson = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null, featured: !!p.featured });
 const fallbackTeam = [
-  { ini: 'BB', name: 'Babacar Ba', role: 'Direction générale', bio: 'Fondateur du festival, il en porte la vision et les partenariats. Initiateur du ZIFFA, il œuvre à faire de Ziguinchor un carrefour du cinéma africain et de la diaspora.', photo: null, featured: true },
-  { ini: 'DP', name: 'Direction de la programmation', role: 'Programmation', bio: 'Sélection des films, invitations des jurys et des cinéastes.', photo: null, featured: false },
-  { ini: 'CP', name: 'Coordination production', role: 'Production', bio: 'Logistique, lieux et accueil des publics.', photo: null, featured: false },
-  { ini: 'CM', name: 'Communication', role: 'Presse & médias', bio: "Relations presse, réseaux sociaux et image du festival.", photo: null, featured: false },
+  { ini: 'BB', name: 'Babacar Ba', role: 'Président du festival', bio: "Producteur audiovisuel, réalisateur et photographe, diplômé de l’École Agnès Varda (Bruxelles). Fondateur du ZIFFA, il œuvre depuis une vingtaine d’années à faire émerger les talents du cinéma sénégalais et à faire de Ziguinchor un carrefour du cinéma africain.", photo: null, featured: true },
+  { ini: 'YP', name: 'Yves-François Preira', role: 'Président de FOTTI Cultures', bio: "Président de l’association FOTTI Cultures, structure porteuse du festival.", photo: null, featured: false },
+  { ini: 'OS', name: 'Oumou Sy', role: 'Présidente d’honneur', bio: "Styliste et scénographe de renommée internationale, figure emblématique de la création africaine.", photo: null, featured: false },
+  { ini: 'SB', name: 'Selly Ba', role: 'Sponsors & partenariats', bio: '', photo: null, featured: false },
 ];
 const team = cmsTeam.length ? cmsTeam.map(mapPerson) : fallbackTeam;
 const founder = team.find((m) => m.featured) || null;

@@ -471,6 +471,44 @@ async function seedMasterclasses2025(strapi) {
   strapi.log.info(`[mc-2025] Masterclasses — créées:${created}, mises à jour:${updated}, retirées:${removed}.`);
 }
 
+// Équipe & gouvernance de l'édition 2025 (source : rapport d'activités FOTTI).
+// Sélection : direction + équipe cœur (le client peut compléter dans l'admin).
+const TEAM_2025 = [
+  { name: 'Babacar Ba', role: 'Président du festival', featured: true, order: 1,
+    bio: "Producteur audiovisuel, réalisateur et photographe, diplômé de l’École Agnès Varda (Bruxelles). Fondateur du ZIFFA, il œuvre depuis une vingtaine d’années à faire émerger les talents du cinéma sénégalais et à faire de Ziguinchor un carrefour du cinéma africain." },
+  { name: 'Yves-François Preira', role: 'Président de FOTTI Cultures', order: 2,
+    bio: "Président de l’association FOTTI Cultures, structure porteuse du festival." },
+  { name: 'Oumou Sy', role: 'Présidente d’honneur', order: 3,
+    bio: "Styliste et scénographe de renommée internationale, figure emblématique de la création africaine, présidente d’honneur du ZIFFA." },
+  { name: 'Selly Ba', role: 'Sponsors & partenariats', order: 4 },
+  { name: 'France Morin', role: 'Directrice d’AMA Brussels (partenaire belge)', order: 5 },
+  { name: 'Aïssatou Cissokho', role: 'Chargée d’administration', order: 6 },
+  { name: 'Omar Arena Massaly', role: 'Coordinateur régional (Ziguinchor)', order: 7 },
+  { name: 'Khassim Bodian', role: 'Coordinateur local (Ziguinchor)', order: 8 },
+  { name: 'Ndeye Nogaye Diagne', role: 'Responsable projection', order: 9 },
+  { name: 'Maïmouna Samaté', role: 'Responsable de communication', order: 10 },
+  { name: 'Bettinha Yvette Badji', role: 'Coordinatrice des masterclasses', order: 11 },
+  { name: 'Madiop Seye', role: 'Graphiste & vidéaste', order: 12 },
+  { name: 'Badara Fall', role: 'Community manager', order: 13 },
+];
+
+async function seedTeam2025(strapi) {
+  const eds = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2025 }, pagination: { limit: 1 } });
+  const ed = eds && eds[0];
+  let created = 0, updated = 0;
+  for (const m of TEAM_2025) {
+    const data = { name: m.name, role: m.role || null, bio: m.bio || null, type: 'equipe', featured: !!m.featured, order: m.order || 0 };
+    if (ed) data.edition = ed.documentId;
+    const found = await strapi.documents('api::person.person').findMany({ filters: { name: m.name, type: 'equipe' }, pagination: { limit: 1 } });
+    const doc = found && found[0];
+    try {
+      if (doc) { await strapi.documents('api::person.person').update({ documentId: doc.documentId, data }); updated++; }
+      else { await strapi.documents('api::person.person').create({ data }); created++; }
+    } catch (e) { strapi.log.warn('[team-2025] ' + m.name + ' : ' + e.message); }
+  }
+  strapi.log.info(`[team-2025] Équipe — créées:${created}, mises à jour:${updated}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -487,6 +525,7 @@ module.exports = {
       await backfillDaySlugs(strapi);
       await recoverFilms2025(strapi);
       await seedMasterclasses2025(strapi);
+      await seedTeam2025(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

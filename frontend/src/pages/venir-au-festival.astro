@@ -15,9 +15,10 @@ const travel = [
 ];
 
 const infos = [
-  { icon: '🌤️', title: 'Climat', text: 'Novembre : chaud et ensoleillé. Prévoyez des tenues légères.' },
   { icon: '💶', title: 'Monnaie', text: 'Franc CFA (FCFA). Espèces conseillées ; distributeurs en ville.' },
   { icon: '🗣️', title: 'Langues', text: 'Français, wolof et diola. Accueil chaleureux et convivial.' },
+  { icon: '🕐', title: 'Décalage horaire', text: 'GMT (UTC+0) — soit −1 h par rapport à Paris en novembre.' },
+  { icon: '🔌', title: 'Électricité', text: '230 V, prises type C/E (comme en France). Pas d’adaptateur pour l’UE.' },
   { icon: '🎟️', title: 'Accès', text: 'Projections en accès libre dans la limite des places. Accréditation pros via la page Contact.' },
 ];
 ---
@@ -48,7 +49,6 @@ const infos = [
             <span class="zmap-go">→</span>
           </button>
         ))}
-        <p class="zmap-hint">Astuce : cliquez sur un marqueur pour l'itinéraire Google Maps.</p>
       </div>
     </div>
   </section>
@@ -77,6 +77,24 @@ const infos = [
 
   <section class="section" id="infos">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Bon à savoir</div><h2 class="section-title">Infos <span class="red">pratiques</span>.</h2></div></div>
+
+    <div class="weather-card" id="zwx">
+      <div class="zwx-live">
+        <div class="zwx-main">
+          <div class="zwx-loc">📍 Ziguinchor, Casamance — météo en direct</div>
+          <div class="zwx-now"><span class="zwx-ic">⏳</span><span class="zwx-temp">—°</span></div>
+          <div class="zwx-cond">Chargement de la météo…</div>
+        </div>
+        <div class="zwx-stats">
+          <div><span>Ressenti</span><b class="zwx-feels">—</b></div>
+          <div><span>Humidité</span><b class="zwx-hum">—</b></div>
+          <div><span>Vent</span><b class="zwx-wind">—</b></div>
+        </div>
+        <div class="zwx-forecast" id="zwx-fc"></div>
+      </div>
+      <div class="zwx-note">🌤️ En novembre, Ziguinchor est chaud et ensoleillé — prévoyez des tenues légères et de quoi vous protéger du soleil.</div>
+    </div>
+
     <div class="presse-cards">
       {infos.map((m) => (
         <div class="presse-card pc-green">
@@ -149,6 +167,54 @@ const infos = [
 
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
       setTimeout(function () { map.invalidateSize(); }, 200);
+    })();
+  </script>
+
+  <script is:inline>
+    (async function () {
+      const root = document.getElementById('zwx');
+      if (!root) return;
+      const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+      function wmo(c) {
+        if (c === 0) return ['☀️', 'Ciel dégagé'];
+        if (c === 1 || c === 2) return ['⛅', 'Partiellement nuageux'];
+        if (c === 3) return ['☁️', 'Couvert'];
+        if (c === 45 || c === 48) return ['🌫️', 'Brouillard'];
+        if (c >= 51 && c <= 57) return ['🌦️', 'Bruine'];
+        if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return ['🌧️', 'Pluie'];
+        if ((c >= 71 && c <= 77) || c === 85 || c === 86) return ['🌨️', 'Neige'];
+        if (c >= 95) return ['⛈️', 'Orage'];
+        return ['🌡️', '—'];
+      }
+      try {
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=12.5833&longitude=-16.2719' +
+          '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
+          '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Africa%2FDakar&forecast_days=4';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('http');
+        const d = await res.json();
+        const cur = d.current;
+        const [ic, lbl] = wmo(cur.weather_code);
+        root.querySelector('.zwx-ic').textContent = ic;
+        root.querySelector('.zwx-temp').textContent = Math.round(cur.temperature_2m) + '°';
+        root.querySelector('.zwx-cond').textContent = lbl;
+        root.querySelector('.zwx-feels').textContent = Math.round(cur.apparent_temperature) + '°';
+        root.querySelector('.zwx-hum').textContent = cur.relative_humidity_2m + '%';
+        root.querySelector('.zwx-wind').textContent = Math.round(cur.wind_speed_10m) + ' km/h';
+        const fc = document.getElementById('zwx-fc');
+        fc.innerHTML = '';
+        for (let i = 1; i < d.daily.time.length; i++) {
+          const dt = new Date(d.daily.time[i] + 'T00:00:00');
+          const [di] = wmo(d.daily.weather_code[i]);
+          const el = document.createElement('div');
+          el.className = 'zwx-day';
+          el.innerHTML = '<span>' + days[dt.getDay()] + '</span><span class="zwx-di">' + di + '</span>' +
+            '<b>' + Math.round(d.daily.temperature_2m_max[i]) + '°</b><i>' + Math.round(d.daily.temperature_2m_min[i]) + '°</i>';
+          fc.appendChild(el);
+        }
+      } catch (e) {
+        root.classList.add('is-error');
+      }
     })();
   </script>
 </Base>

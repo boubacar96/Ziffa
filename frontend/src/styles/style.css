@@ -4213,3 +4213,35 @@
     .zpin { animation: none; }
     .zpin-wrap.is-active .zpin-dot::after { animation: none; }
   }
+
+  /* ===== Météo en direct (Open-Meteo) — Infos pratiques ===== */
+  .weather-card {
+    background: linear-gradient(135deg, var(--green-deep), #15351f); color: #fff;
+    border-radius: 22px; padding: 26px 28px; margin-bottom: 26px;
+    box-shadow: 0 24px 50px -28px rgba(26, 69, 39, .6);
+  }
+  .zwx-live { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; }
+  .zwx-loc { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: .04em; color: var(--yellow); }
+  .zwx-now { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .zwx-ic { font-size: 46px; line-height: 1; }
+  .zwx-temp { font-family: 'Baloo 2', sans-serif; font-size: 52px; font-weight: 800; line-height: 1; }
+  .zwx-cond { font-size: 15px; opacity: .92; margin-top: 3px; }
+  .zwx-stats { display: flex; gap: 24px; }
+  .zwx-stats > div { display: flex; flex-direction: column; gap: 2px; }
+  .zwx-stats span { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; opacity: .7; }
+  .zwx-stats b { font-family: 'Baloo 2', sans-serif; font-size: 18px; font-weight: 700; }
+  .zwx-forecast { display: flex; gap: 10px; margin-left: auto; }
+  .zwx-day {
+    display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 56px;
+    background: rgba(255, 255, 255, .1); border-radius: 13px; padding: 10px 12px;
+  }
+  .zwx-day > span:first-child { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; opacity: .8; }
+  .zwx-di { font-size: 20px; }
+  .zwx-day b { font-family: 'Baloo 2', sans-serif; font-size: 15px; }
+  .zwx-day i { font-style: normal; font-size: 12px; opacity: .6; }
+  .zwx-note { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .16); font-size: 13.5px; opacity: .9; }
+  .weather-card.is-error .zwx-live { display: none; }
+  @media (max-width: 780px) {
+    .zwx-forecast { margin-left: 0; flex-wrap: wrap; }
+    .zwx-temp { font-size: 46px; }
+  }

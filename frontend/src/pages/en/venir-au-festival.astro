@@ -15,9 +15,10 @@ const travel = [
 ];
 
 const infos = [
-  { icon: '🌤️', title: 'Climate', text: 'November: warm and sunny. Pack light clothing.' },
   { icon: '💶', title: 'Currency', text: 'CFA Franc (FCFA). Cash recommended; ATMs in town.' },
   { icon: '🗣️', title: 'Languages', text: 'French, Wolof and Diola. Warm, friendly welcome.' },
+  { icon: '🕐', title: 'Time zone', text: 'GMT (UTC+0) — 1 h behind Paris in November.' },
+  { icon: '🔌', title: 'Electricity', text: '230 V, type C/E plugs (as in France/EU). No adapter needed for EU.' },
   { icon: '🎟️', title: 'Access', text: 'Free screenings subject to available seats. Pro accreditation via the Contact page.' },
 ];
 ---
@@ -48,7 +49,6 @@ const infos = [
             <span class="zmap-go">→</span>
           </button>
         ))}
-        <p class="zmap-hint">Tip: click a marker to get Google Maps directions.</p>
       </div>
     </div>
   </section>
@@ -77,6 +77,24 @@ const infos = [
 
   <section class="section" id="infos">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Good to know</div><h2 class="section-title">Practical <span class="red">info</span>.</h2></div></div>
+
+    <div class="weather-card" id="zwx">
+      <div class="zwx-live">
+        <div class="zwx-main">
+          <div class="zwx-loc">📍 Ziguinchor, Casamance — live weather</div>
+          <div class="zwx-now"><span class="zwx-ic">⏳</span><span class="zwx-temp">—°</span></div>
+          <div class="zwx-cond">Loading weather…</div>
+        </div>
+        <div class="zwx-stats">
+          <div><span>Feels like</span><b class="zwx-feels">—</b></div>
+          <div><span>Humidity</span><b class="zwx-hum">—</b></div>
+          <div><span>Wind</span><b class="zwx-wind">—</b></div>
+        </div>
+        <div class="zwx-forecast" id="zwx-fc"></div>
+      </div>
+      <div class="zwx-note">🌤️ In November, Ziguinchor is warm and sunny — pack light clothing and sun protection.</div>
+    </div>
+
     <div class="presse-cards">
       {infos.map((m) => (
         <div class="presse-card pc-green">
@@ -149,6 +167,54 @@ const infos = [
 
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
       setTimeout(function () { map.invalidateSize(); }, 200);
+    })();
+  </script>
+
+  <script is:inline>
+    (async function () {
+      const root = document.getElementById('zwx');
+      if (!root) return;
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      function wmo(c) {
+        if (c === 0) return ['☀️', 'Clear sky'];
+        if (c === 1 || c === 2) return ['⛅', 'Partly cloudy'];
+        if (c === 3) return ['☁️', 'Overcast'];
+        if (c === 45 || c === 48) return ['🌫️', 'Fog'];
+        if (c >= 51 && c <= 57) return ['🌦️', 'Drizzle'];
+        if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return ['🌧️', 'Rain'];
+        if ((c >= 71 && c <= 77) || c === 85 || c === 86) return ['🌨️', 'Snow'];
+        if (c >= 95) return ['⛈️', 'Thunderstorm'];
+        return ['🌡️', '—'];
+      }
+      try {
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=12.5833&longitude=-16.2719' +
+          '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
+          '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Africa%2FDakar&forecast_days=4';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('http');
+        const d = await res.json();
+        const cur = d.current;
+        const [ic, lbl] = wmo(cur.weather_code);
+        root.querySelector('.zwx-ic').textContent = ic;
+        root.querySelector('.zwx-temp').textContent = Math.round(cur.temperature_2m) + '°';
+        root.querySelector('.zwx-cond').textContent = lbl;
+        root.querySelector('.zwx-feels').textContent = Math.round(cur.apparent_temperature) + '°';
+        root.querySelector('.zwx-hum').textContent = cur.relative_humidity_2m + '%';
+        root.querySelector('.zwx-wind').textContent = Math.round(cur.wind_speed_10m) + ' km/h';
+        const fc = document.getElementById('zwx-fc');
+        fc.innerHTML = '';
+        for (let i = 1; i < d.daily.time.length; i++) {
+          const dt = new Date(d.daily.time[i] + 'T00:00:00');
+          const [di] = wmo(d.daily.weather_code[i]);
+          const el = document.createElement('div');
+          el.className = 'zwx-day';
+          el.innerHTML = '<span>' + days[dt.getDay()] + '</span><span class="zwx-di">' + di + '</span>' +
+            '<b>' + Math.round(d.daily.temperature_2m_max[i]) + '°</b><i>' + Math.round(d.daily.temperature_2m_min[i]) + '°</i>';
+          fc.appendChild(el);
+        }
+      } catch (e) {
+        root.classList.add('is-error');
+      }
     })();
   </script>
 </Base>

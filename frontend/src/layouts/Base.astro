@@ -74,6 +74,46 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
         document.querySelectorAll(sel).forEach((el) => { el.classList.add('reveal-el'); io.observe(el); });
       }
 
+      // « Voir plus » générique sur les listes dynamiques (limite par classe,
+      // surchargeable via data-limit). Tout le contenu reste dans le HTML (SEO).
+      const MORE_LIMITS = {
+        'team-grid': 8, 'films-selection': 12, 'gallery-grid': 12, 'formations-grid': 6,
+        'hl-cards': 6, 'highlights-grid': 6, 'press-grid': 8, 'archive-cards': 8,
+        'prize-grid': 12, 'presse-cards': 12, 'tier-grid': 12,
+      };
+      const moreEN = document.documentElement.lang === 'en';
+      const moreSeen = new Set();
+      Object.keys(MORE_LIMITS).forEach((cls) => {
+        document.querySelectorAll('.' + cls).forEach((grid) => {
+          if (moreSeen.has(grid)) return;
+          moreSeen.add(grid);
+          const limit = parseInt(grid.dataset.limit || MORE_LIMITS[cls], 10);
+          const items = Array.from(grid.children).filter((c) => c.nodeType === 1);
+          if (!(limit > 0) || items.length <= limit) return;
+          const hidden = items.slice(limit);
+          hidden.forEach((it) => it.classList.add('zmore-hidden'));
+          const wrap = document.createElement('div');
+          wrap.className = 'zmore-wrap';
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'zmore-btn';
+          btn.setAttribute('aria-expanded', 'false');
+          const moreLabel = (moreEN ? 'Show more' : 'Voir plus') + ' (' + hidden.length + ')';
+          const lessLabel = moreEN ? 'Show less' : 'Voir moins';
+          btn.textContent = moreLabel;
+          let open = false;
+          btn.addEventListener('click', () => {
+            open = !open;
+            hidden.forEach((it) => { it.classList.toggle('zmore-hidden', !open); if (open) it.classList.add('revealed'); });
+            btn.textContent = open ? lessLabel : moreLabel;
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (!open) grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+          wrap.appendChild(btn);
+          grid.insertAdjacentElement('afterend', wrap);
+        });
+      });
+
       // Lightbox galeries — navigation ‹ ›, clavier, légende
       const GAL_SEL = '.gallery-grid img, .gallery-marquee img, .gallery-page img';
       const lb = document.createElement('div');

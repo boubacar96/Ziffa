@@ -4136,6 +4136,18 @@
   .highlights-grid > *  { flex-basis: 240px; max-width: 360px; }
   .hl-cards > *         { flex-basis: 260px; max-width: 380px; }
 
+  /* ===== « Voir plus » sur les listes dynamiques ===== */
+  .zmore-hidden { display: none !important; }
+  .zmore-wrap { display: flex; justify-content: center; margin-top: 30px; }
+  .zmore-btn {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: .03em;
+    color: var(--green-deep); background: var(--paper); border: 1.5px solid var(--green-deep);
+    border-radius: 999px; padding: 11px 26px; cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .zmore-btn:hover { background: var(--green-deep); color: #fff; transform: translateY(-2px); box-shadow: 0 12px 26px -12px rgba(26,69,39,.5); }
+  .zmore-btn:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+
   /* ===== Carte interactive « Venir au festival » (Leaflet sur-mesure) ===== */
   .zmap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
   .zmap-canvas { position: relative; }

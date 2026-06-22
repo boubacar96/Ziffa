@@ -3005,6 +3005,17 @@
   .formation-block-title { display: inline-block; font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 24px; color: var(--green-deep); margin: 0 0 18px; padding-bottom: 9px; border-bottom: 3px solid var(--yellow); }
   .formation-foot { margin-top: 56px; padding-top: 26px; border-top: 1px solid var(--line); }
 
+  /* ----- Masterclass : bandeau infos + citation + reportage ----- */
+  .mc-meta { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 34px; }
+  .mc-meta-item { display: flex; flex-direction: column; gap: 2px; flex: 1 1 160px; background: var(--surface, #fff); border: 1px solid var(--line); border-left: 4px solid var(--yellow); border-radius: 14px; padding: 14px 18px; }
+  .mc-meta-ic { font-size: 20px; line-height: 1; }
+  .mc-meta-k { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-top: 6px; }
+  .mc-meta-v { font-family: 'Baloo 2', sans-serif; font-size: 18px; color: var(--green-deep); }
+  .mc-quote { margin: 40px 0 0; padding: 26px 30px; background: var(--green-deep); color: var(--bg); border-radius: 18px; position: relative; }
+  .mc-quote p { font-size: 19px; line-height: 1.6; font-style: italic; margin: 0; }
+  .mc-quote cite { display: block; margin-top: 14px; font-style: normal; font-weight: 700; color: var(--yellow); font-family: 'Baloo 2', sans-serif; }
+  .mc-reportage { margin-top: 28px; }
+
   /* ----- Édition : bandeau « en chiffres » + temps forts ----- */
   .edstat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
   .edstat {

@@ -12,6 +12,8 @@ let mc = null;
 if (f) {
   mc = {
     title: f.title, excerpt: f.excerpt || '', content: f.content || '',
+    location: f.location || '', participants: f.participants || '', duration: f.duration || '',
+    quote: f.quote || '', quoteAuthor: f.quoteAuthor || '', reportageUrl: f.reportageUrl || '',
     cover: f.cover?.url ? mediaUrl(f.cover.url) : null,
     gallery: (f.gallery || []).map((g) => (g.url ? mediaUrl(g.url) : null)).filter(Boolean),
     videos: (f.videos || []).map((v) => ({ title: v.title || '', url: toVideoEmbed(v.url) })),
@@ -20,6 +22,11 @@ if (f) {
   const fb = fallbackMasterclasses('fr').find((x) => x.slug === slug);
   if (fb) mc = { ...fb, videos: (fb.videos || []).map((v) => ({ title: v.title, url: toVideoEmbed(v.url) })) };
 }
+const meta = mc ? [
+  mc.location && { icon: '📍', label: 'Lieu', value: mc.location },
+  mc.participants && { icon: '👥', label: 'Participants', value: mc.participants },
+  mc.duration && { icon: '⏱️', label: 'Durée', value: mc.duration },
+].filter(Boolean) : [];
 const contentHtml = mc ? marked.parse(mc.content || '') : '';
 const coverStyle = mc && mc.cover
   ? `background-image:linear-gradient(rgba(26,69,39,.55),rgba(26,69,39,.85)),url('${mc.cover}')`
@@ -38,7 +45,32 @@ const coverStyle = mc && mc.cover
       </header>
 
       <article class="section formation-article">
+        {meta.length > 0 && (
+          <div class="mc-meta">
+            {meta.map((m) => (
+              <div class="mc-meta-item">
+                <span class="mc-meta-ic">{m.icon}</span>
+                <span class="mc-meta-k">{m.label}</span>
+                <span class="mc-meta-v">{m.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
+
+        {mc.quote && (
+          <blockquote class="mc-quote">
+            <p>“{mc.quote}”</p>
+            {mc.quoteAuthor && <cite>— {mc.quoteAuthor}</cite>}
+          </blockquote>
+        )}
+
+        {mc.reportageUrl && (
+          <div class="mc-reportage">
+            <a href={mc.reportageUrl} target="_blank" rel="noopener" class="nav-cta">▶ Voir le reportage ↗</a>
+          </div>
+        )}
 
         {mc.gallery.length > 0 && (
           <section class="formation-block">

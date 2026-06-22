@@ -22,8 +22,26 @@
     "excerpt": {
       "type": "text"
     },
+    "location": {
+      "type": "string"
+    },
+    "participants": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
     "content": {
       "type": "richtext"
+    },
+    "quote": {
+      "type": "text"
+    },
+    "quoteAuthor": {
+      "type": "string"
+    },
+    "reportageUrl": {
+      "type": "string"
     },
     "cover": {
       "type": "media",

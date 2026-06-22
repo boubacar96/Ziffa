@@ -11,6 +11,7 @@ let formation = null;
 if (f) {
   formation = {
     title: f.title, excerpt: f.excerpt || '', content: f.content || '',
+    duration: f.duration || '', audience: f.audience || '', level: f.level || '', location: f.location || '', dates: f.dates || '',
     cover: f.cover?.url ? mediaUrl(f.cover.url) : null,
     gallery: (f.gallery || []).map((g) => (g.url ? mediaUrl(g.url) : null)).filter(Boolean),
     videos: (f.videos || []).map((v) => ({ title: v.title || '', url: toVideoEmbed(v.url) })),
@@ -19,6 +20,13 @@ if (f) {
   const fb = fallbackFormations('en').find((x) => x.slug === slug);
   if (fb) formation = { ...fb, videos: (fb.videos || []).map((v) => ({ title: v.title, url: toVideoEmbed(v.url) })) };
 }
+const meta = formation ? [
+  formation.duration && { icon: '⏱️', label: 'Duration', value: formation.duration },
+  formation.audience && { icon: '👥', label: 'Audience', value: formation.audience },
+  formation.level && { icon: '🎓', label: 'Level', value: formation.level },
+  formation.location && { icon: '📍', label: 'Venue', value: formation.location },
+  formation.dates && { icon: '📅', label: 'Dates', value: formation.dates },
+].filter(Boolean) : [];
 const contentHtml = formation ? marked.parse(formation.content || '') : '';
 const coverStyle = formation && formation.cover
   ? `background-image:linear-gradient(rgba(26,69,39,.55),rgba(26,69,39,.85)),url('${formation.cover}')`
@@ -36,7 +44,19 @@ const coverStyle = formation && formation.cover
         </div>
       </header>
 
-      <article class="section formation-article">
+      <article class="section formation-article mc-detail">
+        {meta.length > 0 && (
+          <div class="mc-meta">
+            {meta.map((m) => (
+              <div class="mc-meta-item">
+                <span class="mc-meta-ic">{m.icon}</span>
+                <span class="mc-meta-k">{m.label}</span>
+                <span class="mc-meta-v">{m.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {contentHtml && <div class="formation-prose" set:html={contentHtml}></div>}
 
         {formation.gallery.length > 0 && (

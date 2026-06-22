@@ -22,6 +22,21 @@
     "excerpt": {
       "type": "text"
     },
+    "duration": {
+      "type": "string"
+    },
+    "audience": {
+      "type": "string"
+    },
+    "level": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "dates": {
+      "type": "string"
+    },
     "content": {
       "type": "richtext"
     },

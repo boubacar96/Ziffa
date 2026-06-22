@@ -285,7 +285,7 @@ const FR_LABELS = {
   'api::prize.prize': { name: 'Nom du prix', description: 'Description', winner: 'Lauréat·e', image: 'Image', edition: 'Édition' },
   'api::photo.photo': { image: 'Images', category: 'Catégorie (galerie / expo)', edition: 'Édition' },
   'api::partner.partner': { name: 'Nom', logo: 'Logo', url: 'Lien (site web)', order: "Ordre d'affichage" },
-  'api::formation.formation': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage", description: 'Description (secours)' },
+  'api::formation.formation': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', duration: 'Durée', audience: 'Public cible', level: 'Niveau', location: 'Lieu', dates: 'Dates', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage", description: 'Description (secours)' },
   'api::masterclass.masterclass': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', location: 'Lieu', participants: 'Nombre de participants', duration: 'Durée', content: 'Contenu', quote: 'Citation / témoignage', quoteAuthor: 'Auteur de la citation', reportageUrl: 'Lien du reportage', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', speaker: 'Intervenant·e', order: "Ordre d'affichage", edition: 'Édition' },
   'api::femme-lumiere.femme-lumiere': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage" },
   'api::press-resource.press-resource': { title: 'Titre', description: 'Description', category: 'Catégorie (dossier / logos / photos)', files: 'Fichiers', order: "Ordre d'affichage" },

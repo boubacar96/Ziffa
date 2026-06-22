@@ -4106,3 +4106,32 @@
     .prog-act-time { text-align: left; }
     .prog-act-body::before { display: none; }
   }
+
+  /* ===== Listes dynamiques : centrage + plus d'étirement d'un élément seul =====
+     auto-fit étirait une carte unique sur toute la largeur de la section.
+     On passe ces grilles en flex centré : 1 carte = largeur normale centrée,
+     plusieurs = groupe centré, beaucoup = remplissage + retour à la ligne. */
+  .films-selection, .formations-grid, .press-grid, .archive-cards,
+  .presse-cards, .team-grid, .tier-grid, .highlights-grid, .hl-cards,
+  .prize-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .films-selection > *, .formations-grid > *, .press-grid > *, .archive-cards > *,
+  .presse-cards > *, .team-grid > *, .tier-grid > *, .highlights-grid > *,
+  .hl-cards > *, .prize-grid > * {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  /* Calibrage de la largeur des cartes par type de liste (basis = idéale, max = plafond) */
+  .team-grid > *        { flex-basis: 190px; max-width: 250px; }
+  .films-selection > *  { flex-basis: 230px; max-width: 320px; }
+  .formations-grid > *  { flex-basis: 300px; max-width: 420px; }
+  .press-grid > *,
+  .archive-cards > *,
+  .prize-grid > *       { flex-basis: 280px; max-width: 400px; }
+  .presse-cards > *,
+  .tier-grid > *,
+  .highlights-grid > *  { flex-basis: 240px; max-width: 360px; }
+  .hl-cards > *         { flex-basis: 260px; max-width: 380px; }

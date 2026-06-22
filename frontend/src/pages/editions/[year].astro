@@ -1,0 +1,229 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../../lib/strapi.js';
+
+const { year } = Astro.params;
+
+// Édition demandée
+const edRes = await fetchAPI('editions', { 'filters[year][$eq]': year, populate: 'poster', 'pagination[limit]': '1' });
+const ed = (edRes.data || [])[0] || null;
+if (!ed) { Astro.response.status = 404; }
+
+const fmtDate = (d) => {
+  if (!d) return '';
+  try { return new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }); }
+  catch (e) { return ''; }
+};
+const dateLabel = ed && ed.dateStart
+  ? `${fmtDate(ed.dateStart)}${ed.dateEnd ? ' → ' + fmtDate(ed.dateEnd) : ''} ${year}`.trim()
+  : '';
+
+// Contenu lié (uniquement si l'édition existe)
+let teaser = '', teaserThumb = null, photos = [], films = [], prizes = [], days = [], jury = [], masterclasses = [];
+if (ed) {
+  if (ed.videoUrl) {
+    teaser = ed.videoUrl.includes('player.vimeo') ? ed.videoUrl : ed.videoUrl;
+    teaserThumb = await getVimeoThumb(ed.videoUrl);
+  }
+  const photoRes = await fetchAPI('photos', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '12' });
+  photos = (photoRes.data || []).flatMap((p) => mediaUrls(p.image)).slice(0, 8);
+
+  const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': year, populate: 'poster', sort: 'title:asc', 'pagination[limit]': '100' });
+  films = (filmRes.data || []).map((f) => ({ title: f.title, director: f.director || '', country: f.country || '', year: f.year || '', duration: f.duration || '', poster: f.poster?.url ? mediaUrl(f.poster.url) : null }));
+
+  const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '20' });
+  prizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
+
+  const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' });
+  days = daysRes.data || [];
+
+  const juryRes = await fetchAPI('people', { 'filters[type][$eq]': 'jury', 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'photo' });
+  jury = (juryRes.data || []).map((j) => ({ ini: (j.name || '?').slice(0, 2).toUpperCase(), name: j.name, role: j.role || '', bio: j.bio || '', photo: j.photo?.url ? mediaUrl(j.photo.url) : null }));
+
+  const mcRes = await fetchAPI('masterclasses', { 'filters[edition][year][$eq]': year, populate: 'cover', sort: 'order:asc', 'pagination[limit]': '20' });
+  masterclasses = (mcRes.data || []).map((m) => ({ slug: m.slug, title: m.title, excerpt: m.excerpt || '', cover: m.cover?.url ? mediaUrl(m.cover.url) : null })).filter((m) => m.slug);
+}
+const title = ed ? (ed.title || `Édition ${year}`) : 'Édition introuvable';
+---
+<Base title={ed ? `${title} | ZIFFA` : 'Édition introuvable | ZIFFA'} description={ed?.tagline || ''}>
+  {ed ? (
+    <>
+      <header class="page-hero">
+        <div class="page-hero-inner">
+          <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; Édition {year}</div>
+          <div class="eyebrow"><span class="arrow">→</span> Édition{ed.number ? ` · N°${String(ed.number).padStart(2, '0')}` : ''}{dateLabel ? ` · ${dateLabel}` : ''}</div>
+          <h1>Édition <span class="yellow">{year}</span>.</h1>
+          {ed.tagline && <p>{ed.tagline}</p>}
+        </div>
+      </header>
+
+      {teaser && (
+        <section class="teaser-section" id="images">
+          <div class="teaser-inner">
+            <div class="teaser-head">
+              <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Le film de l'édition {year}</div>
+              <h2 class="section-title">L'édition <span class="red">{year}</span> en <span class="italic">images</span>.</h2>
+            </div>
+            <div class="teaser-player" id="teaser-player" data-embed={teaser} role="button" tabindex="0" aria-label={`Lire le film de l'édition ${year}`}>
+              <div class="teaser-poster" style={`background-image:linear-gradient(rgba(11,26,18,.28),rgba(11,26,18,.55))${teaserThumb ? `, url('${teaserThumb}')` : ''}`}></div>
+              <div class="teaser-play"><span>▶</span></div>
+              <div class="teaser-cta">Regarder le film du festival</div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {photos.length > 0 && (
+        <section class="section">
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> La galerie</div><h2 class="section-title">Souvenirs de <span class="italic">{year}</span>.</h2></div></div>
+          <div class="gallery-marquee">
+            <div class="gallery-marquee-track">
+              {photos.map((src) => (<figure><img src={src} alt={`ZIFFA ${year}`} loading="lazy" /></figure>))}
+              {photos.map((src) => (<figure aria-hidden="true"><img src={src} alt="" loading="lazy" /></figure>))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {films.length > 0 && (
+        <section class="section" id="selection">
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Sélection officielle</div><h2 class="section-title">Les <span class="red">films</span> {year}.</h2></div></div>
+          <div class="films-selection">
+            {films.map((f) => (
+              f.poster ? (
+                <article class="film-poster-card">
+                  <div class="film-poster-img" style={`background-image:url('${f.poster}')`}></div>
+                  <div class="film-poster-body"><h3>{f.title}</h3>{f.director && <div class="film-sel-dir">{f.director}</div>}<div class="film-sel-meta">{[f.country, f.year, f.duration].filter(Boolean).join(' · ')}</div></div>
+                </article>
+              ) : (
+                <article class="film-sel-card">
+                  <h3>{f.title}</h3>
+                  {f.director && <div class="film-sel-dir">{f.director}</div>}
+                  <div class="film-sel-meta">{[f.country, f.year, f.duration].filter(Boolean).join(' · ')}</div>
+                </article>
+              )
+            ))}
+          </div>
+        </section>
+      )}
+
+      {prizes.length > 0 && (
+        <section class="section" id="prix">
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Palmarès</div><h2 class="section-title">Prix &amp; <span class="red">distinctions</span>.</h2></div></div>
+          <div class="prize-grid">
+            {prizes.map((p, i) => (
+              p.image ? (
+                <div class="prize-photo" style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
+                  <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
+                </div>
+              ) : (
+                <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
+              )
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section class="programme-section" id="programme">
+        <div class="programme-inner">
+          <div style="text-align:center;margin-bottom:10px;"><div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Le programme</div><h2 class="section-title" style="margin:12px auto;text-align:center;">Le <span class="italic">programme</span> {year}.</h2></div>
+          {days.length > 0 ? (
+            <>
+              <div class="prog-days-grid">
+                {days.map((d, i) => (
+                  <a class="prog-day-card" href={`/programme/${d.slug}`}>
+                    <span class="pd-num">— Jour {String(i + 1).padStart(2, '0')}</span>
+                    <span class="pd-label">{d.label}</span>
+                    {d.subtitle && <span class="pd-sub">{d.subtitle}</span>}
+                    <span class="pd-count">{(d.activities?.length || 0)} activités</span>
+                    <span class="pd-go">Voir le détail →</span>
+                  </a>
+                ))}
+              </div>
+              <div class="prog-complete-btn"><a href={`/programme-complet/${year}`} class="nav-cta">Voir le programme complet ↗</a></div>
+            </>
+          ) : (
+            <p class="prog-pdf-empty" style="max-width:520px;margin:0 auto;">Le programme de l'édition {year} sera bientôt disponible.</p>
+          )}
+        </div>
+      </section>
+
+      {jury.length > 0 && (
+        <section class="section" id="jury">
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Le jury {year}</div><h2 class="section-title">Le <span class="italic">jury</span>.</h2></div></div>
+          <div class="team-grid">
+            {jury.map((j) => (
+              <button type="button" class="team-portrait js-person" data-name={j.name} data-role={j.role} data-bio={j.bio} data-photo={j.photo || ''} data-ini={j.ini}>
+                <div class="team-photo" style={j.photo ? `background-image:url('${j.photo}')` : ''}>{j.photo ? '' : <span class="team-ini">{j.ini}</span>}</div>
+                <div class="team-info"><div class="team-name">{j.name}</div><div class="team-role">{j.role}</div></div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {masterclasses.length > 0 && (
+        <section class="section" id="masterclasses">
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Transmission {year}</div><h2 class="section-title">Master-<span class="italic">classes</span>.</h2></div></div>
+          <div class="formations-grid">
+            {masterclasses.map((m) => (
+              <a class="formation-card" href={`/masterclasses/${m.slug}`}>
+                <div class="formation-cover" style={m.cover ? `background-image:url('${m.cover}')` : ''}></div>
+                <div class="formation-body"><h3>{m.title}</h3>{m.excerpt && <p>{m.excerpt}</p>}<span class="formation-more">Lire la suite →</span></div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="person-modal" id="person-modal" hidden>
+        <div class="pm-backdrop" data-close></div>
+        <div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+          <button class="pm-close" data-close aria-label="Fermer">×</button>
+          <div class="pm-photo" id="pm-photo"></div>
+          <div class="pm-body"><div class="pm-role" id="pm-role"></div><h3 id="pm-name"></h3><p id="pm-bio"></p></div>
+        </div>
+      </div>
+    </>
+  ) : (
+    <section class="section" style="text-align:center;padding:80px 20px;">
+      <h1 class="section-title">404</h1>
+      <p class="prog-pdf-empty" style="max-width:480px;margin:20px auto;">Cette édition est introuvable.</p>
+      <a href="/" class="nav-cta">← Accueil</a>
+    </section>
+  )}
+</Base>
+
+<script>
+  const tp = document.getElementById('teaser-player');
+  if (tp) {
+    const play = () => {
+      if (tp.classList.contains('playing')) return;
+      const base = tp.dataset.embed;
+      const src = base + (base.includes('?') ? '&' : '?') + 'autoplay=1';
+      tp.innerHTML = '<iframe src="' + src + '" title="ZIFFA — le film du festival" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:100%;border:0;display:block;"></iframe>';
+      tp.classList.add('playing');
+    };
+    tp.addEventListener('click', play);
+    tp.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+  }
+  const modal = document.getElementById('person-modal');
+  if (modal) {
+    const pmPhoto = document.getElementById('pm-photo');
+    const pmName = document.getElementById('pm-name');
+    const pmRole = document.getElementById('pm-role');
+    const pmBio = document.getElementById('pm-bio');
+    const pmClose = modal.querySelector('.pm-close');
+    let pmLast = null;
+    const open = (d) => {
+      pmName.textContent = d.name || ''; pmRole.textContent = d.role || ''; pmBio.textContent = d.bio || '';
+      if (d.photo) { pmPhoto.style.backgroundImage = `url('${d.photo}')`; pmPhoto.textContent = ''; pmPhoto.classList.remove('pm-photo--ini'); }
+      else { pmPhoto.style.backgroundImage = ''; pmPhoto.textContent = d.ini || ''; pmPhoto.classList.add('pm-photo--ini'); }
+      modal.hidden = false; document.body.style.overflow = 'hidden'; pmLast = document.activeElement; pmClose.focus();
+    };
+    const close = () => { modal.hidden = true; document.body.style.overflow = ''; if (pmLast && pmLast.focus) pmLast.focus(); };
+    document.querySelectorAll('.js-person').forEach((c) => c.addEventListener('click', () => open(c.dataset)));
+    modal.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (modal.hidden) return; if (e.key === 'Escape') close(); });
+  }
+</script>

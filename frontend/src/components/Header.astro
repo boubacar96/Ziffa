@@ -1,6 +1,7 @@
 ---
 import { getLangFromUrl, useTranslations, lp, altPath } from '../i18n.js';
-import { NAV } from '../lib/nav.js';
+import { resolveNav } from '../lib/nav.js';
+const NAV = await resolveNav();
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const base = (Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/');

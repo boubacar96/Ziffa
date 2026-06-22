@@ -1,3 +1,5 @@
+import { fetchAPI } from './strapi.js';
+
 // Source UNIQUE du menu — utilisée par le Header ET le Footer pour rester synchronisés.
 // `href` = lien de la rubrique (null = rubrique sans page, simple ouvre-menu).
 // `dd`   = clé i18n de l'en-tête du sous-menu (header). `items` = sous-liens.
@@ -50,3 +52,42 @@ export const NAV = [
     items: [],
   },
 ];
+
+// Lien de la page d'une édition : 2025 garde sa page riche dédiée ;
+// les autres années passent par le gabarit générique /editions/<année>.
+const editionHref = (year) => (String(year) === '2025' ? '/edition-2025' : `/editions/${year}`);
+
+// Sous-menu « Éditions » construit dynamiquement depuis Strapi (1 entrée par édition).
+async function getEditionItems() {
+  let eds = [];
+  try {
+    const res = await fetchAPI('editions', { sort: 'year:desc', 'pagination[limit]': '50' });
+    eds = (res.data || []).map((e) => e.year).filter(Boolean);
+  } catch (e) { /* Strapi indisponible : aucune édition */ }
+  return eds.map((year) => {
+    const h = editionHref(year);
+    return {
+      label: { fr: `Édition ${year}`, en: `${year} edition` }, href: h,
+      items: [
+        { label: { fr: 'Sélection de films', en: 'Film selection' }, href: h + '#selection' },
+        { label: { fr: 'Programme', en: 'Programme' }, href: h + '#programme' },
+        { label: { fr: 'Palmarès', en: 'Prize list' }, href: h + '#prix' },
+        { label: { fr: 'Jury', en: 'Jury' }, href: h + '#jury' },
+        { label: { fr: 'Masterclasses', en: 'Masterclasses' }, href: h + '#masterclasses' },
+      ],
+    };
+  });
+}
+
+// NAV résolu : la rubrique « Éditions » est remplie depuis Strapi.
+// S'il n'y a aucune édition, la rubrique est masquée.
+export async function resolveNav() {
+  const edItems = await getEditionItems();
+  return NAV
+    .map((g) => {
+      if (g.key !== 'nav.editions') return g;
+      if (!edItems.length) return null;
+      return { ...g, href: edItems[0].href, items: edItems };
+    })
+    .filter(Boolean);
+}

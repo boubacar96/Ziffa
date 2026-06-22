@@ -1,6 +1,7 @@
 ---
 import { getLangFromUrl, useTranslations, lp } from '../i18n.js';
-import { NAV } from '../lib/nav.js';
+import { resolveNav } from '../lib/nav.js';
+const NAV = await resolveNav();
 import Socials from './Socials.astro';
 import { getGlobal } from '../lib/strapi.js';
 const lang = getLangFromUrl(Astro.url);

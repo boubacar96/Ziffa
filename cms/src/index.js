@@ -424,6 +424,53 @@ async function recoverFilms2025(strapi) {
   strapi.log.info(`[recover-films] Films créés : ${created}, séances reliées : ${linked}.`);
 }
 
+// Les 3 masterclasses réelles de l'édition 2025 (source : rapport d'activités FOTTI).
+const MASTERCLASSES_2025 = [
+  {
+    slug: 'babacar-siby', title: 'Babacar Siby', order: 1,
+    excerpt: 'Scénariste (série « Nafi » de Marodi) et coach en théâtre : « la vérité du personnage ».',
+    location: 'Alliance française de Ziguinchor', participants: '50 personnes', duration: '2 heures',
+    content: "L’Alliance française de Ziguinchor a vibré au rythme d’un atelier intense et inspirant animé par **Babacar Siby**, scénariste (série *Nafi* de Marodi, etc.) et coach en théâtre. Une séance riche, humaine et pleine de découvertes — un moment unique pour explorer la **vérité du personnage**, l’émotion et l’authenticité dans le jeu d’acteur.",
+    quote: "J’ai eu le plaisir d’assister à la Master Class de Babacar Siby, scénariste et coach en théâtre, qui a fait vibrer la salle avec un atelier intense, généreux et profondément inspirant sur « La vérité du personnage ». Un moment d’apprentissage comme on l’aime : vrai, humain, technique… et surtout tourné vers le partage avec un grand passionné qui élève les jeunes talents avec une pédagogie rare. Bravo Babacar, et merci pour cette dose d’inspiration.",
+    quoteAuthor: 'Amath Niaye',
+    reportageUrl: 'https://www.facebook.com/reel/839786608793411',
+  },
+  {
+    slug: 'amelie-mbaye', title: 'Amélie Mbaye', order: 2,
+    excerpt: "Comédienne et productrice (Los Angeles · Paris · Dakar) — le jeu d’acteur.",
+    location: 'Université Assane Seck', participants: '180 étudiants', duration: '2 heures',
+    content: "**Amélie Mbaye** a partagé son expérience du jeu d’acteur, offrant aux étudiants des clés essentielles pour comprendre l’émotion, la présence et la vérité d’un personnage — un pont direct entre l’université et le monde professionnel du cinéma.\n\nÀ ce jour la seule actrice sénégalaise à intégrer Nollywood depuis la Californie, elle interprète **Ramatoulaye Fall** dans l’adaptation du roman de Mariama Bâ *« Une si longue lettre »*, classé n°1 en Afrique.",
+  },
+  {
+    slug: 'gora-seck', title: 'Dr Gora Seck', order: 3,
+    excerpt: 'Scénariste, réalisateur et metteur en scène de théâtre.',
+    location: 'Université Assane Seck', participants: '150 étudiants', duration: '2 heures',
+    content: "Entre échanges et conseils, les participants ont plongé au cœur de la master class animée par le **Dr Gora Seck**, scénariste, réalisateur et metteur en scène de théâtre.",
+  },
+];
+
+async function seedMasterclasses2025(strapi) {
+  const eds = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2025 }, pagination: { limit: 1 } });
+  const ed = eds && eds[0];
+  if (!ed) { strapi.log.warn('[mc-2025] pas d\'édition 2025'); return; }
+  // Retrait de l'entrée erronée « Oumar Diolo » (coach jeu d'acteur, pas une masterclasse).
+  const stray = await strapi.documents('api::masterclass.masterclass').findMany({ filters: { slug: 'oumar-diolo' }, pagination: { limit: 5 } });
+  let removed = 0;
+  for (const s of (stray || [])) { try { await strapi.documents('api::masterclass.masterclass').delete({ documentId: s.documentId }); removed++; } catch (e) { strapi.log.warn('[mc-2025] suppression ' + s.slug + ' : ' + e.message); } }
+  let created = 0, updated = 0;
+  for (const mc of MASTERCLASSES_2025) {
+    const data = { ...mc, edition: ed.documentId };
+    const found = await strapi.documents('api::masterclass.masterclass').findMany({ filters: { slug: mc.slug }, pagination: { limit: 1 } });
+    let doc = found && found[0];
+    try {
+      if (doc) { doc = await strapi.documents('api::masterclass.masterclass').update({ documentId: doc.documentId, data }); updated++; }
+      else { doc = await strapi.documents('api::masterclass.masterclass').create({ data }); created++; }
+      await strapi.documents('api::masterclass.masterclass').publish({ documentId: doc.documentId });
+    } catch (e) { strapi.log.warn('[mc-2025] ' + mc.slug + ' : ' + e.message); }
+  }
+  strapi.log.info(`[mc-2025] Masterclasses — créées:${created}, mises à jour:${updated}, retirées:${removed}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -439,6 +486,7 @@ module.exports = {
       await seed2025(strapi);
       await backfillDaySlugs(strapi);
       await recoverFilms2025(strapi);
+      await seedMasterclasses2025(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

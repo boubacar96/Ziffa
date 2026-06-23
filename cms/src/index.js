@@ -570,6 +570,35 @@ async function seedFormations2025(strapi) {
   strapi.log.info(`[formations-2025] Ateliers — créés:${created}, mis à jour:${updated}, retirés:${removed}.`);
 }
 
+// Palmarès officiel 2025 (source : rapport d'activités FOTTI) — 7 prix + 2 mentions.
+const PRIZES_2025 = [
+  { name: '1er Prix — Long métrage', winner: 'Demba — Mamadou Dia (Sénégal)', description: '700 000 FCFA', order: 1 },
+  { name: '2e Prix — Long métrage', winner: 'Mexico 86 — César Díaz', description: '500 000 FCFA', order: 2 },
+  { name: 'Mention spéciale — Long métrage', winner: 'Dans la peau — Pascal Tessaud (France)', description: '', order: 3 },
+  { name: '1er Prix — Court métrage', winner: 'Geej Amul Banxass (Sans Appui) — Khalifa Ba (Sénégal)', description: '500 000 FCFA', order: 4 },
+  { name: '2e Prix — Court métrage', winner: 'Domingo Familiar — Gerardo Del Razo', description: '300 000 FCFA', order: 5 },
+  { name: 'Mention spéciale — Court métrage', winner: 'Him — Ali Hayati (Iran)', description: '', order: 6 },
+  { name: 'Prix du Jury — Animation', winner: 'Prout — Marc-Henri Wajnberg (Belgique)', description: '500 000 FCFA', order: 7 },
+  { name: 'Prix du Public jeune — Animation', winner: 'Princesse Yennenga — Koné Abdoul Rahim Said Jr.', description: '', order: 8 },
+  { name: 'Prix d’Honneur', winner: 'Boubacar Touré Mandémory — photographe', description: '', order: 9 },
+];
+
+async function seedPrizes2025(strapi) {
+  const eds = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2025 }, pagination: { limit: 1 } });
+  const ed = eds && eds[0];
+  if (!ed) { strapi.log.warn('[prizes-2025] pas d\'édition 2025'); return; }
+  // Remplacement exact : retire les prix existants de l'édition 2025, puis recrée le palmarès officiel.
+  const existing = await strapi.documents('api::prize.prize').findMany({ filters: { edition: { documentId: ed.documentId } }, pagination: { limit: 100 } });
+  let removed = 0;
+  for (const p of (existing || [])) { try { await strapi.documents('api::prize.prize').delete({ documentId: p.documentId }); removed++; } catch (e) { strapi.log.warn('[prizes-2025] suppression : ' + e.message); } }
+  let created = 0;
+  for (const pr of PRIZES_2025) {
+    try { await strapi.documents('api::prize.prize').create({ data: { ...pr, edition: ed.documentId } }); created++; }
+    catch (e) { strapi.log.warn('[prizes-2025] ' + pr.name + ' : ' + e.message); }
+  }
+  strapi.log.info(`[prizes-2025] Palmarès — retirés:${removed}, créés:${created}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -588,6 +617,7 @@ module.exports = {
       await seedMasterclasses2025(strapi);
       await seedTeam2025(strapi);
       await seedFormations2025(strapi);
+      await seedPrizes2025(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

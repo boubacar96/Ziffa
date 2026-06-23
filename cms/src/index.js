@@ -591,12 +591,19 @@ async function seedPrizes2025(strapi) {
   const existing = await strapi.documents('api::prize.prize').findMany({ filters: { edition: { documentId: ed.documentId } }, pagination: { limit: 100 } });
   let removed = 0;
   for (const p of (existing || [])) { try { await strapi.documents('api::prize.prize').delete({ documentId: p.documentId }); removed++; } catch (e) { strapi.log.warn('[prizes-2025] suppression : ' + e.message); } }
-  let created = 0;
-  for (const pr of PRIZES_2025) {
-    try { await strapi.documents('api::prize.prize').create({ data: { ...pr, edition: ed.documentId } }); created++; }
-    catch (e) { strapi.log.warn('[prizes-2025] ' + pr.name + ' : ' + e.message); }
+  // Photos de cérémonie déjà dans la médiathèque (codes Facebook) — pré-remplissage DANS L'ORDRE
+  // du palmarès. Le client réajuste l'association photo↔prix dans l'admin.
+  let media = [];
+  try { media = await strapi.db.query('plugin::upload.file').findMany({ where: { name: { $contains: '86164' } }, orderBy: { name: 'asc' }, limit: 20 }); }
+  catch (e) { strapi.log.warn('[prizes-2025] médias : ' + e.message); }
+  let created = 0, withImg = 0;
+  for (let i = 0; i < PRIZES_2025.length; i++) {
+    const data = { ...PRIZES_2025[i], edition: ed.documentId };
+    if (media[i] && media[i].id) { data.image = media[i].id; withImg++; }
+    try { await strapi.documents('api::prize.prize').create({ data }); created++; }
+    catch (e) { strapi.log.warn('[prizes-2025] ' + PRIZES_2025[i].name + ' : ' + e.message); }
   }
-  strapi.log.info(`[prizes-2025] Palmarès — retirés:${removed}, créés:${created}.`);
+  strapi.log.info(`[prizes-2025] Palmarès — retirés:${removed}, créés:${created}, avec photo:${withImg}.`);
 }
 
 module.exports = {

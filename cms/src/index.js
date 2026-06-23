@@ -625,7 +625,7 @@ async function seedJury2025(strapi) {
   if (!ed) { strapi.log.warn('[jury-2025] pas d\'édition 2025'); return; }
   // Médias (portraits déjà uploadés) → id par nom de fichier
   let media = [];
-  try { media = await strapi.db.query('plugin::upload.file').findMany({ where: { name: { $contains: 'ortrait' } }, limit: 50 }); }
+  try { media = await strapi.db.query('plugin::upload.file').findMany({ where: { name: { $contains: 'ortrai' } }, limit: 50 }); }
   catch (e) { strapi.log.warn('[jury-2025] médias : ' + e.message); }
   const findMedia = (frag) => { if (!frag) return null; const m = media.find((f) => (f.name || '').toLowerCase().includes(frag.toLowerCase())); return m ? m.id : null; };
   // Remplacement exact du jury 2025

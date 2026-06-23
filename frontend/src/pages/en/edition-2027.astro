@@ -1,7 +1,4 @@
 ---
-import Base from '../../layouts/Base.astro';
-import UnderConstruction from '../../components/UnderConstruction.astro';
+// The 2027 edition is now handled by the dynamic template /editions/<year>.
+return Astro.redirect('/en/editions/2027', 301);
 ---
-<Base title="2027 Edition — ZIFFA" description="The ZIFFA 2027 edition is in the making: programme, awards, jury and masterclasses coming soon.">
-  <UnderConstruction id="edition-2027" eyebrow="2027 Edition · 17–20 Nov 2027" />
-</Base>

@@ -8,9 +8,6 @@ import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../lib/strapi.js';
 // donc la page reste toujours présentable. Dès qu'on saisit du contenu dans
 // le back-office (+ permissions Public), il remplace automatiquement le repli.
 // ===========================================================================
-const catLabel = { fiction: 'Fiction', documentaire: 'Documentaire', animation: 'Animation', 'court-metrage': 'Court-métrage' };
-const typeLabel = { projection: 'Projection', masterclass: 'Masterclass', rencontre: 'Rencontre', ceremonie: 'Cérémonie' };
-
 // --- Édition courante (pour le compte à rebours) ---
 const edRes = await fetchAPI('editions', { 'filters[isCurrent][$eq]': 'true', 'pagination[limit]': '1' });
 const edition = (edRes.data || [])[0] || null;
@@ -29,48 +26,6 @@ function toEmbed(url) {
 }
 const videoEmbed = toEmbed(edition?.videoUrl) || 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
 const teaserThumb = await getVimeoThumb(edition?.videoUrl || 'https://vimeo.com/1169196245/5c5f7be273');
-
-// --- Films à l'affiche ---
-const filmRes = await fetchAPI('films', { populate: 'poster', sort: 'year:desc', 'pagination[limit]': '6' });
-const cmsFilms = filmRes.data || [];
-const fallbackFilms = [
-  { title: 'Sous le Baobab', cat: 'Fiction', meta: 'Aïssatou Diop · Sénégal · 2025', poster: null },
-  { title: 'Voix de Casamance', cat: 'Documentaire', meta: 'Mamadou Ba · 88 min', poster: null },
-  { title: "L'Esprit du Fleuve", cat: 'Animation', meta: 'Studio Téranga · 2027', poster: null },
-  { title: 'Le Dernier Griot', cat: 'Fiction', meta: 'Fatou Sow · Mali', poster: null },
-  { title: 'Nuit à Ziguinchor', cat: 'Court-métrage', meta: 'O. Diédhiou · 18 min', poster: null },
-  { title: "Mémoires d'Afrique", cat: 'Documentaire', meta: 'Collectif Casamance', poster: null },
-];
-// Contenu CMS d'abord, complété par des placeholders pour ne jamais paraître vide.
-const films = [
-  ...cmsFilms.map((f) => ({
-    title: f.title,
-    cat: catLabel[f.category] || f.category || 'Film',
-    meta: [f.director, f.country, f.year].filter(Boolean).join(' · '),
-    poster: f.poster?.url ? mediaUrl(f.poster.url) : null,
-  })),
-  ...fallbackFilms,
-].slice(0, 6);
-
-// --- Programme (temps forts) ---
-const evRes = await fetchAPI('programme-events', { sort: 'day:asc', 'pagination[limit]': '4' });
-const cmsEvents = evRes.data || [];
-const fallbackEvents = [
-  { time: 'Mer 17', type: 'ceremonie', title: "Cérémonie d'ouverture & film inaugural", desc: "Le coup d'envoi du festival, en présence des invités.", place: 'Théâtre Aline Sitoé Diatta' },
-  { time: 'Jeu 18', type: 'projection', title: 'Projections en compétition', desc: 'Fictions, documentaires et animations de la sélection.', place: 'Salle Casamance' },
-  { time: 'Ven 19', type: 'masterclass', title: 'Masterclasses & rencontres pro', desc: 'Transmission avec les cinéastes invités.', place: 'Institut français' },
-  { time: 'Sam 20', type: 'ceremonie', title: 'Cérémonie de clôture & palmarès', desc: "Remise des prix de l'édition 2027.", place: 'Théâtre Aline Sitoé Diatta' },
-];
-const events = [
-  ...cmsEvents.map((e) => ({
-    time: e.startTime || (e.day ? `Jour ${e.day}` : '—'),
-    type: e.type || 'projection',
-    title: e.title,
-    desc: e.description || '',
-    place: e.location || '',
-  })),
-  ...fallbackEvents,
-].slice(0, 4);
 
 // --- Galerie / pellicule ---
 const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
@@ -108,7 +63,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 ---
 <Base
   title="ZIFFA 2027 — Ziguinchor International Film Festival & Animation"
-  description="Le rendez-vous du cinéma africain en Casamance — 12 au 15 novembre 2027."
+  description="Le rendez-vous du cinéma africain en Casamance — 17 au 20 novembre 2027."
 >
   <!-- ===== 1. HERO ===== -->
   <section class="hero">
@@ -139,7 +94,7 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         <span class="discipline-pill">Photographie</span>
       </div>
       <div class="hero-actions">
-        <a href="/edition-2027" class="btn-primary">Découvrir l'édition 2027 →</a>
+        <a href="/editions/2027" class="btn-primary">Découvrir l'édition 2027 →</a>
         <a href="/participer#inscription" class="btn-ghost">▶ Inscrire un film</a>
       </div>
     </div>
@@ -148,8 +103,14 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
   <!-- ===== 2. PROCHAINE ÉDITION ===== -->
   <section class="countdown-section">
     <div class="countdown-inner">
-      <div class="eyebrow"><span class="arrow">→</span> Prochaine édition · Ziguinchor</div>
+      <div class="eyebrow"><span class="arrow">→</span> Prochaine édition · 17–20 novembre 2027 · Ziguinchor</div>
       <h2 class="section-title">Rendez-vous en <span class="yellow">2027</span>.</h2>
+      <div class="countdown" id="countdown" data-target={festivalTarget}>
+        <div class="cd-box"><span class="cd-num" data-cd="d">—</span><span class="cd-label">jours</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd="h">—</span><span class="cd-label">heures</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd="m">—</span><span class="cd-label">minutes</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd="s">—</span><span class="cd-label">secondes</span></div>
+      </div>
     </div>
   </section>
 
@@ -163,39 +124,12 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
         <a href="/le-ziffa" class="nav-cta">Découvrir le festival ↗</a>
       </div>
       <div class="festival-stats">
-        <div class="fstat fstat-red"><div class="fstat-num" data-count="4"><span class="fstat-val">4</span><span class="fstat-suffix">j</span></div><div class="fstat-label">de festival</div></div>
-        <div class="fstat fstat-green"><div class="fstat-num" data-count="25"><span class="fstat-val">25</span></div><div class="fstat-label">films projetés</div></div>
-        <div class="fstat fstat-yellow"><div class="fstat-num" data-count="10"><span class="fstat-val">10</span><span class="fstat-suffix">+</span></div><div class="fstat-label">pays représentés</div></div>
+        <div class="fstat fstat-red"><div class="fstat-num" data-count="42"><span class="fstat-val">42</span></div><div class="fstat-label">films projetés</div></div>
+        <div class="fstat fstat-green"><div class="fstat-num" data-count="3350"><span class="fstat-val">3350</span></div><div class="fstat-label">festivaliers</div></div>
+        <div class="fstat fstat-yellow"><div class="fstat-num" data-count="419"><span class="fstat-val">419</span></div><div class="fstat-label">talents formés</div></div>
       </div>
     </div>
   </section>
-
-  {/* ===== 4. À L'AFFICHE — masqué en attendant la sélection officielle =====
-  <section class="section" style="padding-top:0;">
-    <div class="section-head">
-      <div>
-        <div class="eyebrow"><span class="arrow">→</span> Sélection officielle</div>
-        <h2 class="section-title">À l'<span class="italic">affiche</span>.</h2>
-      </div>
-      <a href="/edition-2027" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Toute la sélection →</a>
-    </div>
-    <div class="film-grid">
-      {films.map((f) => (
-        <article class="film-card">
-          <div class="film-poster" style={f.poster ? `background-image:url('${f.poster}');background-size:cover;background-position:center;` : ''}>
-            <span class="film-cat">{f.cat}</span>
-          </div>
-          <div class="film-body">
-            <h3 class="film-title">{f.title}</h3>
-            <div class="film-meta">{f.meta}</div>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
-  */}
-
-  {/* Programme masqué sur l'accueil — sera réactivé quand le vrai programme sera dans Strapi */}
 
   <!-- ===== 6. TEASER OFFICIEL ===== -->
   <section class="teaser-section">
@@ -270,15 +204,53 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
       <div class="eyebrow" style="justify-content:center;"><span class="arrow">→</span> Newsletter</div>
       <h2>Ne ratez <span class="red">rien</span><br />du <span class="italic">festival</span>.</h2>
       <p>Programmes, appels à films, annonces de jurys, coulisses : recevez l'actualité du ZIFFA dans votre boîte mail.</p>
-      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Merci pour votre inscription !'); this.reset();">
-        <input type="email" placeholder="votre@email.com" required />
-        <button type="submit">S'inscrire ↗</button>
+      <div id="nl-alert" class="form-alert"></div>
+      <form id="nl-form" class="newsletter-form" novalidate>
+        <div class="hp"><label>Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <input type="hidden" name="type" value="newsletter" />
+        <input type="email" name="email" placeholder="votre@email.com" required />
+        <button type="submit" id="nl-submit">S'inscrire ↗</button>
       </form>
     </div>
   </section>
 </Base>
 
 <script>
+  // Compte à rebours vers la prochaine édition
+  const cd = document.getElementById('countdown');
+  if (cd) {
+    const target = new Date(cd.dataset.target).getTime();
+    const set = (k, v) => { const el = cd.querySelector('[data-cd="' + k + '"]'); if (el) el.textContent = String(v).padStart(2, '0'); };
+    const tick = () => {
+      const diff = target - Date.now();
+      if (isNaN(target) || diff <= 0) { set('d', 0); set('h', 0); set('m', 0); set('s', 0); return; }
+      const s = Math.floor(diff / 1000);
+      set('d', Math.floor(s / 86400)); set('h', Math.floor((s % 86400) / 3600));
+      set('m', Math.floor((s % 3600) / 60)); set('s', s % 60);
+    };
+    tick(); setInterval(tick, 1000);
+  }
+
+  // Newsletter (accueil) → même backend que la page Contact
+  const nlForm = document.getElementById('nl-form');
+  if (nlForm) {
+    const alertBox = document.getElementById('nl-alert');
+    const submitBtn = document.getElementById('nl-submit');
+    const show = (type, msg) => { alertBox.className = 'form-alert show ' + type; alertBox.textContent = msg; };
+    nlForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!nlForm.checkValidity()) { show('err', 'Merci d’indiquer un email valide.'); return; }
+      submitBtn.disabled = true; const orig = submitBtn.textContent; submitBtn.textContent = 'Envoi…';
+      try {
+        const res = await fetch('/api/contact-submission', { method: 'POST', body: new FormData(nlForm) });
+        const data = await res.json();
+        if (data.ok) { show('ok', '✅ Merci ! Votre inscription est enregistrée.'); nlForm.reset(); }
+        else { show('err', '⚠️ ' + (data.error || 'Une erreur est survenue.')); }
+      } catch (err) { show('err', '⚠️ Échec de l’envoi. Vérifiez votre connexion.'); }
+      finally { submitBtn.disabled = false; submitBtn.textContent = orig; }
+    });
+  }
+
   const tp = document.getElementById('teaser-player');
   if (tp) {
     const play = () => {

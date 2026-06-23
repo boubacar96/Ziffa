@@ -643,6 +643,24 @@ async function seedJury2025(strapi) {
   strapi.log.info(`[jury-2025] Jury — retirés:${removed}, créés:${created}, avec photo:${withImg}.`);
 }
 
+// Prochaine édition : 2027 (marquée « en cours » pour le compte à rebours de l'accueil).
+async function seedEdition2027(strapi) {
+  const data = { year: 2027, number: 2, title: 'ZIFFA 2027', tagline: '2ᵉ édition · Ziguinchor, Casamance', dateStart: '2027-11-17', dateEnd: '2027-11-20', location: 'Ziguinchor, Casamance', isCurrent: true };
+  const found = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2027 }, pagination: { limit: 1 } });
+  let doc;
+  try {
+    if (found && found[0]) doc = await strapi.documents('api::edition.edition').update({ documentId: found[0].documentId, data });
+    else doc = await strapi.documents('api::edition.edition').create({ data });
+    try { await strapi.documents('api::edition.edition').publish({ documentId: doc.documentId }); } catch (e) {}
+  } catch (e) { strapi.log.warn('[edition-2027] ' + e.message); }
+  // L'édition 2025 ne doit plus être « en cours »
+  const ed25 = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2025 }, pagination: { limit: 1 } });
+  if (ed25 && ed25[0] && ed25[0].isCurrent) {
+    try { await strapi.documents('api::edition.edition').update({ documentId: ed25[0].documentId, data: { isCurrent: false } }); await strapi.documents('api::edition.edition').publish({ documentId: ed25[0].documentId }); } catch (e) {}
+  }
+  strapi.log.info('[edition-2027] créée/mise à jour (isCurrent=true).');
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -663,6 +681,7 @@ module.exports = {
       await seedFormations2025(strapi);
       await seedPrizes2025(strapi);
       await seedJury2025(strapi);
+      await seedEdition2027(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

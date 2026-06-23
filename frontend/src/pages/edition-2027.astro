@@ -1,7 +1,4 @@
 ---
-import Base from '../layouts/Base.astro';
-import UnderConstruction from '../components/UnderConstruction.astro';
+// L'édition 2027 est désormais gérée par le gabarit dynamique /editions/<année>.
+return Astro.redirect('/editions/2027', 301);
 ---
-<Base title="Édition 2027 — ZIFFA" description="L'édition 2027 du ZIFFA se prépare : programme, prix, jury et masterclasses à venir.">
-  <UnderConstruction id="edition-2027" eyebrow="Édition 2027 · 17–20 Nov 2027" />
-</Base>

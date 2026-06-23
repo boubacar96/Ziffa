@@ -606,6 +606,43 @@ async function seedPrizes2025(strapi) {
   strapi.log.info(`[prizes-2025] Palmarès — retirés:${removed}, créés:${created}, avec photo:${withImg}.`);
 }
 
+// Jury 2025 (source : rapport FOTTI) — 6 membres fiction + 2 animation.
+// photoName = nom du fichier déjà présent dans la médiathèque (relié par id).
+const JURY_2025 = [
+  { name: 'Alceny Saïdou Barry', role: 'Président du jury · Critique (Burkina Faso)', order: 1, bio: "Critique de cinéma (L'Observateur Paalga), enseignant, président du jury du FESPACO 2024." },
+  { name: 'Fatou Kandé Senghor', role: 'Jury fiction · Cinéaste (Sénégal)', order: 2, bio: 'Photographe, cinéaste et artiste visuelle sénégalaise, fondatrice de Waru Studio.', photoName: 'FATOU KANDE' },
+  { name: 'Filipa Cardoso', role: 'Jury fiction · Réalisatrice (Belgique)', order: 3, bio: 'Réalisatrice et monteuse installée à Bruxelles ; documentaires primés.', photoName: 'Filipa' },
+  { name: 'Jean-François Metz', role: 'Jury fiction · Chef opérateur (Belgique)', order: 4, bio: 'Chef opérateur (IAD) ; collaborations primées (César, Magritte, présélection Oscars).', photoName: 'JF Metz' },
+  { name: 'Mervat Omar', role: 'Jury fiction', order: 5, bio: '', photoName: 'Mervat' },
+  { name: 'Dr Gora Seck', role: 'Jury fiction · Réalisateur (Sénégal)', order: 6, bio: 'Scénariste, réalisateur et metteur en scène de théâtre.', photoName: 'Gora Seck' },
+  { name: 'Amath Ndiaye', role: 'Jury animation · Réalisateur (Sénégal)', order: 7, bio: "Réalisateur, fondateur d'Obelus Film & Animation Studio." },
+  { name: 'Patrick Talercio', role: 'Jury animation · Réalisateur (Belgique)', order: 8, bio: 'Réalisateur de films stop-motion, co-directeur de Smala asbl.' },
+];
+
+async function seedJury2025(strapi) {
+  const eds = await strapi.documents('api::edition.edition').findMany({ filters: { year: 2025 }, pagination: { limit: 1 } });
+  const ed = eds && eds[0];
+  if (!ed) { strapi.log.warn('[jury-2025] pas d\'édition 2025'); return; }
+  // Médias (portraits déjà uploadés) → id par nom de fichier
+  let media = [];
+  try { media = await strapi.db.query('plugin::upload.file').findMany({ where: { name: { $contains: 'ortrait' } }, limit: 50 }); }
+  catch (e) { strapi.log.warn('[jury-2025] médias : ' + e.message); }
+  const findMedia = (frag) => { if (!frag) return null; const m = media.find((f) => (f.name || '').toLowerCase().includes(frag.toLowerCase())); return m ? m.id : null; };
+  // Remplacement exact du jury 2025
+  const existing = await strapi.documents('api::person.person').findMany({ filters: { type: 'jury', edition: { documentId: ed.documentId } }, pagination: { limit: 100 } });
+  let removed = 0;
+  for (const p of (existing || [])) { try { await strapi.documents('api::person.person').delete({ documentId: p.documentId }); removed++; } catch (e) {} }
+  let created = 0, withImg = 0;
+  for (const j of JURY_2025) {
+    const data = { name: j.name, role: j.role || null, bio: j.bio || null, type: 'jury', order: j.order || 0, edition: ed.documentId };
+    const mid = findMedia(j.photoName);
+    if (mid) { data.photo = mid; withImg++; }
+    try { await strapi.documents('api::person.person').create({ data }); created++; }
+    catch (e) { strapi.log.warn('[jury-2025] ' + j.name + ' : ' + e.message); }
+  }
+  strapi.log.info(`[jury-2025] Jury — retirés:${removed}, créés:${created}, avec photo:${withImg}.`);
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -625,6 +662,7 @@ module.exports = {
       await seedTeam2025(strapi);
       await seedFormations2025(strapi);
       await seedPrizes2025(strapi);
+      await seedJury2025(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

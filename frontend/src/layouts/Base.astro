@@ -184,6 +184,21 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
         img.style.cursor = 'zoom-in';
         img.addEventListener('click', () => openAt(img));
       });
+
+      // Zoom des photos de prix (image en fond CSS → URL lue depuis data-zoom)
+      const openZoom = (src, cap) => {
+        imgs = [{ currentSrc: src, src, getAttribute: (a) => (a === 'alt' ? (cap || '') : '') }];
+        idx = 0; render(); lb.classList.add('open'); document.body.style.overflow = 'hidden';
+        lbLastFocus = document.activeElement; closeBtn.focus();
+      };
+      document.querySelectorAll('.prize-photo[data-zoom]').forEach((el) => {
+        el.style.cursor = 'zoom-in';
+        el.setAttribute('role', 'button');
+        el.setAttribute('tabindex', '0');
+        const fire = () => openZoom(el.dataset.zoom, el.dataset.caption || '');
+        el.addEventListener('click', fire);
+        el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fire(); } });
+      });
     })();
   </script>
 </body>

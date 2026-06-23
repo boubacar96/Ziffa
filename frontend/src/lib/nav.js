@@ -7,8 +7,8 @@ export const NAV = [
   {
     key: 'nav.leziffa', href: '/le-ziffa', dd: 'nav.dd.decouvrir',
     items: [
-      { key: 'nav.histoire', href: '/le-ziffa#histoire' },
-      { key: 'nav.valeurs', href: '/le-ziffa#valeurs' },
+      { label: { fr: 'Présentation', en: 'Overview' }, href: '/le-ziffa#histoire' },
+      { label: { fr: 'Objectifs', en: 'Goals' }, href: '/le-ziffa#valeurs' },
       { key: 'nav.equipe', href: '/le-ziffa#equipe' },
       { key: 'nav.presse', href: '/le-ziffa#presse' },
       { key: 'nav.partenaires', href: '/le-ziffa#partenaires' },

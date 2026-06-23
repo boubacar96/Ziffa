@@ -12,8 +12,6 @@ const fallbackTeam = [
   { ini: 'SB', name: 'Selly Ba', role: 'Sponsors & partnerships', bio: '', photo: null, featured: false },
 ];
 const team = cmsTeam.length ? cmsTeam.map(mapPerson) : fallbackTeam;
-const founder = team.find((m) => m.featured) || null;
-const others = team.filter((m) => m !== founder);
 
 const partRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
 const fallbackPartners = [
@@ -48,13 +46,11 @@ const objectifs = [
   <section class="section" id="histoire">
     <div class="section-head">
       <div><div class="eyebrow"><span class="arrow">→</span> Festival overview</div><h2 class="section-title">About the<br /><span class="red">festival</span>.</h2></div>
-      <a href="#" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Official document ↓</a>
     </div>
-    <p class="lead" style="margin-bottom:36px;">Discover the world of ZIFFA through our official presentation document.</p>
     <div class="presentation-editorial" style="max-width:880px;">
-      <p>This film festival aims to shine a light on the Ziguinchor region through a <strong>pan-African and international</strong> artistic programme, while celebrating cultural diversity, youth creativity, and the potential of southern Senegal in the cultural and creative industries.</p>
-      <p>Special attention is given to <strong>youth</strong>, with a dedicated programme including a 12-day stop-motion workshop, storytelling sessions and special screenings.</p>
-      <p>Before the festival kicks off, get ready for <strong>twelve days of intensive workshops</strong> open to professionals and young people alike!</p>
+      <p>ZIFFA was born from a simple observation: of the dozen-plus film festivals in Senegal, most take place in Dakar and <strong>none in Casamance</strong>. Launched in <strong>November 2025 in Ziguinchor</strong>, it shines a light on the region through a <strong>pan-African and international</strong> programme, and celebrates youth creativity and the potential of southern Senegal.</p>
+      <p>The festival extends the work of the <strong>FOTTI Cultures</strong> association, whose DNA has been film training for nearly ten years. From 2020 to 2024, its Film Academy trained <strong>120 young people from 10 regions</strong> of Senegal (96 hours of training across Ziguinchor, Saint-Louis, Dakar, Lac Rose and Toubacouta).</p>
+      <p>Each edition combines screenings, masterclasses and <strong>training residencies</strong>, with a youth strand (animation workshops, children's screenings). Twelve days of intensive workshops, open to professionals and young people alike, precede the festival.</p>
     </div>
   </section>
 
@@ -121,7 +117,7 @@ const objectifs = [
         <div class="archive-head archive-head--past"><span class="archive-num">— Edition 01</span><span class="archive-year">2025</span></div>
         <div class="archive-body"><p>Pictures, prize list and programme of the first edition.</p><span class="archive-link">Relive 2025 ↗</span></div>
       </a>
-      <a class="archive-card" href="/en/edition-2027">
+      <a class="archive-card" href="/en/editions/2027">
         <div class="archive-head archive-head--next"><span class="archive-num">— Next edition</span><span class="archive-year">2027</span></div>
         <div class="archive-body"><p>Programme, juries, awards and masterclasses to come.</p><span class="archive-link">Discover 2027 ↗</span></div>
       </a>

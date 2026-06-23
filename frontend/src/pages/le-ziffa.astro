@@ -13,8 +13,6 @@ const fallbackTeam = [
   { ini: 'SB', name: 'Selly Ba', role: 'Sponsors & partenariats', bio: '', photo: null, featured: false },
 ];
 const team = cmsTeam.length ? cmsTeam.map(mapPerson) : fallbackTeam;
-const founder = team.find((m) => m.featured) || null;
-const others = team.filter((m) => m !== founder);
 
 // Partenaires (Strapi `partner`) avec repli.
 const partRes = await fetchAPI('partners', { populate: 'logo', sort: 'order:asc' });
@@ -54,14 +52,12 @@ const objectifs = [
         <div class="eyebrow"><span class="arrow">→</span> Présentation du festival</div>
         <h2 class="section-title">Présentation<br />du <span class="red">festival</span>.</h2>
       </div>
-      <a href="#" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Document officiel ↓</a>
     </div>
-    <p class="lead" style="margin-bottom:36px;">Découvrez l'univers du ZIFFA à travers notre document de présentation officiel.</p>
 
     <div class="presentation-editorial" style="max-width:880px;">
-      <p>Ce festival de cinéma ambitionne de faire rayonner la région de Ziguinchor à travers une programmation artistique <strong>panafricaine et internationale</strong>, tout en valorisant la diversité culturelle, la créativité des jeunes, et le potentiel du Sud du Sénégal dans le domaine des industries culturelles et créatives.</p>
-      <p>Une attention particulière sera portée à la <strong>jeunesse</strong>, avec une programmation dédiée incluant un atelier de stop motion de 12 jours, des séances de conte, ainsi que des projections spéciales.</p>
-      <p>Avant le coup d'envoi du festival, place à <strong>douze jours d'ateliers intensifs</strong> ouverts aux professionnels et aux jeunes !</p>
+      <p>Le ZIFFA est né d'un constat : sur la quinzaine de festivals de cinéma que compte le Sénégal, la grande majorité se tiennent à Dakar et <strong>aucun en Casamance</strong>. Lancé en <strong>novembre 2025 à Ziguinchor</strong>, il fait rayonner la région à travers une programmation <strong>panafricaine et internationale</strong>, et valorise la créativité des jeunes et le potentiel du Sud du pays.</p>
+      <p>Le festival prolonge l'action de l'association <strong>FOTTI Cultures</strong>, dont la formation au cinéma est l'ADN depuis près de dix ans. De 2020 à 2024, son Académie Cinéma a formé <strong>120 jeunes issus de 10 régions</strong> du Sénégal (96 heures de formation à Ziguinchor, Saint-Louis, Dakar, Lac Rose et Toubacouta).</p>
+      <p>Chaque édition associe projections, masterclasses et <strong>résidences-formation</strong>, avec un volet jeunesse (ateliers d'animation, séances ciné-enfants). Douze jours d'ateliers intensifs, ouverts aux professionnels comme aux jeunes, précèdent le festival.</p>
     </div>
   </section>
 
@@ -143,7 +139,7 @@ const objectifs = [
         <div class="archive-head archive-head--past"><span class="archive-num">— Édition 01</span><span class="archive-year">2025</span></div>
         <div class="archive-body"><p>Retour en images, palmarès et programme de la première édition.</p><span class="archive-link">Revivre 2025 ↗</span></div>
       </a>
-      <a class="archive-card" href="/edition-2027">
+      <a class="archive-card" href="/editions/2027">
         <div class="archive-head archive-head--next"><span class="archive-num">— Prochaine édition</span><span class="archive-year">2027</span></div>
         <div class="archive-body"><p>Programme, jurys, prix et masterclasses à venir.</p><span class="archive-link">Découvrir 2027 ↗</span></div>
       </a>

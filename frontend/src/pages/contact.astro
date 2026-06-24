@@ -4,9 +4,9 @@ import Socials from '../components/Socials.astro';
 import { getGlobal } from '../lib/strapi.js';
 const g = await getGlobal();
 const email = g.contactEmail || 'festival@ziffa.sn';
-const phone = g.phone || 'XXXXXXXX';
+const phone = g.phone || '';
 const address = g.address || 'Ziguinchor, Casamance — Sénégal';
-const socialLinks = { facebook: g.facebook || '#', instagram: g.instagram || '#', linkedin: g.linkedin || '#', youtube: g.youtube || '#' };
+const socialLinks = { facebook: g.facebook, instagram: g.instagram, tiktok: g.tiktok, linkedin: g.linkedin, youtube: g.youtube };
 ---
 <Base title="Contact | ZIFFA" description="Contactez l'équipe du ZIFFA : programmation, presse, partenariats, inscriptions. Email, téléphone et newsletter.">
   <header class="page-hero">
@@ -26,11 +26,13 @@ const socialLinks = { facebook: g.facebook || '#', instagram: g.instagram || '#'
         <span class="ct-k">Email</span>
         <span class="ct-v">{email}</span>
       </a>
-      <div class="contact-tile ct-green">
-        <span class="ct-ic">📞</span>
-        <span class="ct-k">Téléphone</span>
-        <span class="ct-v">{phone}</span>
-      </div>
+      {phone && (
+        <div class="contact-tile ct-green">
+          <span class="ct-ic">📞</span>
+          <span class="ct-k">Téléphone</span>
+          <span class="ct-v">{phone}</span>
+        </div>
+      )}
       <div class="contact-tile ct-yellow">
         <span class="ct-ic">📍</span>
         <span class="ct-k">Adresse</span>

@@ -45,6 +45,9 @@
     "youtube": {
       "type": "string"
     },
+    "tiktok": {
+      "type": "string"
+    },
     "currentEditionLabel": {
       "type": "string"
     }

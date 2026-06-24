@@ -290,6 +290,7 @@ const FR_LABELS = {
   'api::femme-lumiere.femme-lumiere': { title: 'Titre', slug: 'Slug (auto)', excerpt: 'Résumé', content: 'Contenu', cover: 'Couverture', gallery: 'Galerie', videos: 'Vidéos', order: "Ordre d'affichage" },
   'api::press-resource.press-resource': { title: 'Titre', description: 'Description', category: 'Catégorie (dossier / logos / photos)', files: 'Fichiers', order: "Ordre d'affichage" },
   'api::edition.edition': { year: 'Année', number: "Numéro d'édition", title: 'Titre', tagline: 'Accroche', dateStart: 'Date de début', dateEnd: 'Date de fin', submissionDeadline: "Date limite d'inscription des films", location: 'Lieu', isCurrent: 'Édition en cours ?', videoUrl: 'Lien vidéo (teaser)', poster: 'Affiche', programmePdf: 'PDF du programme' },
+  'api::global.global': { siteName: 'Nom du site', tagline: 'Accroche', contactEmail: 'Email de contact', pressEmail: 'Email presse', partnerEmail: 'Email partenariats', phone: 'Téléphone', address: 'Adresse', facebook: 'Facebook (lien)', instagram: 'Instagram (lien)', linkedin: 'LinkedIn (lien)', youtube: 'YouTube (lien)', tiktok: 'TikTok (lien)', currentEditionLabel: "Libellé de l'édition en cours" },
   'api::programme-day.programme-day': { label: 'Libellé du jour', subtitle: 'Sous-titre', date: 'Date', slug: 'Slug (auto)', order: "Ordre d'affichage", edition: 'Édition', activities: 'Activités' },
   'api::programme-event.programme-event': { title: 'Titre', description: 'Description', startTime: 'Heure de début', timeEnd: 'Heure de fin', type: 'Type de séance', location: 'Lieu', day: 'Jour (n° pour le tri)', date: 'Date', order: "Ordre d'affichage", filmsList: 'Films de la séance', programmeDay: 'Jour de programme', edition: 'Édition' },
 };
@@ -661,6 +662,36 @@ async function seedEdition2027(strapi) {
   strapi.log.info('[edition-2027] créée/mise à jour (isCurrent=true).');
 }
 
+// Paramètres du site (single type « global ») : crée l'entrée + réseaux réels.
+// Ne touche PAS aux champs déjà renseignés (préserve les saisies du client).
+async function seedGlobal(strapi) {
+  const desired = {
+    siteName: 'ZIFFA',
+    tagline: 'Ziguinchor International Film Festival & Animation',
+    contactEmail: 'festival@ziffa.sn',
+    address: 'Ziguinchor, Casamance — Sénégal',
+    facebook: 'https://www.facebook.com/fotticulturesenegal',
+    instagram: 'https://www.instagram.com/ziffafestival',
+    tiktok: 'https://www.tiktok.com/@ziffa.festival',
+    currentEditionLabel: '2ᵉ édition · 17–20 novembre 2027',
+  };
+  try {
+    const arr = await strapi.documents('api::global.global').findMany({ pagination: { limit: 1 } });
+    const existing = arr && arr[0];
+    if (!existing) {
+      await strapi.documents('api::global.global').create({ data: desired });
+      strapi.log.info('[global] entrée créée (réseaux + email + adresse).');
+    } else {
+      const patch = {};
+      for (const k of Object.keys(desired)) { if (!existing[k]) patch[k] = desired[k]; }
+      if (Object.keys(patch).length) {
+        await strapi.documents('api::global.global').update({ documentId: existing.documentId, data: patch });
+      }
+      strapi.log.info('[global] champs vides complétés (' + Object.keys(patch).join(', ') + ').');
+    }
+  } catch (e) { strapi.log.warn('[global] ' + e.message); }
+}
+
 module.exports = {
   register(/* { strapi } */) {},
 
@@ -682,6 +713,7 @@ module.exports = {
       await seedPrizes2025(strapi);
       await seedJury2025(strapi);
       await seedEdition2027(strapi);
+      await seedGlobal(strapi);
       await setFrenchLabels(strapi);
       strapi.log.info(`[seed] Permissions + contenu en place (prod=${isProd}).`);
     } catch (err) {

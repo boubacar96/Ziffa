@@ -17,7 +17,15 @@ const femmes = cms.length ? cms.filter((f) => f.slug) : fallbackFemmes('en');
     </div>
   </header>
 
-  <section class="section">
+  <section class="section" id="panel">
+    <div class="presentation-editorial" style="max-width:880px;">
+      <p>Among ZIFFA's highlights, the <strong>“Women in the Spotlight”</strong> panel brings together inspiring voices to discuss the place of women in cinema: their challenges, ambitions and impact on creation.</p>
+      <p>A space for listening, sharing and sisterhood, run in partnership with the <strong>Platform of Women for Peace in Casamance</strong>.</p>
+    </div>
+  </section>
+
+  <section class="section" id="portraits">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> They make cinema</div><h2 class="section-title">The <span class="italic">portraits</span>.</h2></div></div>
     <div class="formations-grid">
       {femmes.map((f) => (
         <a class="formation-card" href={`/en/femmes-lumiere/${f.slug}`}>

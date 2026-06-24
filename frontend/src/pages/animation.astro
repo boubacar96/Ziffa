@@ -1,7 +1,53 @@
 ---
 import Base from '../layouts/Base.astro';
-import UnderConstruction from '../components/UnderConstruction.astro';
+import { toVideoEmbed } from '../lib/formations.js';
+
+const films = [
+  { title: 'Fanikendo', url: 'https://vimeo.com/1154101539' },
+  { title: 'Aïcha', url: 'https://vimeo.com/1154100782' },
+];
 ---
-<Base title="Animation — ZIFFA" description="La section Animation du ZIFFA (films d'animation, ateliers, ciné-enfants) arrive bientôt.">
-  <UnderConstruction id="animation" eyebrow="À l'année · Animation" />
+<Base title="Animation — ZIFFA" description="Le ZIFFA met le film d'animation à l'honneur : programmation jeune public, Ciné-Enfants et films réalisés en atelier (stop-motion).">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; <a href="/a-lannee">À l'année</a> &nbsp;/&nbsp; Animation</div>
+      <div class="eyebrow"><span class="arrow">→</span> À l'année · Animation</div>
+      <h1>L'<span class="yellow">animation</span>.</h1>
+      <p>Le ZIFFA met le film d'animation à l'honneur et ouvre les jeunes spectateurs à des récits diversifiés.</p>
+    </div>
+  </header>
+
+  <section class="section" id="presentation">
+    <div class="presentation-editorial" style="max-width:880px;">
+      <p>La programmation animation a réuni <strong>11 films</strong> lors de l'édition 2025, avec une mise en valeur des récits africains et des écritures singulières — souvent hors du champ des plateformes de streaming.</p>
+      <p>Chaque projection s'accompagne d'un temps d'animation et d'échange, en partenariat avec le <strong>Centre Culturel Régional de Ziguinchor</strong> et les établissements scolaires.</p>
+    </div>
+  </section>
+
+  <section class="section" id="cine-enfants">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Jeune public</div><h2 class="section-title">Le <span class="red">Ciné-Enfants</span>.</h2></div></div>
+    <div class="presentation-editorial" style="max-width:880px;margin-bottom:30px;">
+      <p>Un ciné-club éducatif et joyeux, animé par l'équipe du festival, autour de films destinés aux enfants. En 2025, deux séances (les 12 et 13 novembre) ont rassemblé <strong>600 jeunes spectateurs</strong> au Centre Culturel Régional, dont une projection du film <strong><em>Sirocco et le Royaume des Courants d'air</em></strong> de Benoît Chieux.</p>
+    </div>
+    <div class="objectifs-grid">
+      <div class="objectif-card objectif-card--filled oc-red"><div class="objectif-num">— Public</div><h3>600 enfants</h3><p>Sur deux séances dédiées (8–12 ans).</p></div>
+      <div class="objectif-card objectif-card--filled oc-green"><div class="objectif-num">— Lieu</div><h3>Centre Culturel Régional</h3><p>Projections et ateliers pour le jeune public.</p></div>
+      <div class="objectif-card objectif-card--filled oc-yellow"><div class="objectif-num">— Partenaire</div><h3>Arts for Kids</h3><p>Médiation et sélection des participants.</p></div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="section" id="films-atelier">
+    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Réalisés au festival</div><h2 class="section-title">Les <span class="italic">films d'atelier</span>.</h2></div><a href="/formations/stop-motion" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">L'atelier stop-motion →</a></div>
+    <p class="lead" style="max-width:760px;margin-bottom:24px;">Deux films d'animation réalisés image par image par les jeunes de la résidence stop-motion :</p>
+    <div class="formation-videos">
+      {films.map((f) => (
+        <div class="formation-video">
+          <div class="video-wrapper"><iframe src={toVideoEmbed(f.url)} title={f.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" style="width:100%;height:100%;border:0;display:block;"></iframe></div>
+          <div class="formation-video-title">{f.title}</div>
+        </div>
+      ))}
+    </div>
+  </section>
 </Base>

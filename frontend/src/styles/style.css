@@ -4187,10 +4187,10 @@
   .fw-scroller { position: relative; }
   .film-wall--row {
     flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 18px;
-    scroll-snap-type: x proximity; padding: 4px 2px 18px; scrollbar-width: thin;
+    scroll-snap-type: x proximity; padding: 4px 2px 8px;
+    scrollbar-width: none; -ms-overflow-style: none;
   }
-  .film-wall--row::-webkit-scrollbar { height: 8px; }
-  .film-wall--row::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+  .film-wall--row::-webkit-scrollbar { display: none; }
   .film-wall--row .fw-card { flex: 0 0 190px; max-width: 190px; scroll-snap-align: start; }
   .fw-arrow {
     position: absolute; top: 42%; transform: translateY(-50%); z-index: 3;
@@ -4207,10 +4207,10 @@
   /* Équipe en rail horizontal (mode carrousel) */
   .team-grid--row {
     flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start;
-    scroll-snap-type: x proximity; padding: 4px 2px 18px; scrollbar-width: thin;
+    scroll-snap-type: x proximity; padding: 4px 2px 8px;
+    scrollbar-width: none; -ms-overflow-style: none;
   }
-  .team-grid--row::-webkit-scrollbar { height: 8px; }
-  .team-grid--row::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+  .team-grid--row::-webkit-scrollbar { display: none; }
   .team-grid--row > * { scroll-snap-align: start; }
 
   /* ===== Carte interactive « Venir au festival » (Leaflet sur-mesure) ===== */

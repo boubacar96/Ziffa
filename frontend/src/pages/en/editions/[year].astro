@@ -78,7 +78,7 @@ const title = ed ? (ed.title || `${year} edition`) : 'Edition not found';
 
       {films.length > 0 && (
         <section class="section" id="selection">
-          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Official selection</div><h2 class="section-title">The {year} <span class="red">films</span>.</h2></div><a href={`/en/films/${year}`} class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">See all ({films.length}) →</a></div>
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Official selection</div><h2 class="section-title">The {year} <span class="red">films</span>.</h2></div><a href={`/en/films/${year}`} class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);align-self:flex-start;">See all ({films.length}) →</a></div>
           <FilmWall films={films} lang="en" layout="row" />
         </section>
       )}

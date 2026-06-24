@@ -137,13 +137,17 @@ const title = ed ? (ed.title || `Édition ${year}`) : 'Édition introuvable';
       {jury.length > 0 && (
         <section class="section" id="jury">
           <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Le jury {year}</div><h2 class="section-title">Le <span class="italic">jury</span>.</h2></div></div>
-          <div class="team-grid">
-            {jury.map((j) => (
-              <button type="button" class="team-portrait js-person" data-name={j.name} data-role={j.role} data-bio={j.bio} data-photo={j.photo || ''} data-ini={j.ini}>
-                <div class="team-photo" style={j.photo ? `background-image:url('${j.photo}')` : ''}>{j.photo ? '' : <span class="team-ini">{j.ini}</span>}</div>
-                <div class="team-info"><div class="team-name">{j.name}</div><div class="team-role">{j.role}</div></div>
-              </button>
-            ))}
+          <div class="fw-scroller">
+            <button type="button" class="fw-arrow fw-prev" aria-label="Précédent">‹</button>
+            <div class="team-grid team-grid--row" data-rail>
+              {jury.map((j) => (
+                <button type="button" class="team-portrait js-person" data-name={j.name} data-role={j.role} data-bio={j.bio} data-photo={j.photo || ''} data-ini={j.ini}>
+                  <div class="team-photo" style={j.photo ? `background-image:url('${j.photo}')` : ''}>{j.photo ? '' : <span class="team-ini">{j.ini}</span>}</div>
+                  <div class="team-info"><div class="team-name">{j.name}</div><div class="team-role">{j.role}</div></div>
+                </button>
+              ))}
+            </div>
+            <button type="button" class="fw-arrow fw-next" aria-label="Suivant">›</button>
           </div>
         </section>
       )}

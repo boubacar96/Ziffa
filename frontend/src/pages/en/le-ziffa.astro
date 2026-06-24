@@ -74,13 +74,17 @@ const objectifs = [
   <section class="section" id="equipe">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The people behind the festival</div><h2 class="section-title">The <span class="italic">team</span>.</h2></div></div>
 
-    <div class="team-grid">
-      {team.map((m) => (
-        <button type="button" class={`team-portrait js-person ${m.featured ? 'team-portrait--focus' : ''}`} data-name={m.name} data-role={m.role} data-bio={m.bio} data-photo={m.photo || ''} data-ini={m.ini}>
-          <div class="team-photo" style={m.photo ? `background-image:url('${m.photo}')` : ''}>{m.photo ? '' : <span class="team-ini">{m.ini}</span>}{m.featured && <span class="team-badge">★ Founder</span>}</div>
-          <div class="team-info"><div class="team-name">{m.name}</div><div class="team-role">{m.role}</div></div>
-        </button>
-      ))}
+    <div class="fw-scroller">
+      <button type="button" class="fw-arrow fw-prev" aria-label="Previous">‹</button>
+      <div class="team-grid team-grid--row" data-rail>
+        {team.map((m) => (
+          <button type="button" class={`team-portrait js-person ${m.featured ? 'team-portrait--focus' : ''}`} data-name={m.name} data-role={m.role} data-bio={m.bio} data-photo={m.photo || ''} data-ini={m.ini}>
+            <div class="team-photo" style={m.photo ? `background-image:url('${m.photo}')` : ''}>{m.photo ? '' : <span class="team-ini">{m.ini}</span>}{m.featured && <span class="team-badge">★ Founder</span>}</div>
+            <div class="team-info"><div class="team-name">{m.name}</div><div class="team-role">{m.role}</div></div>
+          </button>
+        ))}
+      </div>
+      <button type="button" class="fw-arrow fw-next" aria-label="Next">›</button>
     </div>
   </section>
 

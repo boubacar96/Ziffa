@@ -114,6 +114,45 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
         });
       });
 
+      // Carrousels horizontaux génériques (films, équipe…) : flèches + auto-scroll lent
+      document.querySelectorAll('.fw-scroller').forEach((sc) => {
+        const row = sc.querySelector('[data-rail]');
+        if (!row) return;
+        const prevB = sc.querySelector('.fw-prev');
+        const nextB = sc.querySelector('.fw-next');
+        const step = () => Math.max(220, row.clientWidth * 0.8);
+        prevB && prevB.addEventListener('click', () => row.scrollBy({ left: -step(), behavior: 'smooth' }));
+        nextB && nextB.addEventListener('click', () => row.scrollBy({ left: step(), behavior: 'smooth' }));
+        const updArrows = () => {
+          const max = row.scrollWidth - row.clientWidth - 4;
+          if (prevB) prevB.style.opacity = row.scrollLeft <= 4 ? '0' : '1';
+          if (nextB) nextB.style.opacity = row.scrollLeft >= max ? '0' : '1';
+        };
+        row.addEventListener('scroll', updArrows);
+        window.addEventListener('resize', updArrows);
+        updArrows();
+        // Défilement automatique lent (ping-pong), en pause au survol / focus / toucher
+        if (reduce) return;
+        let paused = false, acc = 0, dir = 1;
+        const SPEED = 0.35;
+        ['mouseenter', 'focusin', 'touchstart'].forEach((e) => sc.addEventListener(e, () => { paused = true; }, { passive: true }));
+        ['mouseleave', 'focusout', 'touchend'].forEach((e) => sc.addEventListener(e, () => { paused = false; }, { passive: true }));
+        const railLoop = () => {
+          if (!paused) {
+            const max = row.scrollWidth - row.clientWidth;
+            if (max > 1) {
+              acc += dir * SPEED;
+              const whole = Math.trunc(acc);
+              if (whole !== 0) { row.scrollLeft += whole; acc -= whole; }
+              if (row.scrollLeft >= max - 1) dir = -1;
+              else if (row.scrollLeft <= 1) dir = 1;
+            }
+          }
+          requestAnimationFrame(railLoop);
+        };
+        requestAnimationFrame(railLoop);
+      });
+
       // Lightbox galeries — navigation ‹ ›, clavier, légende
       const GAL_SEL = '.gallery-grid img, .gallery-marquee img, .gallery-page img';
       const lb = document.createElement('div');

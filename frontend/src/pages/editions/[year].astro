@@ -88,8 +88,8 @@ const title = ed ? (ed.title || `Édition ${year}`) : 'Édition introuvable';
 
       {films.length > 0 && (
         <section class="section" id="selection">
-          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Sélection officielle</div><h2 class="section-title">Les <span class="red">films</span> {year}.</h2></div></div>
-          <FilmWall films={films} lang="fr" />
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Sélection officielle</div><h2 class="section-title">Les <span class="red">films</span> {year}.</h2></div><a href={`/films/${year}`} class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Voir tous ({films.length}) →</a></div>
+          <FilmWall films={films} lang="fr" layout="row" />
         </section>
       )}
 

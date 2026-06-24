@@ -2,7 +2,8 @@
 // Mur d'affiches de films. Si un film a une affiche → on l'utilise ;
 // sinon → affiche « typographique » générée (dégradé charte + grand titre).
 // Badge 🏆 sur les films primés (palmarès) ; survol = synopsis + bande-annonce.
-const { films = [], lang = 'fr' } = Astro.props;
+const { films = [], lang = 'fr', layout = 'grid' } = Astro.props;
+const isRow = layout === 'row';
 
 const FLAGS = {
   'senegal': '🇸🇳', 'france': '🇫🇷', 'iran': '🇮🇷', 'guatemala': '🇬🇹', 'belgique': '🇧🇪', 'belgium': '🇧🇪',
@@ -21,7 +22,9 @@ const T = lang === 'en'
   : { award: 'Primé', trailer: '▶ Bande-annonce' };
 const palette = ['fw-red', 'fw-green', 'fw-yellow', 'fw-deep'];
 ---
-<div class="films-selection film-wall">
+<div class={isRow ? 'fw-scroller' : 'fw-plain'}>
+  {isRow && <button type="button" class="fw-arrow fw-prev" aria-label="Précédent">‹</button>}
+  <div class={`films-selection film-wall ${isRow ? 'film-wall--row' : ''}`}>
   {films.map((f, i) => (
     <article class={`fw-card ${f.poster ? 'fw-has-img' : palette[i % palette.length]}`}>
       <div class="fw-poster" style={f.poster ? `background-image:url('${f.poster}')` : ''}>
@@ -41,4 +44,26 @@ const palette = ['fw-red', 'fw-green', 'fw-yellow', 'fw-deep'];
       </div>
     </article>
   ))}
+  </div>
+  {isRow && <button type="button" class="fw-arrow fw-next" aria-label="Suivant">›</button>}
 </div>
+
+<script>
+  document.querySelectorAll('.fw-scroller').forEach((sc) => {
+    const row = sc.querySelector('.film-wall--row');
+    if (!row) return;
+    const prev = sc.querySelector('.fw-prev');
+    const next = sc.querySelector('.fw-next');
+    const step = () => Math.max(220, row.clientWidth * 0.8);
+    prev && prev.addEventListener('click', () => row.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next && next.addEventListener('click', () => row.scrollBy({ left: step(), behavior: 'smooth' }));
+    const upd = () => {
+      const max = row.scrollWidth - row.clientWidth - 4;
+      if (prev) prev.style.opacity = row.scrollLeft <= 4 ? '0' : '1';
+      if (next) next.style.opacity = row.scrollLeft >= max ? '0' : '1';
+    };
+    row.addEventListener('scroll', upd);
+    window.addEventListener('resize', upd);
+    upd();
+  });
+</script>

@@ -4183,6 +4183,27 @@
   .fw-dir { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
   .fw-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); margin-top: 7px; }
 
+  /* Mode « ligne » : carrousel horizontal */
+  .fw-scroller { position: relative; }
+  .film-wall--row {
+    flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 18px;
+    scroll-snap-type: x proximity; padding: 4px 2px 18px; scrollbar-width: thin;
+  }
+  .film-wall--row::-webkit-scrollbar { height: 8px; }
+  .film-wall--row::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+  .film-wall--row .fw-card { flex: 0 0 190px; max-width: 190px; scroll-snap-align: start; }
+  .fw-arrow {
+    position: absolute; top: 42%; transform: translateY(-50%); z-index: 3;
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--paper); color: var(--green-deep); font-size: 22px; line-height: 1; cursor: pointer;
+    box-shadow: 0 8px 22px -8px rgba(0,0,0,.4); transition: opacity .2s ease, transform .2s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fw-prev { left: -12px; }
+  .fw-next { right: -12px; }
+  .fw-arrow:hover { transform: translateY(-50%) scale(1.08); }
+  @media (max-width: 720px) { .fw-arrow { display: none; } }
+
   /* ===== Carte interactive « Venir au festival » (Leaflet sur-mesure) ===== */
   .zmap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
   .zmap-canvas { position: relative; }

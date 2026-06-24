@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import { FILMS_2025 } from '../../lib/films2025.js';
+import FilmWall from '../../components/FilmWall.astro';
+
+const { year } = Astro.params;
+const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': year, populate: 'poster', sort: 'title:asc', 'pagination[limit]': '200' });
+const cmsFilms = (filmRes.data || []).map((f) => ({ title: f.title, director: f.director || '', country: f.country || '', year: f.year || '', duration: f.duration || '', poster: f.poster?.url ? mediaUrl(f.poster.url) : null, synopsis: f.synopsis || '', trailerUrl: f.trailerUrl || '' }));
+const films = cmsFilms.length ? cmsFilms : (String(year) === '2025' ? FILMS_2025 : []);
+const editionHref = String(year) === '2025' ? '/edition-2025' : `/editions/${year}`;
+---
+<Base title={`Films ${year} | ZIFFA`} description={`La sélection complète de films de l'édition ${year} du ZIFFA.`}>
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; <a href={editionHref}>Édition {year}</a> &nbsp;/&nbsp; Films</div>
+      <div class="eyebrow"><span class="arrow">→</span> Sélection officielle · {year}</div>
+      <h1>Les <span class="yellow">films</span> {year}.</h1>
+      <p>{films.length} films de la sélection officielle de l'édition {year}.</p>
+    </div>
+  </header>
+  <section class="section">
+    {films.length > 0
+      ? <FilmWall films={films} lang="fr" layout="grid" />
+      : <p class="prog-pdf-empty" style="max-width:480px;margin:0 auto;text-align:center;">La sélection {year} sera bientôt disponible.</p>}
+    <div style="margin-top:34px;text-align:center;"><a href={editionHref} class="nav-cta">← Retour à l'édition {year}</a></div>
+  </section>
+</Base>

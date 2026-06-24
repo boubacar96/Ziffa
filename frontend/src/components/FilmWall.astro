@@ -49,6 +49,7 @@ const palette = ['fw-red', 'fw-green', 'fw-yellow', 'fw-deep'];
 </div>
 
 <script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('.fw-scroller').forEach((sc) => {
     const row = sc.querySelector('.film-wall--row');
     if (!row) return;
@@ -65,5 +66,32 @@ const palette = ['fw-red', 'fw-green', 'fw-yellow', 'fw-deep'];
     row.addEventListener('scroll', upd);
     window.addEventListener('resize', upd);
     upd();
+
+    // Défilement automatique lent (ping-pong), en pause au survol / toucher / focus.
+    if (reduce) return;
+    let paused = false, acc = 0, dir = 1;
+    const SPEED = 0.35; // px par frame ≈ 21 px/s
+    const pause = () => { paused = true; };
+    const resume = () => { paused = false; };
+    sc.addEventListener('mouseenter', pause);
+    sc.addEventListener('mouseleave', resume);
+    sc.addEventListener('focusin', pause);
+    sc.addEventListener('focusout', resume);
+    sc.addEventListener('touchstart', pause, { passive: true });
+    sc.addEventListener('touchend', resume, { passive: true });
+    const loop = () => {
+      if (!paused) {
+        const max = row.scrollWidth - row.clientWidth;
+        if (max > 1) {
+          acc += dir * SPEED;
+          const whole = Math.trunc(acc);
+          if (whole !== 0) { row.scrollLeft += whole; acc -= whole; }
+          if (row.scrollLeft >= max - 1) dir = -1;
+          else if (row.scrollLeft <= 1) dir = 1;
+        }
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
   });
 </script>

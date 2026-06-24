@@ -1,6 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import { REGLEMENT } from '../lib/reglement.js';
+import { fetchAPI } from '../lib/strapi.js';
+
+// Date limite d'inscription : depuis l'édition en cours (Strapi), avec repli.
+const edRes = await fetchAPI('editions', { 'filters[isCurrent][$eq]': 'true', 'pagination[limit]': '1' });
+const ed = (edRes.data || [])[0] || null;
+const fmtDate = (d) => { if (!d) return ''; try { return new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ''; } };
+const deadline = (ed && ed.submissionDeadline && fmtDate(ed.submissionDeadline)) || '15 septembre 2027';
 ---
 <Base title="Participer — Inscrire un film | ZIFFA" description="Inscrivez votre film au ZIFFA 2027 : formulaire, lien de visionnage, fiche technique, synopsis, biographie et photos.">
   <header class="page-hero">
@@ -88,7 +95,7 @@ import { REGLEMENT } from '../lib/reglement.js';
         <div class="insc-aside-inner">
           <div class="deadline">
             <div class="deadline-label">— Date limite d'inscription</div>
-            <div class="deadline-date">15 Septembre 2027</div>
+            <div class="deadline-date">{deadline}</div>
           </div>
           <h4>À préparer</h4>
           <ul class="insc-checklist">
@@ -132,6 +139,14 @@ import { REGLEMENT } from '../lib/reglement.js';
   const bioCount = document.getElementById('bio-count');
   const words = (s) => (s.trim().match(/\S+/g) || []).length;
 
+  // Accessibilité : associer chaque libellé à son champ (for/id)
+  let _fid = 0;
+  document.querySelectorAll('.insc-form .field').forEach((field) => {
+    const label = field.querySelector('label');
+    const ctrl = field.querySelector('input, select, textarea');
+    if (label && ctrl && !ctrl.id) { const id = 'ifield-' + (++_fid); ctrl.id = id; label.htmlFor = id; }
+  });
+
   if (bio && bioCount) {
     const upd = () => { const n = words(bio.value); bioCount.textContent = n; bioCount.parentElement.classList.toggle('warn', n > 500); };
     bio.addEventListener('input', upd); upd();
@@ -155,12 +170,22 @@ import { REGLEMENT } from '../lib/reglement.js';
   const rulesCb = document.getElementById('rules-cb');
   const gateNote = document.getElementById('insc-gate-note');
   const rulesOk = document.getElementById('rules-ok');
-  const openRules = () => { if (rulesModal) { rulesModal.hidden = false; document.body.style.overflow = 'hidden'; } };
-  const closeRules = () => { if (rulesModal) { rulesModal.hidden = true; document.body.style.overflow = ''; } };
+  let rulesLastFocus = null;
+  const openRules = () => { if (rulesModal) { rulesModal.hidden = false; document.body.style.overflow = 'hidden'; rulesLastFocus = document.activeElement; const f = rulesModal.querySelector('.rules-x'); if (f) f.focus(); } };
+  const closeRules = () => { if (rulesModal) { rulesModal.hidden = true; document.body.style.overflow = ''; if (rulesLastFocus && rulesLastFocus.focus) rulesLastFocus.focus(); } };
   document.getElementById('open-rules')?.addEventListener('click', openRules);
   document.getElementById('open-rules-2')?.addEventListener('click', openRules);
   rulesModal?.querySelectorAll('[data-rules-close]').forEach((el) => el.addEventListener('click', closeRules));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && rulesModal && !rulesModal.hidden) closeRules(); });
+  // Piège de focus dans la popup
+  rulesModal?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab' || rulesModal.hidden) return;
+    const f = [...rulesModal.querySelectorAll('button, input, a[href], [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   rulesCb?.addEventListener('change', () => {
     const ok = rulesCb.checked;
     if (submitBtn) submitBtn.hidden = !ok;
@@ -174,6 +199,10 @@ import { REGLEMENT } from '../lib/reglement.js';
     if (!form.checkValidity()) { showAlert('err', 'Merci de remplir tous les champs obligatoires (*).'); return; }
     if (form.querySelector('input[name="photos"]').files.length < 2) { showAlert('err', 'Merci de joindre au moins 2 photos du film.'); return; }
     if (words(bio.value) > 500) { showAlert('err', 'La biographie dépasse 500 mots.'); return; }
+    const MAX_BYTES = 22 * 1024 * 1024;
+    let totalBytes = 0;
+    ['technicalSheet', 'poster', 'photos'].forEach((n) => { const inp = form.querySelector(`input[name="${n}"]`); if (inp) Array.from(inp.files).forEach((f) => { totalBytes += f.size; }); });
+    if (totalBytes > MAX_BYTES) { showAlert('err', 'Les fichiers joints dépassent 22 Mo. Réduisez le poids des images ou utilisez le lien de visionnage.'); return; }
     submitBtn.disabled = true; const original = submitBtn.textContent; submitBtn.textContent = 'Envoi en cours…';
     try {
       const res = await fetch('/api/film-submission', { method: 'POST', body: new FormData(form) });

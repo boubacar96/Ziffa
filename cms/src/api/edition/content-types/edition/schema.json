@@ -31,6 +31,9 @@
     "dateEnd": {
       "type": "date"
     },
+    "submissionDeadline": {
+      "type": "date"
+    },
     "location": {
       "type": "string"
     },

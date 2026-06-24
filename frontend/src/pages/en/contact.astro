@@ -7,14 +7,6 @@ const email = g.contactEmail || 'festival@ziffa.sn';
 const phone = g.phone || 'XXXXXXXX';
 const address = g.address || 'Ziguinchor, Casamance — Senegal';
 const socialLinks = { facebook: g.facebook || '#', instagram: g.instagram || '#', linkedin: g.linkedin || '#', youtube: g.youtube || '#' };
-
-// Festival venues shown on the map (CCR & U.F.R Santé exact; Alliance Française = approx. city centre, to adjust).
-const venues = [
-  { name: 'Mémorial du bateau le Joola', lat: 12.5688, lng: -16.2742 },
-  { name: 'Centre Culturel Régional', lat: 12.5656892, lng: -16.2673909 },
-  { name: 'U.F.R Santé', lat: 12.5494994, lng: -16.2830714 },
-  { name: 'Place Bambaya', lat: 12.5746631, lng: -16.2850057 },
-];
 ---
 <Base title="Contact | ZIFFA" description="Contact the ZIFFA team: programme, press, partnerships, submissions. Email, phone and newsletter.">
   <header class="page-hero">
@@ -91,29 +83,6 @@ const venues = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Find us</div><h2 class="section-title">In <span class="red">Ziguinchor</span>.</h2></div></div>
-    <div id="ziffa-map" class="contact-map" role="application" aria-label="Map of the festival venues in Ziguinchor"></div>
-  </section>
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script is:inline define:vars={{ venues }}>
-    (function () {
-      if (!window.L) return;
-      const el = document.getElementById('ziffa-map');
-      if (!el) return;
-      const map = L.map(el, { scrollWheelZoom: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
-      const pts = [];
-      venues.forEach(function (v) {
-        const mk = L.marker([v.lat, v.lng]).addTo(map);
-        mk.bindPopup('<b>' + v.name + '</b><br><a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v.name + ' Ziguinchor') + '" target="_blank" rel="noopener">View on Google Maps ↗</a>');
-        pts.push([v.lat, v.lng]);
-      });
-      map.fitBounds(pts, { padding: [40, 40], maxZoom: 15 });
-    })();
-  </script>
 </Base>
 
 <script>

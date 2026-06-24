@@ -2780,14 +2780,16 @@
     font: inherit; color: inherit; text-align: left; cursor: pointer; padding: 0;
     border: 1px solid var(--line); background: var(--paper); border-radius: 18px; overflow: hidden;
     transition: transform .18s ease, box-shadow .18s ease;
+    display: flex; flex-direction: column;
   }
   .team-portrait:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(0,0,0,.12); }
   .team-photo {
     aspect-ratio: 3 / 4; background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
     background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;
+    flex: none;
   }
   .team-ini { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 48px; color: var(--yellow); }
-  .team-info { padding: 14px 16px 18px; }
+  .team-info { padding: 14px 16px 18px; min-height: 72px; flex: 1; }
   .team-name { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 18px; color: var(--green-deep); line-height: 1.15; }
   .team-role { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--red); margin-top: 5px; }
   .team-photo { position: relative; }
@@ -4125,7 +4127,7 @@
     flex-shrink: 1;
   }
   /* Calibrage de la largeur des cartes par type de liste (basis = idéale, max = plafond) */
-  .team-grid > *        { flex-basis: 190px; max-width: 250px; }
+  .team-grid > *        { flex: 0 0 200px; max-width: 200px; }
   .films-selection > *  { flex-basis: 230px; max-width: 320px; }
   .formations-grid > *  { flex-basis: 300px; max-width: 420px; }
   .press-grid > *,

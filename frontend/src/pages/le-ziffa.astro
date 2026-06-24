@@ -5,7 +5,9 @@ import { fetchAPI, mediaUrl } from '../lib/strapi.js';
 // Équipe (Strapi `person` type=equipe) avec repli.
 const teamRes = await fetchAPI('people', { 'filters[type][$eq]': 'equipe', sort: 'order:asc', populate: 'photo' });
 const cmsTeam = teamRes.data || [];
-const mapPerson = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null, featured: !!p.featured });
+// Photos locales de secours (utilisées seulement si aucune photo n'est mise dans Strapi).
+const LOCAL_TEAM_PHOTOS = { 'Babacar Ba': '/team/babacar-ba.jpg' };
+const mapPerson = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : (LOCAL_TEAM_PHOTOS[p.name] || null), featured: !!p.featured });
 const fallbackTeam = [
   { ini: 'BB', name: 'Babacar Ba', role: 'Président du festival', bio: "Producteur audiovisuel, réalisateur et photographe, diplômé de l’École Agnès Varda (Bruxelles). Fondateur du ZIFFA, il œuvre depuis une vingtaine d’années à faire émerger les talents du cinéma sénégalais et à faire de Ziguinchor un carrefour du cinéma africain.", photo: null, featured: true },
   { ini: 'YP', name: 'Yves-François Preira', role: 'Président de FOTTI Cultures', bio: "Président de l’association FOTTI Cultures, structure porteuse du festival.", photo: null, featured: false },

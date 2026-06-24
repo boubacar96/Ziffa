@@ -4,7 +4,9 @@ import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
 
 const teamRes = await fetchAPI('people', { 'filters[type][$eq]': 'equipe', sort: 'order:asc', populate: 'photo' });
 const cmsTeam = teamRes.data || [];
-const mapPerson = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null, featured: !!p.featured });
+// Local fallback photos (used only when no photo is set in Strapi).
+const LOCAL_TEAM_PHOTOS = { 'Babacar Ba': '/team/babacar-ba.jpg' };
+const mapPerson = (p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : (LOCAL_TEAM_PHOTOS[p.name] || null), featured: !!p.featured });
 const fallbackTeam = [
   { ini: 'BB', name: 'Babacar Ba', role: 'Festival President', bio: 'Audiovisual producer, director and photographer, a graduate of the Agnès Varda film school (Brussels). Founder of ZIFFA, he has worked for some twenty years to nurture Senegalese film talent and make Ziguinchor a crossroads for African cinema.', photo: null, featured: true },
   { ini: 'YP', name: 'Yves-François Preira', role: 'President of FOTTI Cultures', bio: 'President of the FOTTI Cultures association, which runs the festival.', photo: null, featured: false },

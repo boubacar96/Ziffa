@@ -1,0 +1,44 @@
+---
+// Mur d'affiches de films. Si un film a une affiche → on l'utilise ;
+// sinon → affiche « typographique » générée (dégradé charte + grand titre).
+// Badge 🏆 sur les films primés (palmarès) ; survol = synopsis + bande-annonce.
+const { films = [], lang = 'fr' } = Astro.props;
+
+const FLAGS = {
+  'senegal': '🇸🇳', 'france': '🇫🇷', 'iran': '🇮🇷', 'guatemala': '🇬🇹', 'belgique': '🇧🇪', 'belgium': '🇧🇪',
+  'ghana': '🇬🇭', 'mali': '🇲🇱', 'burkina': '🇧🇫', 'gambie': '🇬🇲', 'gambia': '🇬🇲', 'guinee': '🇬🇳',
+  'togo': '🇹🇬', 'benin': '🇧🇯', "cote d'ivoire": '🇨🇮', 'ivoire': '🇨🇮', 'niger': '🇳🇪', 'nigeria': '🇳🇬',
+  'maroc': '🇲🇦', 'tunisie': '🇹🇳', 'egypte': '🇪🇬', 'egypt': '🇪🇬', 'congo': '🇨🇬', 'cameroun': '🇨🇲',
+  'mauritanie': '🇲🇷', 'espagne': '🇪🇸', 'russie': '🇷🇺', 'cap vert': '🇨🇻', 'pays-bas': '🇳🇱', 'allemagne': '🇩🇪',
+};
+const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const flagOf = (country) => { const n = norm(country); for (const k in FLAGS) { if (n.includes(k)) return FLAGS[k]; } return '🎬'; };
+// Fragments de titres primés (palmarès 2025) — détection robuste (accents/orthographe).
+const AWARD = ['demba', 'mexico 86', 'dans la peau', 'banxa', 'geej', 'domingo', 'hilm', 'prout', 'yennenga'];
+const isAward = (title) => { const n = norm(title); return AWARD.some((a) => n.includes(a)); };
+const T = lang === 'en'
+  ? { award: 'Award', trailer: '▶ Trailer' }
+  : { award: 'Primé', trailer: '▶ Bande-annonce' };
+const palette = ['fw-red', 'fw-green', 'fw-yellow', 'fw-deep'];
+---
+<div class="films-selection film-wall">
+  {films.map((f, i) => (
+    <article class={`fw-card ${f.poster ? 'fw-has-img' : palette[i % palette.length]}`}>
+      <div class="fw-poster" style={f.poster ? `background-image:url('${f.poster}')` : ''}>
+        {!f.poster && <span class="fw-title-big">{f.title}</span>}
+        {isAward(f.title) && <span class="fw-badge">🏆 {T.award}</span>}
+        {(f.synopsis || f.trailerUrl) && (
+          <div class="fw-hover">
+            {f.synopsis && <p>{f.synopsis}</p>}
+            {f.trailerUrl && <a href={f.trailerUrl} target="_blank" rel="noopener">{T.trailer}</a>}
+          </div>
+        )}
+      </div>
+      <div class="fw-body">
+        {f.poster && <h3>{f.title}</h3>}
+        {f.director && <div class="fw-dir">{f.director}</div>}
+        <div class="fw-meta">{flagOf(f.country)} {[f.country, f.year, f.duration].filter(Boolean).join(' · ')}</div>
+      </div>
+    </article>
+  ))}
+</div>

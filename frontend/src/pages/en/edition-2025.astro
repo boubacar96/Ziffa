@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../../lib/strapi.js';
 import { fallbackMasterclasses } from '../../lib/masterclasses.js';
 import { FILMS_2025 } from '../../lib/films2025.js';
+import FilmWall from '../../components/FilmWall.astro';
 
 const VIDEO_2025 = 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
 const teaserThumb = await getVimeoThumb(VIDEO_2025);
@@ -40,7 +41,7 @@ const cmsMc = (mcRes.data || []).map((m) => ({ slug: m.slug, title: m.title, exc
 const masterclasses = cmsMc.length ? cmsMc.filter((m) => m.slug) : fallbackMasterclasses('en');
 
 const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': '2025', populate: 'poster', sort: 'title:asc', 'pagination[limit]': '100' });
-const cmsFilms = (filmRes.data || []).map((f) => ({ title: f.title, director: f.director || '', country: f.country || '', year: f.year || '', duration: f.duration || '', poster: f.poster?.url ? mediaUrl(f.poster.url) : null }));
+const cmsFilms = (filmRes.data || []).map((f) => ({ title: f.title, director: f.director || '', country: f.country || '', year: f.year || '', duration: f.duration || '', poster: f.poster?.url ? mediaUrl(f.poster.url) : null, synopsis: f.synopsis || '', trailerUrl: f.trailerUrl || '' }));
 const films2025 = cmsFilms.length ? cmsFilms : FILMS_2025;
 
 const edStats = [
@@ -122,22 +123,7 @@ const highlights = [
 
   <section class="section" id="selection">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Official selection</div><h2 class="section-title">The 2025 <span class="red">films</span>.</h2></div></div>
-    <div class="films-selection">
-      {films2025.map((f) => (
-        f.poster ? (
-          <article class="film-poster-card">
-            <div class="film-poster-img" style={`background-image:url('${f.poster}')`}></div>
-            <div class="film-poster-body"><h3>{f.title}</h3>{f.director && <div class="film-sel-dir">{f.director}</div>}<div class="film-sel-meta">{[f.country, f.year, f.duration].filter(Boolean).join(' · ')}</div></div>
-          </article>
-        ) : (
-          <article class="film-sel-card">
-            <h3>{f.title}</h3>
-            {f.director && <div class="film-sel-dir">{f.director}</div>}
-            <div class="film-sel-meta">{[f.country, f.year, f.duration].filter(Boolean).join(' · ')}</div>
-          </article>
-        )
-      ))}
-    </div>
+    <FilmWall films={films2025} lang="en" />
   </section>
 
   <hr class="section-divider" />

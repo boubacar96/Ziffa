@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+import PeopleGrid from '../../components/PeopleGrid.astro';
+
+const { year } = Astro.params;
+const res = await fetchAPI('people', { 'filters[type][$eq]': 'jury', 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'photo' });
+const jury = (res.data || []).map((p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : null, featured: false }));
+const editionHref = String(year) === '2025' ? '/edition-2025' : `/editions/${year}`;
+---
+<Base title={`Le jury ${year} | ZIFFA`} description={`Le jury international de l'édition ${year} du ZIFFA.`}>
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; <a href={editionHref}>Édition {year}</a> &nbsp;/&nbsp; Jury</div>
+      <div class="eyebrow"><span class="arrow">→</span> Le jury {year}</div>
+      <h1>Le <span class="yellow">jury</span> {year}.</h1>
+      <p>Le jury international qui a départagé les œuvres en compétition.</p>
+    </div>
+  </header>
+  <section class="section">
+    {jury.length > 0
+      ? <PeopleGrid people={jury} lang="fr" />
+      : <p class="prog-pdf-empty" style="max-width:480px;margin:0 auto;text-align:center;">Le jury {year} sera bientôt annoncé.</p>}
+    <div style="margin-top:34px;text-align:center;"><a href={`${editionHref}#jury`} class="nav-cta">← Retour à l'édition {year}</a></div>
+  </section>
+</Base>

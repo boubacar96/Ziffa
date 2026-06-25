@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../lib/strapi.js';
+import PeopleGrid from '../components/PeopleGrid.astro';
+
+const res = await fetchAPI('people', { 'filters[type][$eq]': 'equipe', sort: 'order:asc', populate: 'photo' });
+const LOCAL_TEAM_PHOTOS = { 'Babacar Ba': '/team/babacar-ba.jpg' };
+const team = (res.data || []).map((p) => ({ ini: (p.name || '?').slice(0, 2).toUpperCase(), name: p.name, role: p.role || '', bio: p.bio || '', photo: p.photo?.url ? mediaUrl(p.photo.url) : (LOCAL_TEAM_PHOTOS[p.name] || null), featured: !!p.featured }));
+---
+<Base title="L'équipe | ZIFFA" description="Toute l'équipe du Ziguinchor International Film Festival & Animation.">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; <a href="/le-ziffa">Le ZIFFA</a> &nbsp;/&nbsp; Équipe</div>
+      <div class="eyebrow"><span class="arrow">→</span> Celles & ceux qui font le festival</div>
+      <h1>L'<span class="yellow">équipe</span>.</h1>
+      <p>Direction, coordination, communication, technique — toutes celles et ceux qui portent le ZIFFA.</p>
+    </div>
+  </header>
+  <section class="section">
+    <PeopleGrid people={team} lang="fr" />
+    <div style="margin-top:34px;text-align:center;"><a href="/le-ziffa#equipe" class="nav-cta">← Retour à la présentation</a></div>
+  </section>
+</Base>

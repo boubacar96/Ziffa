@@ -126,7 +126,7 @@ const title = ed ? (ed.title || `${year} edition`) : 'Edition not found';
 
       {jury.length > 0 && (
         <section class="section" id="jury">
-          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The {year} jury</div><h2 class="section-title">The <span class="italic">jury</span>.</h2></div></div>
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> The {year} jury</div><h2 class="section-title">The <span class="italic">jury</span>.</h2></div>{jury.length > 6 && <a href={`/en/jury/${year}`} class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);align-self:flex-start;">View all ({jury.length}) →</a>}</div>
           <div class="fw-scroller">
             <button type="button" class="fw-arrow fw-prev" aria-label="Previous">‹</button>
             <div class="team-grid team-grid--row" data-rail>

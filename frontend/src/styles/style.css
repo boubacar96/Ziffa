@@ -2552,9 +2552,13 @@
   .nav-toggle.open span:nth-child(2) { opacity: 0; }
   .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* Bascule FR/EN dans le menu mobile (la pastille du header est masquée < 1200px) */
-  .nav-lang-mobile { display: none; }
+  /* Menu mobile : CTA « S'accréditer » + bascule FR/EN dans le hamburger.
+     < 1200px on masque la barre de droite (pastille + CTA) → hamburger à droite. */
+  .nav-lang-mobile, .nav-cta-mobile { display: none; }
   @media (max-width: 1200px) {
+    .nav-right { display: none; }
+    .nav-links.open .nav-cta-mobile { display: block; margin-top: 10px; }
+    .nav-links.open .nav-cta-mobile .nav-cta { display: flex; justify-content: center; width: 100%; }
     .nav-links.open .nav-lang-mobile { display: flex; justify-content: center; margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
     .nav-links.open .nav-lang-mobile .lang-pill { display: inline-flex; }
     .nav-lang-mobile .lang-pill a { padding: 10px 20px; font-size: 14px; }

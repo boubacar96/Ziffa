@@ -2552,6 +2552,14 @@
   .nav-toggle.open span:nth-child(2) { opacity: 0; }
   .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+  /* Bascule FR/EN dans le menu mobile (la pastille du header est masquée < 1200px) */
+  .nav-lang-mobile { display: none; }
+  @media (max-width: 1200px) {
+    .nav-links.open .nav-lang-mobile { display: flex; justify-content: center; margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .nav-links.open .nav-lang-mobile .lang-pill { display: inline-flex; }
+    .nav-lang-mobile .lang-pill a { padding: 10px 20px; font-size: 14px; }
+  }
+
   @media (max-width: 1200px) {
     .nav-toggle { display: flex; }
     /* Panneau de navigation déroulant */

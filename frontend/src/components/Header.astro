@@ -58,6 +58,9 @@ const groupActive = (g) => {
         </li>
       );
     })}
+    <li class="nav-item nav-lang-mobile">
+      <div class="lang-pill"><a href={frHref} class={lang === 'fr' ? 'active' : ''}>FR</a><a href={enHref} class={lang === 'en' ? 'active' : ''}>EN</a></div>
+    </li>
   </ul>
 
   <div class="nav-right">

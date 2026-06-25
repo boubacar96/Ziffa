@@ -4185,6 +4185,16 @@
 
   /* Mode « ligne » : carrousel horizontal */
   .fw-scroller { position: relative; }
+  /* Fondu sur les bords = indice « ça défile » (surtout sur mobile sans flèches) */
+  .fw-scroller::before, .fw-scroller::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 44px; z-index: 2;
+    pointer-events: none; transition: opacity .25s ease;
+  }
+  .fw-scroller::before { left: 0; background: linear-gradient(to left, transparent, var(--bg)); opacity: 0; }
+  .fw-scroller::after { right: 0; background: linear-gradient(to right, transparent, var(--bg)); opacity: 1; }
+  .fw-scroller.at-start::before { opacity: 0; }
+  .fw-scroller:not(.at-start)::before { opacity: 1; }
+  .fw-scroller.at-end::after { opacity: 0; }
   .film-wall--row {
     flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 18px;
     scroll-snap-type: x proximity; padding: 4px 2px 8px;

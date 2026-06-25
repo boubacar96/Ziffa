@@ -125,18 +125,28 @@ const enUrl = new URL(altPath(Astro.url, 'en'), Astro.url).href;
         nextB && nextB.addEventListener('click', () => row.scrollBy({ left: step(), behavior: 'smooth' }));
         const updArrows = () => {
           const max = row.scrollWidth - row.clientWidth - 4;
-          if (prevB) prevB.style.opacity = row.scrollLeft <= 4 ? '0' : '1';
-          if (nextB) nextB.style.opacity = row.scrollLeft >= max ? '0' : '1';
+          const atStart = row.scrollLeft <= 4;
+          const atEnd = row.scrollLeft >= max || max <= 0;
+          if (prevB) prevB.style.opacity = atStart ? '0' : '1';
+          if (nextB) nextB.style.opacity = atEnd ? '0' : '1';
+          sc.classList.toggle('at-start', atStart);
+          sc.classList.toggle('at-end', atEnd);
         };
         row.addEventListener('scroll', updArrows);
         window.addEventListener('resize', updArrows);
         updArrows();
-        // Défilement automatique lent (ping-pong), en pause au survol / focus / toucher
+        // Défilement automatique lent (ping-pong). Ne lutte jamais avec l'utilisateur :
+        // pause au survol (desktop) ; au toucher/swipe/molette → pause puis reprise après inactivité.
         if (reduce) return;
-        let paused = false, acc = 0, dir = 1;
+        let paused = false, acc = 0, dir = 1, hovering = false, idle;
         const SPEED = 0.35;
-        ['mouseenter', 'focusin', 'touchstart'].forEach((e) => sc.addEventListener(e, () => { paused = true; }, { passive: true }));
-        ['mouseleave', 'focusout', 'touchend'].forEach((e) => sc.addEventListener(e, () => { paused = false; }, { passive: true }));
+        const resumeSoon = () => { clearTimeout(idle); idle = setTimeout(() => { if (!hovering) paused = false; }, 3500); };
+        const interact = () => { paused = true; resumeSoon(); };
+        sc.addEventListener('mouseenter', () => { hovering = true; paused = true; clearTimeout(idle); });
+        sc.addEventListener('mouseleave', () => { hovering = false; paused = false; });
+        ['touchstart', 'pointerdown', 'wheel'].forEach((e) => row.addEventListener(e, interact, { passive: true }));
+        prevB && prevB.addEventListener('click', interact);
+        nextB && nextB.addEventListener('click', interact);
         const railLoop = () => {
           if (!paused) {
             const max = row.scrollWidth - row.clientWidth;

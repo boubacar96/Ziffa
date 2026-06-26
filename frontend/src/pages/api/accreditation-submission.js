@@ -1,11 +1,12 @@
-import { getTransport, MAIL_TO, MAIL_FROM } from '../../lib/mailer.js';
+import { getTransport, MAIL_TO, MAIL_FROM, headerSafe } from '../../lib/mailer.js';
+import { checkRateLimit, clientIp } from '../../lib/ratelimit.js';
 
 export const prerender = false;
 
 const MAX_TOTAL_BYTES = 25 * 1024 * 1024; // ~25 Mo de pièces jointes max
 
-function json(obj, status = 200) {
-  return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
+function json(obj, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json', ...extraHeaders } });
 }
 function esc(s) {
   return String(s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -102,8 +103,11 @@ const BRANCHES = {
   },
 };
 
-export async function POST({ request }) {
+export async function POST({ request, clientAddress }) {
   try {
+    const rl = checkRateLimit(clientIp(request, clientAddress));
+    if (!rl.ok) return json({ ok: false, error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, 429, { 'Retry-After': String(rl.retryAfter) });
+
     const form = await request.formData();
     if ((form.get('website') || '').toString().trim()) return json({ ok: true }); // honeypot
 
@@ -152,8 +156,8 @@ export async function POST({ request }) {
     await transport.sendMail({
       from: MAIL_FROM,
       to: MAIL_TO,
-      replyTo: f(branch.emailField) || undefined,
-      subject: `🎟️ Accréditation ${branch.label} — ${branch.titleField(f) || 'demande'}`,
+      replyTo: headerSafe(f(branch.emailField)) || undefined,
+      subject: headerSafe(`🎟️ Accréditation ${branch.label} — ${branch.titleField(f) || 'demande'}`),
       html,
       attachments: mailAttachments,
     });

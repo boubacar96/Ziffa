@@ -1,13 +1,17 @@
-import { getTransport, MAIL_TO, MAIL_FROM, esc, emailLayout, infoTable, messageBlock, noteBox } from '../../lib/mailer.js';
+import { getTransport, MAIL_TO, MAIL_FROM, esc, headerSafe, emailLayout, infoTable, messageBlock, noteBox } from '../../lib/mailer.js';
+import { checkRateLimit, clientIp } from '../../lib/ratelimit.js';
 
 export const prerender = false;
 
-function json(obj, status = 200) {
-  return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
+function json(obj, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json', ...extraHeaders } });
 }
 
-export async function POST({ request }) {
+export async function POST({ request, clientAddress }) {
   try {
+    const rl = checkRateLimit(clientIp(request, clientAddress));
+    if (!rl.ok) return json({ ok: false, error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, 429, { 'Retry-After': String(rl.retryAfter) });
+
     const form = await request.formData();
     if ((form.get('website') || '').toString().trim()) return json({ ok: true }); // honeypot
     const f = (k) => (form.get(k) || '').toString().trim();
@@ -23,7 +27,7 @@ export async function POST({ request }) {
       const email = f('email');
       if (!email) return json({ ok: false, error: 'Merci d’indiquer votre email.' }, 400);
       await transport.sendMail({
-        from: MAIL_FROM, to: MAIL_TO, replyTo: email,
+        from: MAIL_FROM, to: MAIL_TO, replyTo: headerSafe(email),
         subject: '📰 Nouvelle inscription newsletter — ZIFFA',
         html: `<p style="font-family:sans-serif">Nouvel abonné à la newsletter :</p><p style="font-family:sans-serif;font-size:16px"><b>${esc(email)}</b></p>`,
       });
@@ -53,8 +57,8 @@ export async function POST({ request }) {
     });
 
     await transport.sendMail({
-      from: MAIL_FROM, to: MAIL_TO, replyTo: email,
-      subject: `✉️ Contact — ${f('subject') || 'Message'} (${name})`,
+      from: MAIL_FROM, to: MAIL_TO, replyTo: headerSafe(email),
+      subject: headerSafe(`✉️ Contact — ${f('subject') || 'Message'} (${name})`),
       html,
     });
 

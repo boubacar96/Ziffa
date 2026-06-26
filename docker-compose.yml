@@ -30,6 +30,8 @@ services:
       DATABASE_SSL: "false"
       NODE_ENV: production
       URL: https://${ADMIN_DOMAIN}
+      # CORS : on restreint l'API au domaine public (au lieu de "*" par défaut).
+      SITE_ORIGIN: https://${SITE_DOMAIN}
     volumes:
       - uploads:/opt/app/public/uploads
     depends_on:

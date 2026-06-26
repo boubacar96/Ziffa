@@ -1,18 +1,22 @@
-import { getTransport, MAIL_TO, MAIL_FROM, esc, emailLayout, infoTable, messageBlock, noteBox } from '../../lib/mailer.js';
+import { getTransport, MAIL_TO, MAIL_FROM, esc, headerSafe, emailLayout, infoTable, messageBlock, noteBox } from '../../lib/mailer.js';
+import { checkRateLimit, clientIp } from '../../lib/ratelimit.js';
 
 export const prerender = false;
 
 const MAX_TOTAL_BYTES = 22 * 1024 * 1024; // ~22 Mo de pièces jointes max
 
-function json(obj, status = 200) {
+function json(obj, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...extraHeaders },
   });
 }
 
-export async function POST({ request }) {
+export async function POST({ request, clientAddress }) {
   try {
+    const rl = checkRateLimit(clientIp(request, clientAddress));
+    if (!rl.ok) return json({ ok: false, error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, 429, { 'Retry-After': String(rl.retryAfter) });
+
     const form = await request.formData();
 
     // Honeypot anti-spam : champ caché qui doit rester vide.
@@ -88,8 +92,8 @@ export async function POST({ request }) {
     await transport.sendMail({
       from: MAIL_FROM,
       to: MAIL_TO,
-      replyTo: f('email'),
-      subject: `🎬 Inscription film — ${f('filmTitle')} (${f('director')})`,
+      replyTo: headerSafe(f('email')),
+      subject: headerSafe(`🎬 Inscription film — ${f('filmTitle')} (${f('director')})`),
       html,
       attachments: mailAttachments,
     });

@@ -30,6 +30,15 @@ export function esc(s) {
 }
 
 /**
+ * Neutralise les retours à la ligne dans une valeur destinée à un en-tête email
+ * (subject, replyTo). Défense en profondeur contre l'injection d'en-tête —
+ * nodemailer encode déjà les en-têtes, mais on retire les CR/LF par sécurité.
+ */
+export function headerSafe(s) {
+  return String(s || '').replace(/[\r\n]+/g, ' ').trim();
+}
+
+/**
  * Enveloppe un contenu dans l'habillage de marque ZIFFA.
  * @param {object} o
  * @param {string} o.barColor   couleur de la bande d'accent sous l'en-tête

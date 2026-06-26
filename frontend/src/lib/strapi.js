@@ -31,7 +31,13 @@ export async function getVimeoThumb(url) {
   let thumb = null;
   try {
     const m = String(url).match(/vimeo\.com\/(?:video\/)?(\d+)(?:\?h=|\/)?([0-9a-f]+)?/i);
-    const pageUrl = m ? `https://vimeo.com/${m[1]}${m[2] ? '/' + m[2] : ''}` : url;
+    // Anti-SSRF : on ne contacte le réseau que pour une vraie URL Vimeo.
+    // Sans correspondance, aucune requête n'est émise vers une URL arbitraire.
+    if (!m) {
+      _vimeoThumbCache[url] = null;
+      return null;
+    }
+    const pageUrl = `https://vimeo.com/${m[1]}${m[2] ? '/' + m[2] : ''}`;
     const res = await fetch(`https://vimeo.com/api/oembed.json?url=${encodeURIComponent(pageUrl)}&width=1280`);
     if (res.ok) {
       const data = await res.json();

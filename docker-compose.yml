@@ -32,6 +32,9 @@ services:
       URL: https://${ADMIN_DOMAIN}
       # CORS : on restreint l'API au domaine public (au lieu de "*" par défaut).
       SITE_ORIGIN: https://${SITE_DOMAIN}
+      # Aperçu (Preview) : URL du front + secret partagé avec le frontend.
+      CLIENT_URL: https://${SITE_DOMAIN}
+      PREVIEW_SECRET: ${PREVIEW_SECRET:-}
     volumes:
       - uploads:/opt/app/public/uploads
     depends_on:
@@ -58,6 +61,9 @@ services:
       SMTP_PASS: ${SMTP_PASS:-}
       MAIL_TO: ${MAIL_TO:-festival@ziffa.sn}
       MAIL_FROM: ${MAIL_FROM:-ZIFFA <no-reply@ziffa.sn>}
+      # Aperçu (Preview) : secret partagé + token de lecture des brouillons.
+      PREVIEW_SECRET: ${PREVIEW_SECRET:-}
+      PREVIEW_API_TOKEN: ${PREVIEW_API_TOKEN:-}
     depends_on:
       - cms
     networks: [internal, web]

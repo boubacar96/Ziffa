@@ -1,12 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb, previewMode } from '../../lib/strapi.js';
 import FilmWall from '../../components/FilmWall.astro';
 
 const { year } = Astro.params;
+const preview = previewMode(Astro.url);
 
 // Édition demandée
-const edRes = await fetchAPI('editions', { 'filters[year][$eq]': year, populate: 'poster', 'pagination[limit]': '1' });
+const edRes = await fetchAPI('editions', { 'filters[year][$eq]': year, populate: 'poster', 'pagination[limit]': '1' }, { preview });
 const ed = (edRes.data || [])[0] || null;
 if (!ed) { Astro.response.status = 404; }
 
@@ -26,22 +27,22 @@ if (ed) {
     teaser = ed.videoUrl.includes('player.vimeo') ? ed.videoUrl : ed.videoUrl;
     teaserThumb = await getVimeoThumb(ed.videoUrl);
   }
-  const photoRes = await fetchAPI('photos', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '12' });
+  const photoRes = await fetchAPI('photos', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '12' }, { preview });
   photos = (photoRes.data || []).flatMap((p) => mediaUrls(p.image)).slice(0, 8);
 
-  const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': year, populate: 'poster', sort: 'title:asc', 'pagination[limit]': '100' });
+  const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': year, populate: 'poster', sort: 'title:asc', 'pagination[limit]': '100' }, { preview });
   films = (filmRes.data || []).map((f) => ({ title: f.title, director: f.director || '', country: f.country || '', year: f.year || '', duration: f.duration || '', poster: f.poster?.url ? mediaUrl(f.poster.url) : null, synopsis: f.synopsis || '', trailerUrl: f.trailerUrl || '' }));
 
-  const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '20' });
+  const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '20' }, { preview });
   prizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
 
-  const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' });
+  const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' }, { preview });
   days = daysRes.data || [];
 
-  const juryRes = await fetchAPI('people', { 'filters[type][$eq]': 'jury', 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'photo' });
+  const juryRes = await fetchAPI('people', { 'filters[type][$eq]': 'jury', 'filters[edition][year][$eq]': year, sort: 'order:asc', populate: 'photo' }, { preview });
   jury = (juryRes.data || []).map((j) => ({ ini: (j.name || '?').slice(0, 2).toUpperCase(), name: j.name, role: j.role || '', bio: j.bio || '', photo: j.photo?.url ? mediaUrl(j.photo.url) : null }));
 
-  const mcRes = await fetchAPI('masterclasses', { 'filters[edition][year][$eq]': year, populate: 'cover', sort: 'order:asc', 'pagination[limit]': '20' });
+  const mcRes = await fetchAPI('masterclasses', { 'filters[edition][year][$eq]': year, populate: 'cover', sort: 'order:asc', 'pagination[limit]': '20' }, { preview });
   masterclasses = (mcRes.data || []).map((m) => ({ slug: m.slug, title: m.title, excerpt: m.excerpt || '', cover: m.cover?.url ? mediaUrl(m.cover.url) : null })).filter((m) => m.slug);
 }
 const title = ed ? (ed.title || `Édition ${year}`) : 'Édition introuvable';

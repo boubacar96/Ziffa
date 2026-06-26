@@ -1,26 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
-import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb } from '../lib/strapi.js';
+import { fetchAPI, mediaUrl, mediaUrls, getVimeoThumb, previewMode } from '../lib/strapi.js';
 import { fallbackMasterclasses } from '../lib/masterclasses.js';
 import { FILMS_2025 } from '../lib/films2025.js';
 import FilmWall from '../components/FilmWall.astro';
+
+const preview = previewMode(Astro.url);
 
 // Vidéo de l'édition 2025 (Vimeo fournie par le client).
 const VIDEO_2025 = 'https://player.vimeo.com/video/1169196245?h=5c5f7be273';
 const teaserThumb = await getVimeoThumb(VIDEO_2025);
 
 // Galerie : photos du CMS, sinon repli sur les photos locales.
-const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' });
+const photoRes = await fetchAPI('photos', { populate: 'image', 'pagination[limit]': '12' }, { preview });
 const cmsPhotos = (photoRes.data || []).flatMap((p) => mediaUrls(p.image));
 const fallbackPhotos = Array.from({ length: 10 }, (_, i) => `/photos/photo${String(i + 1).padStart(2, '0')}.jpg`);
 const photos = [...cmsPhotos, ...fallbackPhotos].slice(0, 8);
 
 // Programme 2025 (dynamique, depuis Strapi).
-const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': '2025', sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' });
+const daysRes = await fetchAPI('programme-days', { 'filters[edition][year][$eq]': '2025', sort: 'order:asc', populate: 'activities', 'pagination[limit]': '20' }, { preview });
 const days = daysRes.data || [];
 
 // Palmarès 2025 (Strapi `prize`) avec repli.
-const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', populate: 'image', 'pagination[limit]': '20' });
+const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', populate: 'image', 'pagination[limit]': '20' }, { preview });
 const cmsPrizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
 const fallbackPrizes = [
   { name: 'Meilleur long métrage de fiction de la sous-région', winner: '', image: null },
@@ -32,7 +34,7 @@ const fallbackPrizes = [
 const prizes = cmsPrizes.length ? cmsPrizes : fallbackPrizes;
 
 // Jury 2025 (Strapi `person` type=jury) avec repli.
-const juryRes = await fetchAPI('people', { 'filters[type][$eq]': 'jury', 'filters[edition][year][$eq]': '2025', sort: 'order:asc', populate: 'photo' });
+const juryRes = await fetchAPI('people', { 'filters[type][$eq]': 'jury', 'filters[edition][year][$eq]': '2025', sort: 'order:asc', populate: 'photo' }, { preview });
 const cmsJury = (juryRes.data || []).map((j) => ({ ini: (j.name || '?').slice(0, 2).toUpperCase(), name: j.name, role: j.role || '', bio: j.bio || '', photo: j.photo?.url ? mediaUrl(j.photo.url) : null }));
 const fallbackJury = [
   { ini: 'P', name: 'Président·e du jury 2025', role: 'Présidence', bio: 'À annoncer.', photo: null },
@@ -42,12 +44,12 @@ const fallbackJury = [
 const jury = cmsJury.length ? cmsJury : fallbackJury;
 
 // Masterclasses 2025 (depuis le programme, type=masterclass) avec repli.
-const mcRes = await fetchAPI('masterclasses', { 'filters[edition][year][$eq]': '2025', populate: 'cover', sort: 'order:asc', 'pagination[limit]': '20' });
+const mcRes = await fetchAPI('masterclasses', { 'filters[edition][year][$eq]': '2025', populate: 'cover', sort: 'order:asc', 'pagination[limit]': '20' }, { preview });
 const cmsMc = (mcRes.data || []).map((m) => ({ slug: m.slug, title: m.title, excerpt: m.excerpt || '', cover: m.cover?.url ? mediaUrl(m.cover.url) : null }));
 const masterclasses = cmsMc.length ? cmsMc.filter((m) => m.slug) : fallbackMasterclasses('fr');
 
 // Films de la sélection 2025 (depuis le programme) avec repli.
-const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': '2025', populate: 'poster', sort: 'title:asc', 'pagination[limit]': '100' });
+const filmRes = await fetchAPI('films', { 'filters[edition][year][$eq]': '2025', populate: 'poster', sort: 'title:asc', 'pagination[limit]': '100' }, { preview });
 const cmsFilms = (filmRes.data || []).map((f) => ({ title: f.title, director: f.director || '', country: f.country || '', year: f.year || '', duration: f.duration || '', poster: f.poster?.url ? mediaUrl(f.poster.url) : null, synopsis: f.synopsis || '', trailerUrl: f.trailerUrl || '' }));
 const films2025 = cmsFilms.length ? cmsFilms : FILMS_2025;
 

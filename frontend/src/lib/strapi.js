@@ -8,6 +8,26 @@ const INTERNAL =
 const PUBLIC =
   import.meta.env.PUBLIC_STRAPI_URL || process.env.PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
+// Aperçu (Preview Strapi) : secret partagé + token de lecture des brouillons.
+// Tous deux requis, sinon on reste en mode publié (aucune fuite de brouillon).
+const PREVIEW_SECRET =
+  import.meta.env.PREVIEW_SECRET || process.env.PREVIEW_SECRET || '';
+const PREVIEW_TOKEN =
+  import.meta.env.PREVIEW_API_TOKEN || process.env.PREVIEW_API_TOKEN || '';
+
+/**
+ * Détecte le mode aperçu depuis l'URL de la page (Astro.url) : le lien généré
+ * par Strapi contient ?preview=<secret>. On valide le secret et on exige un
+ * token configuré — à défaut, on rend la version publiée.
+ * @param {URL} url
+ */
+export function previewMode(url) {
+  if (!PREVIEW_SECRET || !PREVIEW_TOKEN) return false;
+  const p = url?.searchParams?.get('preview');
+  const status = url?.searchParams?.get('status');
+  return !!(p && p === PREVIEW_SECRET && status !== 'published');
+}
+
 /** Construit l'URL absolue d'un média Strapi. */
 export function mediaUrl(path) {
   if (!path) return '';
@@ -60,17 +80,21 @@ export async function getGlobal() {
  * Appelle l'API REST de Strapi.
  * @param {string} endpoint  ex: 'articles'
  * @param {object} params    paramètres de requête (populate, sort, filters…)
+ * @param {{preview?: boolean}} [opts]  en aperçu : lit les brouillons (status=draft) avec le token.
  * @returns {Promise<{data: any}>}  renvoie { data: [] } en cas d'erreur (pas de crash).
  */
-export async function fetchAPI(endpoint, params = {}) {
+export async function fetchAPI(endpoint, params = {}, { preview = false } = {}) {
   const url = new URL(`${INTERNAL}/api/${endpoint}`);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
+  const headers = { 'Content-Type': 'application/json' };
+  if (preview && PREVIEW_TOKEN) {
+    url.searchParams.set('status', 'draft'); // version brouillon
+    headers.Authorization = `Bearer ${PREVIEW_TOKEN}`;
+  }
   try {
-    const res = await fetch(url, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const res = await fetch(url, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } catch (err) {

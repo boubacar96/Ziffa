@@ -3300,6 +3300,10 @@
     .filmstrip-section { padding: 60px 0; }
     .filmstrip figure { width: 240px; height: 165px; }
   }
+  /* Bandeau défilant des prix : on réutilise .prize-photo dans la pellicule. */
+  .filmstrip-track--prizes .prize-photo { flex: 0 0 auto; width: 340px; }
+  .filmstrip-section + .filmstrip-section { border-top: none; }
+  @media (max-width: 1000px) { .filmstrip-track--prizes .prize-photo { width: 260px; } }
 
   /* ----- Vraies photos dans les cartes actualités ----- */
   .actu-img img {

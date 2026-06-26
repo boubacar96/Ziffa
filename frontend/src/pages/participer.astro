@@ -171,7 +171,11 @@ const deadline = (ed && ed.submissionDeadline && fmtDate(ed.submissionDeadline))
   const gateNote = document.getElementById('insc-gate-note');
   const rulesOk = document.getElementById('rules-ok');
   let rulesLastFocus = null;
-  const openRules = () => { if (rulesModal) { rulesModal.hidden = false; document.body.style.overflow = 'hidden'; rulesLastFocus = document.activeElement; const f = rulesModal.querySelector('.rules-x'); if (f) f.focus(); } };
+  // On rattache la modale directement au <body> : sinon un ancêtre transformé
+  // (animations/reveal) peut "piéger" position:fixed et la faire passer sous
+  // l'en-tête, masquant son titre. Au <body>, elle couvre tout le viewport.
+  if (rulesModal && rulesModal.parentElement !== document.body) document.body.appendChild(rulesModal);
+  const openRules = () => { if (rulesModal) { rulesModal.hidden = false; document.body.style.overflow = 'hidden'; rulesLastFocus = document.activeElement; const rb = rulesModal.querySelector('.rules-body'); if (rb) rb.scrollTop = 0; const f = rulesModal.querySelector('.rules-x'); if (f) f.focus({ preventScroll: true }); } };
   const closeRules = () => { if (rulesModal) { rulesModal.hidden = true; document.body.style.overflow = ''; if (rulesLastFocus && rulesLastFocus.focus) rulesLastFocus.focus(); } };
   document.getElementById('open-rules')?.addEventListener('click', openRules);
   document.getElementById('open-rules-2')?.addEventListener('click', openRules);

@@ -1,4 +1,4 @@
-import { getTransport, MAIL_TO, MAIL_FROM } from '../../lib/mailer.js';
+import { getTransport, MAIL_TO, MAIL_FROM, esc, emailLayout, infoTable, messageBlock, noteBox } from '../../lib/mailer.js';
 
 export const prerender = false;
 
@@ -9,9 +9,6 @@ function json(obj, status = 200) {
     status,
     headers: { 'Content-Type': 'application/json' },
   });
-}
-function esc(s) {
-  return String(s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 }
 
 export async function POST({ request }) {
@@ -61,30 +58,32 @@ export async function POST({ request }) {
       return json({ ok: false, error: "Le service d'envoi n'est pas encore configuré. Réessayez plus tard ou écrivez à festival@ziffa.sn." }, 503);
     }
 
-    const row = (label, val) => `<tr><td style="padding:6px 12px;color:#6b7280">${esc(label)}</td><td style="padding:6px 12px;color:#1e293b"><b>${esc(val) || '—'}</b></td></tr>`;
-    const html = `
-      <h2 style="font-family:sans-serif;color:#1A4527">Nouvelle inscription de film — ZIFFA</h2>
-      <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px">
-        ${row('Titre du film', f('filmTitle'))}
-        ${row('Réalisateur', f('director'))}
-        ${row('Email', f('email'))}
-        ${row('Téléphone', f('phone'))}
-        ${row('Pays', f('country'))}
-        ${row('Année', f('productionYear'))}
-        ${row('Durée', f('duration'))}
-        ${row('Catégorie', f('category'))}
-        ${row('Langue / sous-titres', f('language'))}
-        ${row('Lien de visionnage', f('viewingLink'))}
-        ${row('Mot de passe du lien', f('viewingPassword'))}
-      </table>
-      <h3 style="font-family:sans-serif;color:#1A4527">Synopsis court</h3>
-      <p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${esc(f('synopsisShort'))}</p>
-      <h3 style="font-family:sans-serif;color:#1A4527">Synopsis long</h3>
-      <p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${esc(f('synopsisLong'))}</p>
-      <h3 style="font-family:sans-serif;color:#1A4527">Biographie du réalisateur</h3>
-      <p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${esc(f('directorBio'))}</p>
-      <p style="font-family:sans-serif;font-size:13px;color:#6b7280">Pièces jointes : ${mailAttachments.map((a) => esc(a.filename)).join(', ') || 'aucune'}</p>
-    `;
+    const attachNames = mailAttachments.map((a) => a.filename).join(', ') || 'aucune';
+    const html = emailLayout({
+      barColor: '#D63832', pillBg: '#FBE9E8', pillText: '#D63832',
+      badge: 'Nouvelle inscription de film',
+      title: `« ${f('filmTitle')} »`,
+      subtitle: `Réalisé par ${f('director')} — reçu via « Inscrire un film »`,
+      preheader: `${f('filmTitle')} — ${f('director')} (${f('country') || '—'})`,
+      content:
+        infoTable([
+          ['Réalisateur', f('director')],
+          ['Email', f('email')],
+          ['Téléphone', f('phone')],
+          ['Pays', f('country')],
+          ['Année', f('productionYear')],
+          ['Durée', f('duration')],
+          ['Catégorie', f('category')],
+          ['Langue / sous-titres', f('language')],
+          ['Lien de visionnage', f('viewingLink')],
+          ['Mot de passe du lien', f('viewingPassword')],
+        ]) +
+        messageBlock('Synopsis court', f('synopsisShort')) +
+        messageBlock('Synopsis long', f('synopsisLong')) +
+        messageBlock('Biographie du réalisateur', f('directorBio')) +
+        noteBox(`${mailAttachments.length} pièce(s) jointe(s) : ${attachNames}`, 'attach') +
+        noteBox(`Répondez directement à cet email pour écrire à ${f('director')}.`),
+    });
 
     await transport.sendMail({
       from: MAIL_FROM,

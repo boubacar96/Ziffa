@@ -1,12 +1,9 @@
-import { getTransport, MAIL_TO, MAIL_FROM } from '../../lib/mailer.js';
+import { getTransport, MAIL_TO, MAIL_FROM, esc, emailLayout, infoTable, messageBlock, noteBox } from '../../lib/mailer.js';
 
 export const prerender = false;
 
 function json(obj, status = 200) {
   return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
-}
-function esc(s) {
-  return String(s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 }
 
 export async function POST({ request }) {
@@ -43,17 +40,17 @@ export async function POST({ request }) {
     if (!message) missing.push('Message');
     if (missing.length) return json({ ok: false, error: 'Champs obligatoires manquants : ' + missing.join(', ') }, 400);
 
-    const row = (label, val) => (val ? `<tr><td style="padding:6px 12px;color:#6b7280">${esc(label)}</td><td style="padding:6px 12px;color:#1e293b"><b>${esc(val)}</b></td></tr>` : '');
-    const html = `
-      <h2 style="font-family:sans-serif;color:#1A4527">Nouveau message — Contact ZIFFA</h2>
-      <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px">
-        ${row('Nom', name)}
-        ${row('Email', email)}
-        ${row('Sujet', f('subject'))}
-      </table>
-      <h3 style="font-family:sans-serif;color:#1A4527">Message</h3>
-      <p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${esc(message)}</p>
-    `;
+    const html = emailLayout({
+      barColor: '#E8B547', pillBg: '#EAF3DE', pillText: '#1A4527',
+      badge: 'Nouveau message de contact',
+      title: `${name} vous a écrit`,
+      subtitle: 'Reçu via le formulaire de contact du site',
+      preheader: message.slice(0, 90),
+      content:
+        infoTable([['Nom', name], ['Email', email], ['Sujet', f('subject')]]) +
+        messageBlock('Message', message) +
+        noteBox(`Répondez directement à cet email pour écrire à ${name}.`),
+    });
 
     await transport.sendMail({
       from: MAIL_FROM, to: MAIL_TO, replyTo: email,

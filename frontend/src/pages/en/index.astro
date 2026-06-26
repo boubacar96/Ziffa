@@ -36,9 +36,10 @@ const cmsPartnersMapped = (partRes.data || []).map((p) => ({ name: p.name, url: 
 // Strapi only as soon as there is at least 1 partner; otherwise demo logos.
 const partners = cmsPartnersMapped.length ? cmsPartnersMapped : fallbackPartners;
 
-// --- 2025 prize list (home) : keep only prizes that have a winner. ---
-const palmRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', 'pagination[limit]': '20' });
-const palmares = (palmRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '' })).filter((p) => p.winner);
+// --- 2025 awards & distinctions (home) : same content as the 2025 edition page
+//     (photos + winners), for an identical look. ---
+const palmRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', populate: 'image', 'pagination[limit]': '20' });
+const palmares = (palmRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
 
 const shapes = ['tall', 'square', 'wide'];
 const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, (_, i) => ({ n: String(((c * 3 + i * 2) % 10) + 1).padStart(2, '0'), shape: shapes[(c + i) % 3] })));
@@ -128,10 +129,17 @@ const heroCols = Array.from({ length: 6 }, (_, c) => Array.from({ length: 10 }, 
 
   {palmares.length > 0 && (
     <section class="section" id="palmares-2025">
-      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Prize list · 2025 edition</div><h2 class="section-title">The 2025 <span class="red">prize list</span>.</h2></div><a href="/en/edition-2025#prix" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">See the 2025 edition →</a></div>
+      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Prize list · 2025 edition</div><h2 class="section-title">Awards &amp; <span class="red">distinctions</span>.</h2></div><a href="/en/edition-2025#prix" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">See the 2025 edition →</a></div>
+      <p class="lead" style="max-width:760px;margin-bottom:30px;">An international jury awarded 7 prizes and 2 special mentions:</p>
       <div class="prize-grid">
         {palmares.map((p, i) => (
-          <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner}</div></div>
+          p.image ? (
+            <div class="prize-photo" data-zoom={p.image} data-caption={`${p.name}${p.winner ? ' — ' + p.winner : ''}`} style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
+              <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
+            </div>
+          ) : (
+            <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Winner to be announced'}</div></div>
+          )
         ))}
       </div>
     </section>

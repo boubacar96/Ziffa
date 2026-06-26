@@ -48,9 +48,10 @@ const cmsPartnersMapped = cmsPartners.map((p) => ({ name: p.name, url: p.url || 
 // Strapi seul dès qu'il y a au moins 1 partenaire ; sinon logos de démo.
 const partners = cmsPartnersMapped.length ? cmsPartnersMapped : fallbackPartners;
 
-// --- Palmarès 2025 (accueil) : on ne garde que les prix qui ont un lauréat. ---
-const palmRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', 'pagination[limit]': '20' });
-const palmares = (palmRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '' })).filter((p) => p.winner);
+// --- Prix & distinctions 2025 (accueil) : même contenu que la page édition 2025
+//     (photos + lauréats), pour un rendu identique. ---
+const palmRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': '2025', populate: 'image', 'pagination[limit]': '20' });
+const palmares = (palmRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
 
 // --- Mosaïque du hero ---
 const shapes = ['tall', 'square', 'wide'];
@@ -166,10 +167,17 @@ const heroCols = Array.from({ length: 6 }, (_, c) =>
 
   {palmares.length > 0 && (
     <section class="section" id="palmares-2025">
-      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Palmarès · Édition 2025</div><h2 class="section-title">Le <span class="red">palmarès</span> 2025.</h2></div><a href="/edition-2025#prix" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Voir l'édition 2025 →</a></div>
+      <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Palmarès · Édition 2025</div><h2 class="section-title">Prix &amp; <span class="red">distinctions</span>.</h2></div><a href="/edition-2025#prix" class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);">Voir l'édition 2025 →</a></div>
+      <p class="lead" style="max-width:760px;margin-bottom:30px;">Un jury international a décerné 7 prix et 2 mentions spéciales :</p>
       <div class="prize-grid">
         {palmares.map((p, i) => (
-          <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner}</div></div>
+          p.image ? (
+            <div class="prize-photo" data-zoom={p.image} data-caption={`${p.name}${p.winner ? ' — ' + p.winner : ''}`} style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
+              <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
+            </div>
+          ) : (
+            <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
+          )
         ))}
       </div>
     </section>

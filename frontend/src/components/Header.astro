@@ -14,14 +14,6 @@ const groupActive = (g) => {
   return paths.some((p) => base === p || base.startsWith(p + '/')) ? 'active' : '';
 };
 ---
-<div class="top-strip">
-  <div><span class="dot"></span>{t('topstrip.edition')}</div>
-  <div class="top-strip-right">
-    <a href={L('/contact') + '#contact'}>{t('nav.presse')}</a>
-    <a href={L('/contact') + '#contact'}>{t('footer.contact')}</a>
-  </div>
-</div>
-
 <nav class="navbar">
   <a href={L('/')} class="logo" aria-label="ZIFFA">
     <img src="/ziffa.png" alt="ZIFFA - Ziguinchor International Festival Film and Animation" width="220" height="80" decoding="async" fetchpriority="high" />

@@ -146,16 +146,20 @@ const highlights = [
   <section class="section" id="prix">
     <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Palmarès</div><h2 class="section-title">Prix &amp; <span class="red">distinctions</span>.</h2></div></div>
     <p class="lead" style="max-width:760px;margin-bottom:30px;">Un jury international a décerné 7 prix et 2 mentions spéciales :</p>
-    <div class="prize-grid">
-      {prizes.map((p, i) => (
-        p.image ? (
-          <div class="prize-photo" data-zoom={p.image} data-caption={`${p.name}${p.winner ? ' — ' + p.winner : ''}`} style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
-            <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
-          </div>
-        ) : (
-          <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
-        )
-      ))}
+    <div class="fw-scroller">
+      <button type="button" class="fw-arrow fw-prev" aria-label="Précédent">‹</button>
+      <div class="prize-grid prize-grid--row" data-rail>
+        {prizes.map((p, i) => (
+          p.image ? (
+            <div class="prize-photo" data-zoom={p.image} data-caption={`${p.name}${p.winner ? ' — ' + p.winner : ''}`} style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
+              <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
+            </div>
+          ) : (
+            <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
+          )
+        ))}
+      </div>
+      <button type="button" class="fw-arrow fw-next" aria-label="Suivant">›</button>
     </div>
   </section>
 

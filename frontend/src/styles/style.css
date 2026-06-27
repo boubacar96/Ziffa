@@ -4239,6 +4239,16 @@
   .team-grid--row::-webkit-scrollbar { display: none; }
   .team-grid--row > * { scroll-snap-align: start; }
 
+  /* Prix en rail horizontal (mode carrousel, comme les films) */
+  .prize-grid--row {
+    display: flex; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 18px;
+    grid-template-columns: none; scroll-snap-type: x proximity; padding: 4px 2px 8px;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .prize-grid--row::-webkit-scrollbar { display: none; }
+  .prize-grid--row > * { flex: 0 0 320px; max-width: 320px; scroll-snap-align: start; }
+  @media (max-width: 720px) { .prize-grid--row > * { flex-basis: 260px; max-width: 260px; } }
+
   /* ===== Carte interactive « Venir au festival » (Leaflet sur-mesure) ===== */
   .zmap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
   .zmap-canvas { position: relative; }

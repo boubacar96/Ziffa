@@ -86,7 +86,7 @@ const title = ed ? (ed.title || `${year} edition`) : 'Edition not found';
 
       {prizes.length > 0 && (
         <section class="section" id="prix">
-          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Prize list</div><h2 class="section-title">Awards &amp; <span class="red">honours</span>.</h2></div></div>
+          <div class="section-head"><div><div class="eyebrow"><span class="arrow">→</span> Prize list</div><h2 class="section-title">Awards &amp; <span class="red">honours</span>.</h2></div><a href={`/en/palmares/${year}`} class="btn-ghost" style="color:var(--green-deep);border-color:var(--line);align-self:flex-start;">View all ({prizes.length}) →</a></div>
           <div class="fw-scroller">
             <button type="button" class="fw-arrow fw-prev" aria-label="Previous">‹</button>
             <div class="prize-grid prize-grid--row" data-rail>

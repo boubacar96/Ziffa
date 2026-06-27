@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fetchAPI, mediaUrl } from '../../lib/strapi.js';
+
+const { year } = Astro.params;
+const prizeRes = await fetchAPI('prizes', { 'filters[edition][year][$eq]': year, populate: 'image', 'pagination[limit]': '50' });
+const prizes = (prizeRes.data || []).map((p) => ({ name: p.name, winner: p.winner || '', image: p.image?.url ? mediaUrl(p.image.url) : null }));
+const editionHref = String(year) === '2025' ? '/edition-2025' : `/editions/${year}`;
+---
+<Base title={`Prix & distinctions ${year} | ZIFFA`} description={`Le palmarès complet de l'édition ${year} du ZIFFA.`}>
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb"><a href="/">Accueil</a> &nbsp;/&nbsp; <a href={editionHref}>Édition {year}</a> &nbsp;/&nbsp; Prix & distinctions</div>
+      <div class="eyebrow"><span class="arrow">→</span> Palmarès · {year}</div>
+      <h1>Prix &amp; <span class="yellow">distinctions</span> {year}.</h1>
+      <p>Le palmarès complet de l'édition {year}.</p>
+    </div>
+  </header>
+  <section class="section">
+    {prizes.length > 0
+      ? <div class="prize-grid">
+          {prizes.map((p, i) => (
+            p.image ? (
+              <div class="prize-photo" data-zoom={p.image} data-caption={`${p.name}${p.winner ? ' — ' + p.winner : ''}`} style={`background-image:linear-gradient(to top, rgba(15,58,32,.94) 0%, rgba(15,58,32,.15) 55%, rgba(15,58,32,0) 100%), url('${p.image}')`}>
+                <div class="prize-photo-body"><h3>{p.name}</h3>{p.winner && <div class="winner">{p.winner}</div>}</div>
+              </div>
+            ) : (
+              <div class={`prize-card prize-card--accent oc-${['red', 'green', 'yellow', 'orange'][i % 4]}`}><h3>{p.name}</h3><div class="winner">{p.winner || 'Lauréat·e à annoncer'}</div></div>
+            )
+          ))}
+        </div>
+      : <p class="prog-pdf-empty" style="max-width:480px;margin:0 auto;text-align:center;">Le palmarès {year} sera bientôt disponible.</p>}
+    <div style="margin-top:34px;text-align:center;"><a href={`${editionHref}#prix`} class="nav-cta">← Retour à l'édition {year}</a></div>
+  </section>
+</Base>
